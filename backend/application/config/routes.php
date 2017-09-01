@@ -51,11 +51,6 @@ $route['editarea/(:any)'] = 'area/edit/$1';
 $route['addNewArea'] = 'area/addNewArea';
 $route['areaListing/(:any)/(:any)/(:num)'] = "area/listing/$1/$2/$3";
 
-$route['course'] = 'area/course';
-$route['addcourse'] = 'area/addCourse';
-$route['courseListing/(:any)/(:num)'] = "area/courselisting/$1/$2";
-$route['editcourse/(:any)'] = 'area/editcourse/$1';
-
 $route['shop'] = 'shop';
 $route['addshop'] = 'shop/addShop';
 $route['shopListing/(:any)/(:num)'] = "shop/shoplisting/$1/$2";
