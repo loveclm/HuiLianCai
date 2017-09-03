@@ -1,0 +1,49 @@
+html body{
+    width: 100%;
+    height: 100%;
+}
+.search {
+    z-index: 6201;
+    left: 15px;
+    top: 15px;
+}
+.dtrigger, .search {
+    position: absolute;
+}
+
+.searchbox {
+    position: relative;
+    z-index: 2201;
+    width: 360px;
+    height: 45px;
+    background: #fff;
+    box-shadow: 0 2px 2px rgba(0,0,0,.15);
+    border-radius: 3px;
+}
+#amap-banner, #amap-banner-entry, #nav li, .city-pc-title span, .city-search input, .searchbox {
+    box-sizing: border-box;
+}
+article, aside, details, figcaption, figure, footer, header, hgroup, main, menu, nav, section, summary {
+    display: block;
+}
+
+.amap-search-panctrl {
+    background-color: #fff;
+    padding: 12px 10px 5px;
+    width: 340px;
+    font-size: 14px;
+    box-shadow: 1px 2px 1px rgba(0,0,0,.1);
+    color: #0f89f5;
+}
+
+.amap-panctrl, .amap-search-panctrl {
+    z-index: -10;
+    position: absolute;
+    height: 24px;
+    left: 0;
+    display: none;
+    cursor: pointer;
+    overflow: hidden;
+    text-align: center;
+}
+
