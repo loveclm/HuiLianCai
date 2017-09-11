@@ -7,7 +7,7 @@ class shop_model extends CI_Model
      * This function is used to get all Tourist Area
      * @return array $result : This is result
      */
-    function getShops($name = '', $address = 'all', $status = 0)
+    function getShops($name = '', $address = 'all', $status = 0, $shopnumber='')
     {
         $this->db->select('*');
         $this->db->from('shop');
@@ -24,6 +24,8 @@ class shop_model extends CI_Model
             $likeCriteria = "(address_1  LIKE '%" . $address . "%')";
             $this->db->where($likeCriteria);
         }
+        if($shopnumber!='')
+            $this->db->where('phonenumber', $shopnumber);
         $query = $this->db->get();
 
         $result = $query->result();
@@ -60,8 +62,23 @@ class shop_model extends CI_Model
         $this->db->where('id', $id);
         $query = $this->db->get();
         $result = $query->result();
-        if (count($result)) return $result[0];
-        return array();
+        if (count($result)>0) return $result[0];
+        return NULL;
+    }
+
+    /**
+     * This function is used to get Tourist Area by id
+     * @return array $result : This is result
+     */
+    function getShopIdByNumber($number)
+    {
+        $this->db->select('id');
+        $this->db->from('shop');
+        $this->db->where('phonenumber', $number);
+        $query = $this->db->get();
+        $result = $query->result();
+        if (count($result)>0) return $result[0];
+        return NULL;
     }
 
     /**
@@ -89,6 +106,24 @@ class shop_model extends CI_Model
     {
         $this->db->where('id', $shopId);
         $this->db->update('shop', $shopInfo);
+        $authItems=$this->auth_model->getAuthsByShopId($shopId);
+        if(count($authItems)>0){
+            foreach($authItems as $item){
+                $newItem = $item;
+                $newItem->status=$shopInfo['status'];
+                $this->db->where('id', $newItem->id);
+                $this->db->update('tbl_authcode', $newItem);
+            }
+        }
+        $qrItems=$this->getQRByShopId($shopId);
+        if(count($qrItems)>0){
+            foreach($qrItems as $item){
+                $newItem = $item;
+                $newItem->status=$shopInfo['status'];
+                $this->db->where('id', $newItem->id);
+                $this->db->update('qrcode', $newItem);
+            }
+        }
         return TRUE;
     }
 
@@ -140,6 +175,20 @@ class shop_model extends CI_Model
         return -1;
     }
 
+    function getQRByShopId($shopid)
+    {
+        $this->db->select('*');
+        $this->db->from('qrcode');
+        $this->db->where('shopid', $shopid);
+        $query = $this->db->get();
+        $result = $query->result();
+        if (count($result) > 0) {
+            return $result;
+        }
+        return NULL;
+    }
+
+
     /**
      * This function is used to add new shop to system
      * @return number $insert_id : This is last inserted id
@@ -163,12 +212,12 @@ class shop_model extends CI_Model
      * This function is used to get all Tourist Area
      * @return array $result : This is result
      */
-    function getQR($name = '', $type = 0)
+    function getQR($name = '', $type = 0, $searchType=0)
     {
-        $this->db->select('sh.name, qr.type, qr.created_time, qr.data, qr.id, qr.targetid');
+        $this->db->select('sh.name, sh.phonenumber as shopnumber, qr.type, qr.created_time, qr.data, qr.id, qr.targetid');
         $this->db->from('qrcode as qr');
         $this->db->join('shop as sh', 'sh.id = qr.shopid');
-        if ($name != 'all') {
+        if ($searchType==0 && $name != 'all') {
             $likeCriteria = "(sh.name  LIKE '%" . $name . "%')";
             $this->db->where($likeCriteria);
         }
@@ -176,6 +225,8 @@ class shop_model extends CI_Model
         if ($type != 0) {
             $this->db->where('qr.type', $type);
         }
+        $this->db->where('qr.status', 0);
+        $this->db->order_by('qr.created_time','DESC');
 
         $query = $this->db->get();
 

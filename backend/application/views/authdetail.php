@@ -35,11 +35,11 @@
                 <table class="table table-bordered area-result-view">
                     <thead>
                     <tr style="background-color: lightslategrey;">
-                        <th sidth="100">序号</th>
+                        <th sidth="">序号</th>
                         <th>授权码</th>
                         <th>状态</th>
                         <th>订单时间</th>
-                        <th width="200">操作</th>
+                        <th width="">操作</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -68,78 +68,6 @@
                     <?php } ?>
                     </tbody>
                 </table>
-                <div class="form-group">
-                    <div id="custom-confirm-delete-view" style="display:none;">
-                        <p>
-                            是否要删除此商家？
-                        </p>
-
-                        <div class="form-group">
-                            <button onclick="deleteArea('<?php echo base_url(); ?>', 0);">取消</button>
-                            <button onclick="deleteArea('<?php echo base_url(); ?>', 1);">确定</button>
-                        </div>
-
-                    </div>
-                    <div id="custom-confirm-deploy-view" style="display:none;">
-                        <p>
-                            是否要上架此景区？
-                        </p>
-
-                        <div class="form-group">
-                            <button onclick="deployArea('<?php echo base_url(); ?>', 0);">取消</button>
-                            <button onclick="deployArea('<?php echo base_url(); ?>', 1);">确定</button>
-                            <input id="current-areaid" style="display: none;"/>
-                            <input id="current-areastatus" style="display: none;"/>
-                            <input id="current-type" style="display: none;"/>
-                        </div>
-                    </div>
-
-                    <div id="custom-generate-auth-view" style="display:none;">
-                        <div class="form-group">
-                            <label>选择类型 </label>
-                            <select id="auth-select" onchange="changeAuthType();">
-                                <option value="0">请选择</option>
-                                <option value="1">景区</option>
-                                <option value="2">旅游线路</option>
-                            </select>
-                        </div>
-                        <div class="form-group" id="custom-auth-area-view" style="display:none;">
-                            <label>景区名称 </label>
-                            <select id="auth-select-area">
-                                <option value="0">请选择</option>
-                                <option value="1">区</option>
-                                <option value="2">旅</option>
-                            </select>
-                        </div>
-                        <div class="form-group" id="custom-auth-course-view" style="display:none;">
-                            <label>旅游线路名称 </label>
-                            <select id="auth-select-course">
-                                <option value="0">请选择</option>
-                                <option value="1">区</option>
-                                <option value="2">旅</option>
-                            </select>
-                        </div>
-
-
-                        <div class="form-group">
-                            <button onclick="cancel('<?php echo base_url(); ?>');">取消</button>
-                            <button onclick="generateAuth('<?php echo base_url(); ?>');">确定</button>
-                        </div>
-                    </div>
-
-                    <div id="custom-generate-auth-count-view" style="display:none;">
-                        <div class="form-group">
-                            <label>发放数量 </label>
-                            <input id="auth-count"/>个
-                        </div>
-
-                        <div class="form-group">
-                            <button onclick="cancel('<?php echo base_url(); ?>');">取消</button>
-                            <button onclick="generateAuthFinal('<?php echo base_url(); ?>');">确定</button>
-                        </div>
-                    </div>
-
-                </div>
                 <div class="clearfix"></div>
             </div>
 

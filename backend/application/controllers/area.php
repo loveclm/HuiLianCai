@@ -55,6 +55,111 @@ class area extends BaseController
         }
     }
 
+    function custom_listing()
+    {
+        $ret = array(
+            'data'=>'',
+            'status'=>'fail'
+        );
+        if(!empty($_POST)){
+
+            $name = $_POST['name'];
+            $address = $_POST['address'];
+            $status = $_POST['status'];
+
+            $areaList =$this->area_model->getAreas($name, $address, $status);
+            $ret['data'] = $this->output_area($areaList);
+            $ret['status'] = 'success';
+        }
+        echo json_encode($ret);
+    }
+
+    function output_area($areas)
+    {
+        $output_html = '';
+        foreach($areas as $area):
+            $points = json_decode($area->point_list);
+            $pointCount = count($points);
+            $statusStr = '已上架';
+            if($area->status!='1') $statusStr = '未上架';
+            $output_html .= '<tr>';
+            $output_html .= '<td>'.$area->name.'</td>';
+            $output_html .= '<td>'.$pointCount.'</td>';
+            $output_html .= '<td>'.floatval($area->price)*floatval($area->discount_rate).'</td>';
+            $output_html .= '<td>'.$area->address.'</td>';
+            $output_html .= '<td>'.$statusStr.'</td>';
+            $output_html .= '<td>';
+            $output_html .= '<a href="'.base_url().'editarea/'.$area->id.'">查看 &nbsp;</a>';
+            if($area->status=='0'){
+                $output_html .= '<a href="#" onclick="deleteAreaConfirm_jingqu('.$area->id.')">删除 &nbsp;</a>';
+            }
+            if($area->status=='0'){
+                $output_html .= '<a href="#" onclick="deployAreaConfirm_jingqu('.$area->id.')">上架 &nbsp;</a>';
+            }else{
+                $output_html .= '<a href="#" onclick="undeployAreaConfirm_jingqu('.$area->id.')">下架 &nbsp;</a>';
+            }
+            $output_html .='</td>';
+            $output_html .='</tr>';
+        endforeach;
+        return $output_html;
+    }
+
+    function course_listing()
+    {
+        $ret = array(
+            'data'=>'',
+            'status'=>'fail'
+        );
+        if(!empty($_POST)){
+
+            $name = $_POST['name'];
+            $status = $_POST['status'];
+
+            $courseList =$this->area_model->getCourses($name, $status);
+            $ret['data'] = $this->output_course($courseList);
+            $ret['status'] = 'success';
+        }
+        echo json_encode($ret);
+    }
+
+    function output_course($courseList)
+    {
+        $output_html = '';
+
+        $courseCount = count($courseList);
+
+        for($i = 0; $i < $courseCount; $i++) {
+            $course = $courseList[$i];
+            $areas = json_decode($courseList[$i]->point_list);
+            $areaCount = count($areas);
+            $courseName = '';
+            foreach ($areas as $areaItem) {
+                if ($courseName == '') $courseName = $areaItem->name;
+                else $courseName = $courseName . ' - ' . $areaItem->name;
+            }
+
+            $output_html .= '<tr>';
+            $output_html .= '<td>' . $course->name . '</td>';
+            $output_html .= '<td>' . $courseName . '</td>';
+            $output_html .= '<td>' . floatval($course->price)*floatval($course->discount_rate) . '</td>';
+            $output_html .= '<td>' . ($course->status == 1 ? '已上架' : '未上架') . '</td>';
+            $output_html .= '<td>';
+            $output_html .= '<a href="' . base_url() . 'editcourse/' . $course->id . '">查看 &nbsp;</a>';
+            if ($course->status == '0') {
+                $output_html .= '<a href="#" onclick="deleteAreaConfirm(' . $course->id . ')">删除 &nbsp;</a>';
+            }
+            if ($course->status == '0') {
+                $output_html .= '<a href="#" onclick="deployAreaConfirm(' . $course->id . ')">上架 &nbsp;</a>';
+            } else {
+                $output_html .= '<a href="#" onclick="undeployAreaConfirm(' . $course->id . ')">下架 &nbsp;</a>';
+            }
+            $output_html .= '</td>';
+            $output_html .= '</tr>';
+        }
+
+        return $output_html;
+    }
+
     /**
      * This function is used to load the add new form
      */
@@ -115,9 +220,8 @@ class area extends BaseController
         }
         else
         {
-
             $this->global['pageTitle'] = '新增旅游线路';
-            $this->global['areaList'] =$this->area_model->getAreas();
+            $this->global['areaList'] =$this->area_model->getAreas('','all','1');
             $this->loadViews("course-add", $this->global, NULL, NULL);
         }
     }
@@ -153,9 +257,8 @@ class area extends BaseController
         }
         else
         {
-
             $this->global['pageTitle'] = '编辑旅游线路';
-            $this->global['areaList'] =$this->area_model->getAreas();
+            $this->global['areaList'] =$this->area_model->getAreas('','all','1');
             $this->global['course'] = $this->area_model->getAreaById($id);
 
             $this->loadViews("course-add", $this->global, NULL, NULL);

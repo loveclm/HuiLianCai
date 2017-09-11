@@ -18,7 +18,6 @@ class systemmanage extends BaseController
     {
         parent::__construct();
         $this->load->model('user_model');
-        $this->load->model('area_model');
         $this->load->model('shop_model');
         $this->isLoggedIn();
     }
@@ -38,14 +37,11 @@ class systemmanage extends BaseController
      */
     function userListing()
     {
-        $name = '';
-        $address = '';
-        $status = '';
         if ($this->isAdmin() == TRUE) {
             $this->loadThis();
         } else {
             $searchText = $this->input->post('searchText');
-            $data['searchText'] = $searchText;
+            $searchStatus = $this->input->post('searchStatus');
 
             $this->load->library('pagination');
 
@@ -53,14 +49,12 @@ class systemmanage extends BaseController
 
             $returns = $this->paginationCompress("userListing/", $count, 5);
 
-            $data['userRecords'] = $this->user_model->userListing($searchText, $returns["page"], $returns["segment"]);
+            $data['userRecords'] = $this->user_model
+                ->userListing($searchText, $searchStatus, $returns["page"], $returns["segment"]);
 
             $this->global['pageTitle'] = '人员管理';
-            $this->global['pageType'] = 'user';
-            $this->global['areaList'] = $this->area_model->getAreas($name, $address, $status);
-            $this->global['searchName'] = $name;
-            $this->global['searchAddress'] = $address;
-            $this->global['searchStatus'] = $status;
+            $data['searchText'] = $searchText;
+            $data['searchStatus'] = $searchStatus;
 
             $this->loadViews("systemusermanage", $this->global, $data, NULL);
         }
@@ -78,7 +72,6 @@ class systemmanage extends BaseController
             $data['userRecords'] = $this->user_model->roleListing();
 
             $this->global['pageTitle'] = '角色管理';
-            $this->global['pageType'] = 'user';
 
             $this->loadViews("systemrolemanage", $this->global, $data, NULL);
         }
@@ -161,7 +154,7 @@ class systemmanage extends BaseController
                 if ($result > 0) {
                     $this->session->set_flashdata('success', '新用户创建成功.');
                 } else {
-                    $this->session->set_flashdata('error', '用户创建失败.');
+                    $this->session->set_flashdata('error', '用户创建失败. 此帐户已存在了.');
                 }
                 redirect('addNew');
             }

@@ -35,19 +35,19 @@ if(!empty($userInfo))
                             <div class="row">
                                 <div class="col-md-12 form-inline">
                                     <div class="form-group" style="margin-bottom: 10px;">
-                                        <label for="fname" >&nbsp;&nbsp;&nbsp;*账 号 &nbsp;:&nbsp;</label>
+                                        <label for="email">&nbsp;&nbsp;&nbsp;*账 号 &nbsp;:&nbsp;</label>
+                                        <input type="text" class="form-control required email" id="email"
+                                               name="email" maxlength="128" value="<?php echo isset($email)?$email:''; ?>">
+                                    </div>
+                                </div>
+                                <div class="col-md-12 form-inline">
+                                    <div class="form-group" style="margin-bottom: 10px;">
+                                        <label for="fname" >&nbsp;&nbsp;&nbsp;*姓 名 &nbsp;:&nbsp;</label>
                                         <input type="text" class="form-control required" id="fname" name="fname"
                                                maxlength="128" value="<?php echo isset($name)?$name:''; ?>">
                                         <input type="hidden" value="<?php echo $userId; ?>" name="userId" id="userId" />
                                     </div>
 
-                                </div>
-                                <div class="col-md-12 form-inline">
-                                    <div class="form-group" style="margin-bottom: 10px;">
-                                        <label for="email">&nbsp;&nbsp;&nbsp;*姓 名 &nbsp;:&nbsp;</label>
-                                        <input type="text" class="form-control required email" id="email"
-                                               name="email" maxlength="128" value="<?php echo isset($email)?$email:''; ?>">
-                                    </div>
                                 </div>
                             </div>
                             <div class="row">

@@ -19,8 +19,26 @@ function searchBuyOrder(url) {
     stDate = stDate == '' ? '0' : stDate;
     enDate = enDate == '' ? '0' : enDate;
 
-    location.href = url + 'buyListing/' + searchType + '/' +
-        name + '/' + stDate + '/' + enDate + '/' + status;
+//    location.href = url + 'buyListing/' + searchType + '/' +
+//        name + '/' + stDate + '/' + enDate + '/' + status;
+
+    $.ajax({
+        type: 'post',
+        url: url + 'ordermanage/buy_listing',
+        dataType: 'json',
+        data: {searchType: searchType, name:name, stDate:stDate, enDate:enDate, status: status},
+        success: function (res) {
+            if (res.status == 'success') {
+
+                $('#content_tbl_1').html(res.data);
+
+            } else {
+                alert('search failed!');
+                console.log(res.data);
+            }
+        }
+    });
+
 }
 
 // Search course on Course List Page
@@ -34,11 +52,28 @@ function searchAuthOrder(url) {
     stDate = stDate == '' ? '0' : stDate;
     enDate = enDate == '' ? '0' : enDate;
 
-    console.log (stDate+','+enDate);
+    console.log(stDate + ',' + enDate);
 
+//    location.href = url + 'orderListing/' + searchType + '/' +
+//        name + '/' + stDate + '/' + enDate + '/' + status;
 
-    location.href = url + 'orderListing/' + searchType + '/' +
-        name + '/' + stDate + '/' + enDate + '/' + status;
+    $.ajax({
+        type: 'post',
+        url: url + 'ordermanage/auth_listing',
+        dataType: 'json',
+        data: {searchType: searchType, name:name, stDate:stDate, enDate:enDate, status: status},
+        success: function (res) {
+            if (res.status == 'success') {
+
+                $('#content_tbl_2').html(res.data);
+
+            } else {
+                alert('search failed!');
+                console.log(res.data);
+            }
+        }
+    });
+
 }
 
 // Search course on Course List Page

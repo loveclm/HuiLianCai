@@ -15,7 +15,28 @@ function searchAuth(url) {
     var status = $('#searchStatus :selected').val();
     name = name == '' ? 'ALL' : name;
 
-    location.href = url + 'authListing/' + authType + '/' + name + '/' + status;
+    //location.href = url + 'authListing/' + authType + '/' + encodeURI(name) + '/' + status;
+
+    $.ajax({
+        type:'post',
+        url:url+'authmanage/auth_listing',
+        dataType:'json',
+        data:{searchType:authType,name:name,status:status},
+        success:function(res){
+            if(res.status=='success'){
+
+                $('#content_tbl').html(res.data);
+
+            }else{
+                alert('search failed!');
+                console.log(res.data);
+            }
+        }
+    });
+
+
+
+
 }
 
 // Search course on Course List Page
@@ -40,8 +61,8 @@ function authOrderItem(url, id) {
 }
 
 // Search course on Course List Page
-function addMoney(url) {
-    var money = $('#auth-count').val();
+function addMoney(url,type) {
+    var money = ((type==0)?'0':$('#auth-count').val());
     var id = $('#savingId').html();
     location.href = url + 'authAdd/' + money + '/' + id;
 }

@@ -9,29 +9,35 @@ class auth_model extends CI_Model
      */
     function getAuths($searchType = 0, $name = '', $status = 0)
     {
-        $this->db->select('au.id as id, sh.name as shopName, tr.name as tourName, '.
-            ' au.created_time as created, au.targetid as targetid, au.price as money, '.
-            ' sh.address_1 as total, au.codecount as count, sh.address_2 as used');
+        $this->db->select('au.id as id, sh.name as shopName, tr.name as tourName, ' .
+            ' au.created_time as created, au.targetid as targetid, au.price as money, ' .
+            ' sh.address_1 as total, au.codecount as count, sh.address_2 as used, ' .
+            ' au.status as status, sh.phonenumber as shopnumber');
         $this->db->from('tbl_authcode as au');
         $this->db->join('shop as sh', 'au.shopid = sh.id');
         $this->db->join('tourist_area as tr', 'au.targetid = tr.id');
-        if ($name == 'ALL') $name = '';
-        if ($searchType == 0) {
+        if ($searchType == 0 && $name != 'ALL') {
             $likeCriteria = "(sh.name  LIKE '%" . $name . "%')";
             $this->db->where($likeCriteria);
         } else {
-            $likeCriteria = "(tr.name  LIKE '%" . $name . "%')";
-            $this->db->where($likeCriteria);
+            //$likeCriteria = "(tr.name  LIKE '%" . $name . "%')";
+            //$this->db->where($likeCriteria);
         }
         if ($status == 2) {
             $this->db->where('au.price', 0);
         } elseif ($status == 1) {
             $this->db->where("au.price > '0'");
         }
-        $this->db->order_by('au.created_time','desc');
+        $this->db->where('sh.status','0');
+
+        //$this->db->where("au.status",'0');
+        $this->db->order_by('au.created_time', 'desc');
         $query = $this->db->get();
         $result = $query->result();
-        return $result;
+        if (count($result) == 0)
+            return NULL;
+        else
+            return $result;
     }
 
     /**
@@ -58,13 +64,47 @@ class auth_model extends CI_Model
         $this->db->where('shopid', $id);
         $query = $this->db->get();
         $result = $query->result();
-        if(count($result)==0)
+        if (count($result) == 0)
             return '0';
-        $qresult=0;
-        foreach($result as $item){
-            $qresult+=$item->codecount;
+        $qresult = 0;
+        foreach ($result as $item) {
+            $qresult += $item->codecount;
         }
         return $qresult;
+    }
+
+    /**
+     * This function is used to get all Tourist Area
+     * @return array $result : This is result
+     */
+    function getAuthsByShopId($id)
+    {
+        $this->db->select('*');
+        $this->db->from('tbl_authcode');
+        $this->db->where('shopid', $id);
+        $query = $this->db->get();
+        $result = $query->result();
+        if (count($result) == 0)
+            return NULL;
+        else
+            return $result;
+    }
+
+    /**
+     * This function is used to get all Tourist Area
+     * @return array $result : This is result
+     */
+    function getAuthOrdersByAuthId($authid)
+    {
+        $this->db->select('*');
+        $this->db->from('tbl_order');
+        $this->db->where('authid', $authid);
+        $this->db->order_by('authid');
+        $this->db->order_by('areaid');
+
+        $query = $this->db->get();
+        $result = $query->result();
+        return $result;
     }
 
     /**
@@ -79,7 +119,7 @@ class auth_model extends CI_Model
         $query = $this->db->get();
         $qresult = $query->result();
         $result = 0;
-        if(count($qresult)>0) {
+        if (count($qresult) > 0) {
             foreach ($qresult as $item) {
                 $result += $this->getOrderTotal($item->id);
             }
@@ -126,7 +166,7 @@ class auth_model extends CI_Model
             $this->db->where('status', $status);
         else if ($status != '0')
             $this->db->where("status <> '1'");
-        $this->db->order_by('ordered_time','desc');
+        $this->db->order_by('ordered_time', 'desc');
         $query = $this->db->get();
 
         $result = $query->result();
@@ -160,6 +200,8 @@ class auth_model extends CI_Model
         $result = $query->result();
         if (count($result) == 0) return FALSE;
         $authInfo = $result['0'];
+        if ($money == '0') $authInfo->status = 2;
+        else if ($money != '0') $authInfo->status = 1;
         $authInfo->price = $money;
         $this->db->select('*');
         $this->db->where('id', $id);

@@ -7,6 +7,7 @@
 $(document).ready(function () {
 
 });
+
 function confirmDelete(id) {
     $('#userId').html(id);
     $('#custom-confirm-delete-view').show();

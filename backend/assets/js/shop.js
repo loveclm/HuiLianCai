@@ -1,11 +1,17 @@
 /*
-    fileName: shop.js
-    description: process Shop
-*/
+ fileName: shop.js
+ description: process Shop
+ */
 
 // Code included inside $( document ).ready() will only run once the page Document Object Model (DOM) is ready for JavaScript code to execute
-$(document).ready(function(){
-
+$(document).ready(function () {
+    var count;
+    if ((document.getElementById("qrcount")) != null) {
+        count = $("#qrcount").html();
+        for (var i = 0; i < count; i++) {
+            $('#qr-view-' + i).qrcode({text: 'http://www.ayoubc.com/tour' + '?shopid=' + i},{width:128, height:128});
+        }
+    }
 });
 
 // Search course on Course List Page
@@ -13,19 +19,60 @@ function searchShop(url) {
 
     var name = $('#searchName').val();
     var status = $('#searchStatus :selected').val();
-    name = name == '' ? 'all': name;
+    name = name == '' ? 'all' : name;
 
-    location.href = url + 'shopListing/' + name+ '/' + status;
+    var provinceText = $('#provinceName').html();
+    var cityText = $('#cityName').html();
+    var districtText = $('#districtName').html();
+    var address = provinceText + "_" + cityText + "_" + districtText;
+
+    // location.href = url + 'shopListing/' + name + '/' + status;
+
+    $.ajax({
+        type: 'post',
+        url: url + 'shop/shop_listing',
+        dataType: 'json',
+        data: {name: name, address: address, status: status},
+        success: function (res) {
+            if (res.status == 'success') {
+
+                $('#content_tbl').html(res.data);
+
+            } else {
+                alert('search failed!');
+                console.log(res.data);
+            }
+        }
+    });
 }
 
 // Search course on Course List Page
 function searchQR(url) {
 
+    var searchType = $('#searchType').val();
     var name = $('#searchName').val();
     var status = $('#searchStatus :selected').val();
-    name = name == '' ? 'all': name;
+    name = name == '' ? 'all' : name;
 
-    location.href = url + 'qrListing/' + name+ '/' + status;
+//    location.href = url + 'qrListing/' + name + '/' + status;
+
+    $.ajax({
+        type: 'post',
+        url: url + 'qrmanage/qr_listing',
+        dataType: 'json',
+        data: {name: name, status: status, searchType: searchType},
+        success: function (res) {
+            if (res.status == 'success') {
+
+                $('#content_tbl').html(res.data);
+
+            } else {
+                alert('search failed!');
+                console.log(res.data);
+            }
+        }
+    });
+
 }
 
 //check if string is number string
@@ -35,8 +82,8 @@ function isNumeric(value) {
 
 //check if account is valid
 function invalidAccount(account) {
-    if(account.length != 11) return true;
-    if(!isNumeric(account)) return true;
+    if (account.length != 11) return true;
+    if (!isNumeric(account)) return true;
     return false;
 }
 
@@ -44,39 +91,64 @@ function invalidAccount(account) {
 function processShop(url, id) {
 
     var name = $("#shopname").val();
-    var rate = ($("#shoprate").val());
+    var rate = parseFloat($("#shoprate").val()) / 100;
     var account = $("#shopid").val();
     var password = $("#shoppassword").val();
-    var address = $("#cityName").val();
     var type = $('#shoptype :selected').val();
 
-    if(name.length > 10){
+    var provinceText = $('#provinceName').html();
+    var cityText = $('#cityName').html();
+    var districtText = $('#districtName').html();
+    if (districtText == '' || cityText == '' || provinceText == '') {
+        window.alert("Please select address correctly.");
+        return;
+    }
+    var address = provinceText + "," +
+        cityText + "," + districtText;
+
+    if (name.length > 10) {
         $('#custom-error-shopname').show();
         return;
     }
 
-    if(invalidAccount(account)){
+    if (invalidAccount(account)) {
         $('#custom-error-shopid').show();
         return;
     }
 
     var shopInfo = '';
     var reqUrl = '';
-    if(parseInt(id) != 0){
+    if (parseInt(id) != 0) {
         shopInfo = {
-            id: parseInt(id), name: name, phonenumber: account, password: password, address_1: address, address_2: address, type: type, discount_rate: rate, status: 0
+            id: parseInt(id),
+            name: name,
+            phonenumber: account,
+            password: password,
+            address_1: address,
+            address_2: address,
+            type: type,
+            discount_rate: rate,
+            status: 0
         };
-        reqUrl = url + "api/Shops/save/" + id;
+        reqUrl = url + "api/Shops/saveAccount/" + id;
     }
     else {
         shopInfo = {
-            name: name, phonenumber: account, password: password, address_1: address, address_2: address, type: type, discount_rate: rate, status: 0
+            name: name,
+            phonenumber: account,
+            password: password,
+            address_1: address,
+            address_2: address,
+            type: type,
+            discount_rate: rate,
+            status: 0
         };
-        reqUrl = url + "api/Shops/save";
+        reqUrl = url + "api/Shops/saveAccount";
     }
 
-    $.post(reqUrl, shopInfo, function(result){
+    $.post(reqUrl, shopInfo, function (result) {
         console.log(result);
+        window.alert(result['message']);
         location.href = url + 'shop';
     });
 
@@ -85,48 +157,50 @@ function processShop(url, id) {
 
 // This part is action processing for Course
 // delete and deploy Course
-function deleteAreaConfirm(id) {
+function deleteShopConfirm(id) {
 
     $('#custom-confirm-delete-view').show();
     $('#current-areaid').val(id);
 }
 
-function deleteArea(url, type) {
+function deleteShop(url, type) {
 
     $('#custom-confirm-delete-view').hide();
-    if(type == 1){
-
-        $.post(url + "api/Shops/remove/" + $('#current-areaid').val(), function(result){
+    if (type == 1) {  // if ok button clicked
+        $.post(url + "api/Shops/remove/" + $('#current-areaid').val(), function (result) {
+            console.log(result);
             location.href = url + 'shop';
         });
     }
 }
 
-function deployAreaConfirm(id) {
+function deployShopConfirm(id) {
 
     $('#custom-confirm-deploy-view').show();
+    $('#deployMessage').html("是否要禁用此商家?");
     $('#current-areaid').val(id);
     $('#current-areastatus').val(1);
 }
 
-function undeployAreaConfirm(id) {
+function undeployShopConfirm(id) {
 
     $('#custom-confirm-deploy-view').show();
+    $('#deployMessage').html("是否要取消禁用此商家?");
     $('#current-areaid').val(id);
     $('#current-areastatus').val(0);
 }
 
-function deployArea(url, type) {
+function deployShop(url, type) {
 
     $('#custom-confirm-deploy-view').hide();
-    if(type == 1){
+    if (type == 1) {  // if ok button clicked
 
         var touristArea = {
             id: $('#current-areaid').val(),
             status: $('#current-areastatus').val()
         };
 
-        $.post(url + "api/Shops/save/" + touristArea['id'], touristArea, function(result){
+        $.post(url + "api/Shops/save/" + touristArea['id'], touristArea, function (result) {
             location.href = url + 'shop';
         });
     }
@@ -148,14 +222,14 @@ function showGenerateAuth(id) {
 
 function changeAuthType() {
     var type = $('#auth-select :selected').val();
-    if(type == 1) {
+    if (type == 2) { // 1-course, 2-area
         $('#custom-auth-area-view').show();
         $('#custom-auth-course-view').hide();
-        $('#current-type').val(1);
-    } else if(type == 2){
+        $('#current-type').val(2);
+    } else if (type == 1) { //1-course, 2-area
         $('#custom-auth-area-view').hide();
         $('#custom-auth-course-view').show();
-        $('#current-type').val(2);
+        $('#current-type').val(1);
     } else {
         $('#custom-auth-area-view').hide();
         $('#custom-auth-course-view').hide();
@@ -169,16 +243,16 @@ function generateAuth(url, confirm) {
     var codeType = $('#current-codetype').val();
 
     var target = '0';
-    if(type == 1){
+    if (type == 2) { // 1-course, 2-area
         target = $('#auth-select-area :selected').val();
     }
-    if(type == 2){
+    if (type == 1) { // 1- course, 2-area
         target = $('#auth-select-course :selected').val();
     }
-    if(target !='0'){
+    if (target != '0') {
 
         $('#current-targetid').val(target);
-        if(codeType == 'qr') {
+        if (codeType == 'qr') {
             generateAuthFinal(url, confirm);
         }
         else {
@@ -190,7 +264,7 @@ function generateAuth(url, confirm) {
 
 function showQR(url, id) {
     $('#custom-generate-qr-view').show();
-    $('#qr-view').qrcode({   text	: 'http://116.196.83.125/tour'+'?shopid='+id  });
+    $('#qr-view').qrcode({text: 'http://www.ayoubc.com/tour' + '?shopid=' + id});
 }
 
 function generateAuthFinal(url, confirm) {
@@ -200,11 +274,11 @@ function generateAuthFinal(url, confirm) {
     var type = $('#current-type').val();
     var shopid = $('#current-areaid').val();
 
-    console.log('code ' + codeType + 'tar '+ target + ' type ' + type + ' shop ' + shopid + ' count ' + authCount);
+    console.log('code ' + codeType + 'tar ' + target + ' type ' + type + ' shop ' + shopid + ' count ' + authCount);
 
-    if(codeType == 'qr'){
+    if (codeType == 'qr') {
 
-        var data = 'http://116.196.83.125/tour';
+        var data = 'http://www.ayoubc.com/tour';
         var authInfo = {
             shopid: shopid,
             type: type,
@@ -212,29 +286,29 @@ function generateAuthFinal(url, confirm) {
             data: data
         };
         console.log(url);
-        $.post(url + "api/Shops/generateQR", authInfo, function(result){
+        $.post(url + "api/Shops/generateQR", authInfo, function (result) {
             console.log(result);
             $('#custom-generate-qr-view').show();
             $('#custom-generate-auth-view').hide();
 
-            $('#qr-view').qrcode({   text	: data +'?shopid='+shopid });
+            $('#qr-view').qrcode({text: data + '?shopid=' + shopid});
 
             //location.href = url + 'shop';
         });
 
     } else {
-        if(authCount > 0 ){
-            if(codeType == 'auth'){
+        if (authCount > 0) {
+            if (codeType == 'auth') {
 
                 var authInfo = {
                     shopid: shopid,
-                    status: 0,
+                    status: 0,  // 0-usual,  1- unusual
                     type: type,
                     targetid: target,
                     codecount: authCount
                 };
 
-                $.post(url + "api/Shops/generateAuth", authInfo, function(result){
+                $.post(url + "api/Shops/generateAuth", authInfo, function (result) {
                     console.log(result);
                     location.href = url + 'shop';
                 });
@@ -252,17 +326,17 @@ function cancel(url) {
 function cancelQR(url) {
     location.href = url + 'qrmanage';
 }
-function findAreaInList(url) {
+function findShopInList(url) {
     var strKey = $('#course-search').val();
-    $.post(url + "api/Shops/find/" +strKey, function(result){
+    $.post(url + "api/Shops/find/" + strKey, function (result) {
 
         console.log(result);
         $("#courseList").empty();
         var areaList = result;
-        for(var i = 0; i < areaList.length; i++ ){
+        for (var i = 0; i < areaList.length; i++) {
             var area = areaList[i];
-            $("#courseList").append("<li class='custom-areaitem' id='areaitem-"+ area['id'] +"' onclick='selectCourse(" + area['id'] +");'>" +
-                "<div id='areatitle-"+ area['id'] +"'>" + area['name'] + "</div></li>");
+            $("#courseList").append("<li class='custom-areaitem' id='areaitem-" + area['id'] + "' onclick='selectCourse(" + area['id'] + ");'>" +
+                "<div id='areatitle-" + area['id'] + "'>" + area['name'] + "</div></li>");
         }
 
     });

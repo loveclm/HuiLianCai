@@ -40,35 +40,94 @@ class authmanage extends BaseController
         } else {
             $this->global['pageTitle'] = '授权码管理';
             $auths = $this->auth_model->getAuths($searchType, $name, $status);
+            $authList = NULL;
             if (count($auths) > 0) {
                 $i = 0;
                 foreach ($auths as $list) {
                     $areaid = $list->targetid;
                     $areaInfo = $this->area_model->getAreaById($areaid);
-                    $info = $list;
-                    if (isset($areaInfo)) {
-                        if ($areaInfo->type == '2') {
-                            $courseName = '';
-                            $areas = json_decode($areaInfo->point_list);
-                            foreach ($areas as $areaItem) {
-                                if ($courseName == '') $courseName = $areaItem->name;
-                                else $courseName = $courseName . ' - ' . $areaItem->name;
-                            }
-                            $areaInfo->name = $courseName;
-                            $info->tourName = $courseName;
-                        }
-                    }
-                    $authList[$i] = $info;
+                    if ($this->global ['shop_manager_number'] != ''
+                        && $this->global ['shop_manager_number'] != $list->shopnumber
+                    ) continue;
+
+                    $list->tourName = $this->area_model->getCourseNameByAreaId($areaid);
+                    if ($searchType == 1 && strstr($name, $list->tourName) == false) continue; // 0-shopname search, 1-coursename search
+                    $authList[$i] = $list;
                     $i++;
                 }
             }
             $this->global['authList'] = $authList;
             $this->global['searchType'] = $searchType;
-            $this->global['searchName'] = $name == 'ALL' ? '' : $name;
+            $this->global['searchName'] = $name == 'ALL' ? '' : utf8_decode($name);
             $this->global['searchStatus'] = $status;
             $this->loadViews("authmanage", $this->global, NULL, NULL);
         }
     }
+
+
+    function auth_listing()
+    {
+        $ret = array(
+            'data' => '',
+            'status' => 'fail'
+        );
+        if (!empty($_POST)) {
+
+            $searchType = $_POST['searchType'];
+            $name = $_POST['name'];
+            $status = $_POST['status'];
+            $auths = $this->auth_model->getAuths($searchType, $name, $status);
+            $authList = NULL;
+            if (count($auths) > 0) {
+                $i = 0;
+                foreach ($auths as $list) {
+                    $areaid = $list->targetid;
+                    $areaInfo = $this->area_model->getAreaById($areaid);
+                    if ($this->global ['shop_manager_number'] != ''
+                        && $this->global ['shop_manager_number'] != $list->shopnumber
+                    ) continue;
+                    $list->tourName = $this->area_model->getCourseNameByAreaId($areaid);
+                    //var_dump($name.',,,,,'.$list->tourName.',,,,,,'.strstr($list->tourName, $name));
+                    if ($searchType == 1 && $name != 'ALL' && strstr($list->tourName, $name) == false) continue; // 0-shopname search, 1-coursename search
+                    $authList[$i] = $list;
+                    $i++;
+                }
+            }
+            $ret['data'] = $this->output_auth($authList);
+            $ret['status'] = 'success';
+        }
+        echo json_encode($ret);
+    }
+
+    function output_auth($authList)
+    {
+        $output_html = '';
+        $authCount = count($authList);
+        for ($i = 0; $i < $authCount; $i++) {
+            $item = $authList[$i];
+
+            $output_html .= '<tr>';
+            if ($this->global['shop_manager_number'] == '') {
+                $output_html .= '<td>' . $item->shopName . '</td>';
+            }
+            $output_html .= '<td>' . $item->tourName . '</td>';
+            $output_html .= '<td>' . $this->auth_model->getOrderTotal($item->id) . '</td>';
+            $output_html .= '<td>' . $this->auth_model->getOrderUsed($item->id) . '</td>';
+            $output_html .= '<td>' . $item->created . '</td>';
+            $output_html .= '<td>' . ($item->status != 0 ? ($item->money > 0 ? '先付款' : '后付款') : '') . '</td>';
+            $output_html .= '<td>' . ($item->money > 0 ? $item->money : '') . '</td>';
+            $output_html .= '<td>';
+            $output_html .= '<a href="' . base_url() . 'authDetail/' . $item->id . '/0">查看 &nbsp;</a>';
+            if ($item->money == 0 && $this->global['shop_manager_number'] == '') {
+                $output_html .= '<a href="#" onclick="showSelect(' . $item->id . ')">付款方式 &nbsp;</a>';
+            }
+            $output_html .= '</td>';
+            $output_html .= '</tr>';
+        }
+
+        return $output_html;
+    }
+
 
     /**
      * This function is used to load the edit form

@@ -22,7 +22,7 @@ class collection_model extends CI_Model
 
         $query = $this->db->get();
         $result = $query->result();
-        $retData='';
+        $retData = NULL;
         if (count($result) == 0) {
             return '';
         } else {
@@ -47,7 +47,7 @@ class collection_model extends CI_Model
         $this->db->select('*');
         $this->db->from('tbl_order');
         $this->db->where('userphone', $mobile);
-        $this->db->where('ordertype','1');
+        $this->db->where("ordertype <> '4'");
         $qresult = $this->db->count_all_results();
 
         return $qresult;
@@ -62,7 +62,7 @@ class collection_model extends CI_Model
         $this->db->select('*');
         $this->db->from('tbl_order');
         $this->db->where('userphone', $mobile);
-        $this->db->where('ordertype', '2');
+        $this->db->where('ordertype', '4');
         $qresult = $this->db->count_all_results();
         return $qresult;
     }

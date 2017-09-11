@@ -24,14 +24,14 @@ class error extends CI_Controller
     {
         $this->isLoggedIn();
     }
-    
+
     /**
      * This function used to check the user is logged in or not
      */
     function isLoggedIn()
     {
         $isLoggedIn = $this->session->userdata('isLoggedIn');
-        
+
         if(!isset($isLoggedIn) || $isLoggedIn != TRUE)
         {
             $this->load->view('login');
@@ -41,7 +41,7 @@ class error extends CI_Controller
             redirect('pageNotFound');
         }
     }
-}
+};
 
 /* End of file error.php */
 /* Location: .application/controllers/error.php */

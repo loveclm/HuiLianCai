@@ -40,7 +40,7 @@ class login_controller extends CI_Controller
         }
         else
         {
-            redirect('/area');
+            redirect('/home');
         }
     }
     
@@ -71,24 +71,25 @@ class login_controller extends CI_Controller
                 foreach ($result as $res)
                 {
                     $permission = $this->user_model->getRoleById($res->roleId);
-                    $sessionArray = array('userId'=>$res->userId,                    
+                    $sessionArray = array('userId'=>$res->userId,
                                             'role'=>$res->roleId,
                                             'roleText'=>$res->role,
                                             'name'=>$res->name,
+                                            'shopnumber'=>$account,
                                             'permission'=>$permission[0]->permission,
                                             'isLoggedIn' => TRUE
                                     );
                                     
                     $this->session->set_userdata($sessionArray);
-                    
-                    redirect('/area');
+
+                    redirect('/home');
                 }
             }
             else
             {
                 $this->session->set_flashdata('error', 'Account or password mismatch');
                 
-                redirect('/login');
+                redirect('/loginMe');
             }
         }
     }
@@ -187,7 +188,7 @@ class login_controller extends CI_Controller
         }
         else
         {
-            redirect('/login');
+            redirect('/loginMe');
         }
     }
     
@@ -231,7 +232,7 @@ class login_controller extends CI_Controller
             
             setFlashData($status, $message);
 
-            redirect("/login");
+            redirect("/loginMe");
         }
     }
 

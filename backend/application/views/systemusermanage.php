@@ -9,16 +9,17 @@
         <div class="container">
             <div class="row">
                 <div class="col-xs-12">
-                    <form action="<?php echo base_url() ?>userListing" method="POST" id="searchList">
+                    <form action="<?php echo base_url(); ?>userListing" method="POST" id="searchList">
                         <div class="col-xs-9 col-sm-8 form-inline">
                             <div class="form-group">
-                                <select class="form-control" id="searchStatus">
-                                    <option value="0" <?php if ($searchStatus == 0) echo ' selected' ?>>手机号</option>
+                                <select class="form-control" id="searchStatus" name="searchStatus">
+                                    <option value="0" <?php if ($searchStatus == 0) echo ' selected'; ?>>账号</option>
+                                    <option value="1" <?php if ($searchStatus == 1) echo ' selected'; ?>>姓名</option>
                                 </select>
                             </div>
                             <div class="input-group">
-                                <input type="text" id="searchName" name="searchText"
-                                       value="<?php echo $searchName == 'all' ? '' : $searchName; ?>"
+                                <input type="text" id="searchText" name="searchText"
+                                       value="<?php echo $searchText == 'all' ? '' : $searchText; ?>"
                                        class="form-control pull-right"
                                        placeholder=""/>
                             </div>
@@ -44,12 +45,12 @@
                     <table class="table area-result-view table-bordered table-hover">
                         <thead>
                         <tr style="background-color: lightslategrey;">
-                            <th width="100">序号</th>
+                            <th width="">序号</th>
                             <th>账号</th>
                             <th>姓名</th>
-                            <th width="150">角色</th>
-                            <th width="150">新增时间</th>
-                            <th width="250">操作</th>
+                            <th width="">角色</th>
+                            <th width="">新增时间</th>
+                            <th width="">操作</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -61,8 +62,8 @@
                                 ?>
                                 <tr>
                                     <td><?php echo $i ?></td>
-                                    <td><?php echo $record->name ?></td>
                                     <td><?php echo $record->email ?></td>
+                                    <td><?php echo $record->name ?></td>
                                     <td><?php echo $record->role ?></td>
                                     <td><?php echo $record->createdDtm ?></td>
                                     <td class="text-center">
@@ -92,8 +93,8 @@
                                 <label>确定删除？</label>
                             </div>
                             <div class="form-group">
-                                <button onclick="$('#custom-confirm-delete-view').hide();">取消</button>
-                                <button onclick="deleteUser('<?php echo base_url(); ?>');">确定</button>
+                                <button class="btn btn-default" onclick="$('#custom-confirm-delete-view').hide();">取消</button>
+                                <button class="btn btn-primary" onclick="deleteUser('<?php echo base_url(); ?>');">确定</button>
                                 <div id="userId" style="display: none;"></div>
                             </div>
                         </div>
@@ -102,8 +103,8 @@
                                 <label>确定要重置密码？</label>
                             </div>
                             <div class="form-group">
-                                <button onclick="$('#custom-generate-auth-view').hide();">取消</button>
-                                <button onclick="showPassword();">确定</button>
+                                <button class="btn btn-default" onclick="$('#custom-generate-auth-view').hide();">取消</button>
+                                <button class="btn btn-primary" onclick="showPassword();">确定</button>
                             </div>
                         </div>
 
@@ -117,8 +118,8 @@
                                 <input id="cpasswd" type="password"/>
                             </div>
                             <div class="form-group">
-                                <button onclick="$('#custom-generate-auth-count-view').hide();">取消</button>
-                                <button onclick="resetPassword('<?php echo base_url(); ?>', );">确认</button>
+                                <button class="btn btn-default" onclick="$('#custom-generate-auth-count-view').hide();">取消</button>
+                                <button class="btn btn-primary" onclick="resetPassword('<?php echo base_url(); ?>', );">确认</button>
                             </div>
                             <div class="form-group alert-danger" id="alertpwd" style="display: none;"></div>
                         </div>
@@ -137,7 +138,7 @@
 <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/sysuser.js" charset="utf-8"></script>
 <script type="text/javascript">
     jQuery(document).ready(function () {
-        $('.treeview-menu').show();
+        //$('.treeview-menu').show();
         jQuery('ul.pagination li a').click(function (e) {
             e.preventDefault();
             var link = jQuery(this).get(0).href;

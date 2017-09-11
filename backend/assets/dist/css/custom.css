@@ -1,99 +1,96 @@
-.area-search-name-view label{
-    padding-left: 30px;
-    padding-right: 20px;
-}
-.area-search-area-view label {
-    padding-right: 20px;
-}
-.area-search-area-view select {
-    margin-right: 10px;
-}
-.area-search-control-view{
-    float: right;
-}
-.area-search-control-view button{
-    width: 80px;
-}
-.alert{
-    padding: 6px;
-    margin-bottom: 10px;
-
-}
-.alert-dismissable .close{
-    right:0;
-}
-.content-header {
-    padding-bottom: 10px;
-    background-color: red;
-}
-.area-result-view{
-    margin-top: 20px;
+.table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th,
+.table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {
+    border-top: 1px solid #e0e0e0;
     text-align: center;
-}
-.area-result-view th {
-    text-align: center;
-}
-.area-add-view{
-    padding-bottom: 20px;
-}
-#pointList {
-    list-style: none;
-}
-#custom-confirm-delete-view, #custom-confirm-deploy-view, #custom-generate-auth-view, #custom-generate-auth-count-view, #custom-generate-qr-view {
-    position: absolute;
-    border: 1px solid;
-    text-align: center;
-    width: 20%;
-    background-color: white;
-    padding: 30px;
-    left: 40%;
-    top: 20%;
-}
-#custom-confirm-delete-view p, #custom-confirm-deploy-view p{
-    padding: 30px;
-}
-.area-list-view li, .course-item-view li {
-    list-style: none;
-}
-.area-list-view, .course-item-view {
-    height: 100%;
-    background-color: white;
-    padding: 10px;
+    font-size:15px;
+    vertical-align: middle;
 }
 
-.form-control.date-picker{
-    width:30%;
-}
-
-#courseList ,#courseItems{
-    padding: 0px;
-}
-.selected-area, .selected-courseitem {
-    background-color: #f2f2f2;
-}
-.custom-course-control-view {
-    padding-top: 20px;
-}
-.custom-error {
-    color: red;
-}
-.custom-info-row {
-    padding-bottom: 10px;
-}
-.custom-course-itemlist-view {
-    padding: 0px;
-    border: 0px solid;
-    height: 600px;
-    background-color: #f2f2f2;
-}
-.custom-course-itemlist-control {
-    padding-top: 250px;
-}
-.custom-course-itemlist-control input {
-    width: 100%;
-    background-color: #0099ff;
+.table > thead > tr > th, .table > tbody > tr > th {
+    background-color: #0090bf;
     color: white;
 }
-#custom-generate-qr-view {
-    padding: 5px;
+
+.head-selected {
+    color: #0090bf;
+}
+
+.skin-blue .content-header {
+    background-color: white;
+    border-bottom: 1px solid #d0d0d0;
+    height: 55px;
+}
+
+h1 {
+    font-weight: 400;
+}
+
+.info-box, .info-box-icon {
+    margin-top: 0px;
+    max-height: 150px;
+    min-height: 150px;
+}
+
+.info-box-icon {
+    padding-top: 20px;
+}
+
+.info-box-content {
+    padding-top: 40px;
+}
+
+.main-shadow {
+    box-shadow: 0 3px 3px rgba(0, 0, 0, 0.2);
+}
+
+.h1, .h2, .h3, .h4, .h5, .h6, h1, h2, h3, h4, h5, h6 {
+    margin-top: 0px;
+}
+
+.form-control {
+    margin-bottom: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.form-group .radio {
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+.form-control input {
+    width: 300px;
+}
+
+.form-inline {
+    margin: 10px;
+}
+
+.form-group .input-text {
+    width: 350px;
+}
+.form-inline .input-group {
+    width: 400px;
+}
+.form-inline label{
+    width: 150px;
+    text-align: right;
+}
+.modal-dialog{
+    border:1px solid grey;
+    width:400px;
+    position:absolute;
+    z-index: 10000;
+    top: 30%;
+    left:40%;
+}
+.modal-header{
+    background-color: lightgrey;
+}
+#tip{
+    vertical-align: text-bottom;
+}
+#tip select {
+    width: 100px;
+    height: 32px;
 }

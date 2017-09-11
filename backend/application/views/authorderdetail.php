@@ -24,7 +24,7 @@
             </div>
             <div class="row custom-info-row">
                 <label class="col-sm-2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;状态：</label>
-                <label class="col-sm-4"><?php echo isset($orderitem) ? ($orderitem->status=='1'?'使用中':'未使用') : '';?></label>
+                <label class="col-sm-4"><?php echo isset($orderitem) ? ($orderitem->status=='0'?'未使用':'使用中') : '';?></label>
             </div>
         </div>
         <div class="container">

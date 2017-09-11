@@ -1,4 +1,4 @@
-<?php if(!defined('BASEPATH')) exit('No direct script access allowed');
+<?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 
 require APPPATH . '/libraries/BaseController.php';
 
@@ -35,19 +35,17 @@ class qrmanage extends BaseController
      */
     function listing($name, $address, $status)
     {
-        if($this->isAdmin() == TRUE)
-        {
+        if ($this->isAdmin() == TRUE) {
             $this->loadThis();
-        }
-        else
-        {
+        } else {
             $this->global['pageTitle'] = '景区管理';
-            $this->global['areaList'] =$this->area_model->getAreas($name, $address, $status);
+            $this->global['areaList'] = $this->area_model->getAreas($name, $address, $status);
+            $this->global['searchType'] = 0;
             $this->global['searchName'] = $name;
             $this->global['searchAddress'] = $address;
             $this->global['searchStatus'] = $status;
 
-            $this->loadViews("area", $this->global, NULL , NULL);
+            $this->loadViews("area", $this->global, NULL, NULL);
         }
     }
 
@@ -56,12 +54,9 @@ class qrmanage extends BaseController
      */
     function edit($id)
     {
-        if($this->isAdmin() == TRUE)
-        {
+        if ($this->isAdmin() == TRUE) {
             $this->loadThis();
-        }
-        else
-        {
+        } else {
 
             $this->global['pageTitle'] = '编辑景区';
             $this->global['area'] = $this->area_model->getAreaById($id);
@@ -80,32 +75,30 @@ class qrmanage extends BaseController
         $qrList = array();
         $qrDBList = $this->shop_model->getQR();
 
-        foreach ($qrDBList as $list){
+        foreach ($qrDBList as $list) {
             $areaid = $list->targetid;
             $areaInfo = $this->area_model->getAreaById($areaid);
-            if(isset($areaInfo)) {
-                if ($areaInfo->type == '2') {
-                    $courseName = '';
-                    $areas = json_decode($areaInfo->point_list);
-                    foreach ($areas as $areaItem) {
-                        if ($courseName == '') $courseName = $areaItem->name;
-                        else $courseName = $courseName . ' - ' . $areaItem->name;
-                    }
-                    $areaInfo->name = $courseName;
-                }
+            if (isset($areaInfo)) {
+                $courseName = $this->area_model->getCourseNameByAreaId($areaid);
+                $areaInfo->name = $courseName;
+                if ($this->global['shop_manager_number'] != ''
+                    && $this->global['shop_manager_number'] != $list->shopnumber
+                ) continue;
+
+                $info = array('target' => $areaInfo->name,
+                    'shop' => $list->name,
+                    'type' => $list->type == '1' ? '旅游线路' : '景区',
+                    'time' => $list->created_time,
+                    'id' => $list->id);
+                array_push($qrList, $info);
             }
-            $info = array('target'=>$areaInfo->name,
-                'shop'=>$list->name, 'type' => $list->type == '1' ? '景区':'旅游线路',
-                'time'=>$list->created_time,
-                'id'=>$list->id);
-            array_push($qrList, $info);
         }
 
         $this->global['qrList'] = $qrList;
-
+        $this->global['searchType'] = 0;
         $this->global['searchName'] = '';
         $this->global['searchStatus'] = 0;
-        $this->loadViews("qrmanage", $this->global, NULL , NULL);
+        $this->loadViews("qrmanage", $this->global, NULL, NULL);
     }
 
     /**
@@ -113,25 +106,23 @@ class qrmanage extends BaseController
      */
     function qrlisting($name, $status)
     {
-        if($this->isAdmin() == TRUE)
-        {
+        if ($this->isAdmin() == TRUE) {
             $this->loadThis();
-        }
-        else
-        {
+        } else {
             $this->global['pageTitle'] = '二维码管理';
 
             $qrList = array();
             $qrDBList = $this->shop_model->getQR($name, $status);
 
-            foreach ($qrDBList as $list){
+            foreach ($qrDBList as $list) {
                 $areaid = $list->targetid;
                 $areaInfo = $this->area_model->getAreaById($areaid);
 
-                $info = array('target'=>$areaInfo->name,
-                    'shop'=>$list->name, 'type' => $list->type == '1' ? '景区':'旅游线路',
-                    'time'=>$list->created_time,
-                    'id'=>$list->id);
+                $info = array('target' => $areaInfo->name,
+                    'shop' => $list->name,
+                    'type' => $list->type == '1' ? '旅游线路' : '景区',
+                    'time' => $list->created_time,
+                    'id' => $list->id);
                 array_push($qrList, $info);
             }
 
@@ -139,24 +130,89 @@ class qrmanage extends BaseController
 
             $this->global['searchName'] = $name;
             $this->global['searchStatus'] = $status;
-            $this->loadViews("qrmanage", $this->global, NULL , NULL);
+            $this->loadViews("qrmanage", $this->global, NULL, NULL);
         }
     }
+
+    /**
+     * This function is used to load the user list
+     */
+    function qr_listing()
+    {
+        $ret = array(
+            'data' => '',
+            'status' => 'fail'
+        );
+        if (!empty($_POST)) {
+
+            $searchType = $_POST['searchType'];
+            $name = $_POST['name'];
+            $status = $_POST['status'];
+
+            $qrList = array();
+            $qrDBList = $this->shop_model->getQR($name, $status, $searchType);
+            foreach ($qrDBList as $list) {
+                $areaid = $list->targetid;
+                $areaInfo = $this->area_model->getAreaById($areaid);
+                if (isset($areaInfo)) {
+                    $courseName = $this->area_model->getCourseNameByAreaId($areaid);
+                    if ($searchType == 1 && $name!='all' && strstr($courseName, $name)==false) continue; // 0-shopname search, 1-coursename search
+                    $areaInfo->name = $courseName;
+                    if ($this->global['shop_manager_number'] != ''
+                        && $this->global['shop_manager_number'] != $list->shopnumber
+                    ) continue;
+
+                    $info = array('target' => $areaInfo->name,
+                        'shop' => $list->name,
+                        'type' => $list->type == '1' ? '旅游线路' : '景区',
+                        'time' => $list->created_time,
+                        'id' => $list->id);
+                    array_push($qrList, $info);
+                }
+            }
+
+
+            $ret['data'] = $this->output_qr($qrList);
+            $ret['status'] = 'success';
+        }
+        echo json_encode($ret);
+    }
+
+    function output_qr($qrList)
+    {
+        $output_html = '';
+
+        $qrCount = count($qrList);
+        for ($i = 0; $i < $qrCount; $i++) {
+            $qr = $qrList[$i];
+            $output_html .= '<tr>';
+            if ($this->global['shop_manager_number'] == '') {
+                $output_html .= '<td>' . $qr['shop'] . '</td>';
+            }
+            $output_html .= '<td>' . $qr['type'] . '</td>';
+            $output_html .= '<td>' . $qr['target'] . '</td>';
+            $output_html .= '<td>' . $qr['time'] . '</td>';
+            $output_html .= '<td>';
+            $output_html .= '<a href="#" onclick="showQR(\'' . base_url() . '\',\'' . $qr['id'] . '\')">查看 &nbsp;</a>';
+            $output_html .= '</td>';
+            $output_html .= '</tr>';
+        }
+
+        return $output_html;
+    }
+
 
     /**
      * This function is used to load the add Course form
      */
     function addShop()
     {
-        if($this->isAdmin() == TRUE)
-        {
+        if ($this->isAdmin() == TRUE) {
             $this->loadThis();
-        }
-        else
-        {
+        } else {
 
             $this->global['pageTitle'] = '新增商家';
-            $this->global['areaList'] =$this->area_model->getAreas();
+            $this->global['areaList'] = $this->area_model->getAreas();
             $this->loadViews("shop-add", $this->global, NULL, NULL);
         }
     }
@@ -166,18 +222,15 @@ class qrmanage extends BaseController
      */
     function courselisting($name, $status)
     {
-        if($this->isAdmin() == TRUE)
-        {
+        if ($this->isAdmin() == TRUE) {
             $this->loadThis();
-        }
-        else
-        {
+        } else {
             $this->global['pageTitle'] = '旅游线路管理';
-            $this->global['courseList'] =$this->area_model->getCourses($name, $status);
+            $this->global['courseList'] = $this->area_model->getCourses($name, $status);
             $this->global['searchName'] = $name;
             $this->global['searchStatus'] = $status;
 
-            $this->loadViews("course", $this->global, NULL , NULL);
+            $this->loadViews("course", $this->global, NULL, NULL);
         }
     }
 
@@ -186,15 +239,12 @@ class qrmanage extends BaseController
      */
     function editcourse($id)
     {
-        if($this->isAdmin() == TRUE)
-        {
+        if ($this->isAdmin() == TRUE) {
             $this->loadThis();
-        }
-        else
-        {
+        } else {
 
             $this->global['pageTitle'] = '编辑旅游线路';
-            $this->global['areaList'] =$this->area_model->getAreas();
+            $this->global['areaList'] = $this->area_model->getAreas();
             $this->global['course'] = $this->area_model->getAreaById($id);
 
             $this->loadViews("course-add", $this->global, NULL, NULL);

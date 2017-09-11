@@ -23,10 +23,10 @@ class login_model extends CI_Model
             if(verifyHashedPassword($password, $user[0]->password)){
                 return $user;
             } else {
-                return array();
+                return NULL;
             }
         } else {
-            return array();
+            return NULL;
         }
     }
 
