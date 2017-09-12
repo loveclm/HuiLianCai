@@ -2,45 +2,141 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>登录</title>
-
-    <link rel="shortcut icon" href="images/logo.png" type="image/x-icon"/>
-    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css"/>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="css/AdminLTE.min.css">
-    <link rel="stylesheet" href="css/skins/_all-skins.min.css">
-    <link rel="stylesheet" href="css/style.css">
-
-    <script type="text/javascript" src="js/plugins/jquery.min.js"/>
-    <script type="text/javascript" src="js/plugins/bootstrap.min.js"></script>
-
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <title>惠联采</title>
+    <!-- BEGIN GLOBAL MANDATORY STYLES -->
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&amp;subset=all" rel="stylesheet" type="text/css">
+    <link href="assets/global/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="assets/global/plugins/simple-line-icons/simple-line-icons.min.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link href="assets/global/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <!-- END GLOBAL MANDATORY STYLES -->
+    <!-- BEGIN PAGE LEVEL PLUGINS -->
+    <link href="assets/global/plugins/bootstrap-modal/css/bootstrap-modal-bs3patch.css" rel="stylesheet" type="text/css" />
+    <link href="assets/global/plugins/bootstrap-modal/css/bootstrap-modal.css" rel="stylesheet" type="text/css" />
+    <!-- END PAGE LEVEL PLUGINS -->
+    <!-- BEGIN THEME GLOBAL STYLES -->
+    <link href="assets/global/css/components-rounded.min.css" rel="stylesheet" id="style_components" type="text/css">
+    <link href="assets/global/css/plugins.min.css" rel="stylesheet" type="text/css">
+    <!-- END THEME GLOBAL STYLES -->
+    <!-- BEGIN THEME LAYOUT STYLES -->
+    <link href="assets/layouts/layout/css/layout.min.css" rel="stylesheet" type="text/css">
+    <link href="assets/layouts/layout/css/themes/light.min.css" rel="stylesheet" type="text/css" id="style_color">
+    <link href="assets/layouts/layout/css/custom.min.css" rel="stylesheet" type="text/css">
+    <link href="css/style.css" rel="stylesheet" type="text/css">
+    <!-- END THEME LAYOUT STYLES -->
 </head>
 <body>
-    <div style="text-align: center; padding-top: 30px">
-        <img class="col-md-offset-5 col-md-2 col-xs-offset-4 col-xs-4" id="reg_logo" src="images/logo.png">
-        <div class="col-md-offset-4 col-md-4 col-xs-offset-1 col-xs-10 reg_row">
-            <div class="col-xs-4">
-                <label>手机号</label>
-            </div>
-            <div class="col-xs-8">
-                <input id="phone_numberr">
+    <div class="page-wrapper">
+        <div class="page-content-wrapper">
+            <div class="page-content" style="height:600px">
+                <div id="advertise_header" class="carousel slide vertical nicer" data-ride="carousel">
+                    <!-- Indicators -->
+                    <ol class="carousel-indicators">
+                        <li data-target="#advertise_header" data-slide-to="0" class="active"></li>
+                        <li data-target="#advertise_header" data-slide-to="1"></li>
+                        <li data-target="#advertise_header" data-slide-to="2"></li>
+                        <li data-target="#advertise_header" data-slide-to="3"></li>
+                        <li data-target="#advertise_header" data-slide-to="4"></li>
+                    </ol>
+                    <!-- Wrapper for slides -->
+                    <div class="carousel-inner">
+                        <div class="item active">
+                            <div class="carousel_item">
+                                <img src="images/tmp/u1.png">
+                            </div>
+                        </div>
+                        <div class="item">
+                            <div class="carousel_item">
+                                <img src="images/tmp/u2.png">
+                            </div>
+                        </div>
+                        <div class="item">
+                            <div class="carousel_item">
+                                <img src="images/tmp/u3.jpg">
+                            </div>
+                        </div>
+                        <div class="item">
+                            <div class="carousel_item">
+                                <img src="images/tmp/u1.png">
+                            </div>
+                        </div>
+                        <div class="item">
+                            <div class="carousel_item">
+                                <img src="images/tmp/u2.png">
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Left and right controls -->
+                    <!--
+                    <a class="left carousel-control" href="#advertise_header" data-slide="prev">
+                        <span class="glyphicon glyphicon-chevron-left"></span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                    <a class="right carousel-control" href="#advertise_header" data-slide="next">
+                        <span class="glyphicon glyphicon-chevron-right"></span>
+                        <span class="sr-only">Next</span>
+                    </a>-->
+                </div>
+                <div id="horizontal_menu_bar">
+                </div>
+                <div id="detail_menu">
+                    <div id="detail_menu_content">adfadfsa</div>
+                    <div id="detail_menu_mask"></div>
+                </div>
+                <div class="product_container" style="overflow-y: scroll;">
+                </div>
             </div>
         </div>
-        <div class="col-md-offset-4 col-md-4 reg_row">
-            <div class="col-xs-4">
-                <label>密码</label>
+
+        <div class="page-footer">
+            <div class="bottom_item">
+                <img src="images/tabbar_icon1_d.png" class="bottom_item_image">
+                <h5 style="color: #38abff">拼货</h5>
             </div>
-            <div class="col-xs-8">
-                <input id="password">
+            <div class="bottom_item"  onclick="selectBottomItem(1)">
+                <img src="images/tabbar_icon2_n.png" class="bottom_item_image">
+                <h5>购物车</h5>
+            </div>
+            <div class="bottom_item"  onclick="selectBottomItem(2)">
+                <img src="images/tabbar_icon3_n.png" class="bottom_item_image">
+                <h5>消息</h5>
+            </div>
+            <div class="bottom_item"  onclick="selectBottomItem(3)">
+                <img src="images/tabbar_icon4_n.png" class="bottom_item_image">
+                <h5>我的</h5>
             </div>
         </div>
     </div>
+    <div id="menu_dialog" class="modal" tabindex="-1" data-backdrop="basic" data-keyboard="false">
+        <div class="modal-body">
+        </div>
+    </div>
 </body>
+<!-- BEGIN CORE PLUGINS -->
+<script src="assets/global/plugins/jquery.min.js" type="text/javascript"></script>
+<script src="assets/global/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+<script src="assets/global/plugins/js.cookie.min.js" type="text/javascript"></script>
+<script src="assets/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js" type="text/javascript"></script>
+<script src="assets/global/plugins/jquery.blockui.min.js" type="text/javascript"></script>
+<script src="assets/global/plugins/bootstrap-switch/js/bootstrap-switch.min.js" type="text/javascript"></script>
+<!-- END CORE PLUGINS -->
+<!-- BEGIN PAGE LEVEL PLUGINS -->
+<script src="assets/global/plugins/bootstrap-modal/js/bootstrap-modalmanager.js" type="text/javascript"></script>
+<script src="assets/global/plugins/bootstrap-modal/js/bootstrap-modal.js" type="text/javascript"></script>
+<!-- END PAGE LEVEL PLUGINS -->
+<!-- BEGIN THEME GLOBAL SCRIPTS -->
+<script src="assets/global/scripts/app.min.js" type="text/javascript"></script>
+<!-- END THEME GLOBAL SCRIPTS -->
+<!-- BEGIN PAGE LEVEL SCRIPTS -->
+<script src="assets/pages/scripts/ui-extended-modals.min.js" type="text/javascript"></script>
+<!-- END PAGE LEVEL SCRIPTS -->
+<!-- BEGIN THEME LAYOUT SCRIPTS -->
+<script src="assets/layouts/layout/scripts/layout.min.js" type="text/javascript"></script>
+<script src="assets/layouts/layout/scripts/demo.min.js" type="text/javascript"></script>
+<script src="assets/layouts/global/scripts/quick-sidebar.min.js" type="text/javascript"></script>
+<script src="assets/layouts/global/scripts/quick-nav.min.js" type="text/javascript"></script>
+<!-- END THEME LAYOUT SCRIPTS -->
+<script src="js/global.js" type="text/javascript"></script>
+<script src="js/main.js" type="text/javascript"></script>
 </html>
-<script type="text/javascript">
-    $(function () {
-       $('#reg_logo').css({'padding-top': document.body.clientHeight/10,
-                           'padding-bottom': document.body.clientHeight/20
-       });
-    });
-</script>
