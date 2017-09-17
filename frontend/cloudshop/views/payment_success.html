@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <title>收银柜台</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta name="apple-touch-fullscreen" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no">
+
+    <link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../css/AdminLTE.min.css">
+    <link rel="stylesheet" href="../css/skins/_all-skins.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <style type="text/css">
+        .i_button{
+            text-align: center;
+            border:1px solid;
+            border-radius: 15px;
+            border-color: #17b5dc;
+            color: #17b5dc;
+        }
+        .i_button:active{
+            text-align: center;
+            border:1px solid;
+            border-radius: 15px;
+            border-color: #17b5dc;
+            color: #ffffff;
+            background-color: #17b5dc;
+        }
+    </style>
+
+    <script type="text/javascript" src="../js/plugins/jquery.min.js"></script>
+    <script type="text/javascript" src="../js/plugins/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../js/global.js"></script>
+    <script type="text/javascript" src="../js/guanzhu.js"></script>
+</head>
+
+<body>
+    <div id="content">
+        <div class="header" id="app_header">
+            <h3 style="text-align: center">
+                <a href="javascript:history.back()" style="float: left; position: fixed;left: 10px; top: 0px">
+                    <img src="../resource/image/left_arrow.png" id="back_img">
+                </a>
+                收银柜台
+            </h3>
+        </div>
+        <div id="container">
+            <div style="text-align: center; margin-top: 45px">
+                <img src="../resource/image/success.png" style="width: 60px; margin: 25px 0px">
+                <h3 style="font-weight: bold; color: #aa6559">已支付成功</h3>
+            </div>
+            <div id="money"></div>
+            <div id="success_content"><p>已购买成功， 您可以在APP中使用。</p><p>你可以听到景点的解释。</p></div>
+            <div class="row" style="margin-top: 20%">
+                <div class="col-xs-4 col-xs-offset-4 i_button" onclick="enterOrder()"><h4>查看订单</h4></div>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript">
+    $(function () {
+        var payment_data = sessionStorage.getObject('payment_data');
+        $('#money').html('¥' + parseFloat(payment_data['real_cost']).toFixed(2));
+    })
+    function enterOrder() {
+        window.location.href = 'order_detail.html';
+    }
+</script>
+</html>
