@@ -28,24 +28,24 @@ function OnRegister() {
     var password = $('#passwd').val();
     var confirm_password = $('#confirm_passwd').val();
     if( password == "") {
-        alert('密码不能为空。');
+        showMessage('密码不能为空。');
         return;
     }
 
     if(password.length < 6 || password.length > 20){
-        alert('密码格式错误!');
+        showMessage('密码格式错误!');
         return;
     }
 
     if(password != confirm_password){
-        alert('确认密码错误。');
+        showMessage('确认密码错误。');
         return false;
     }
 
     // check the availability of the servant's mobile number
     var servant_phone = $('#Servant_phone').val();
     if( servant_phone == "" || servant_phone.length != 11){
-        alert('需要业务员手机号码。')
+        showMessage('需要业务员手机号码。')
         return;
     }
 
@@ -58,7 +58,7 @@ function OnRegister() {
 // check phone verify code
 function confirm_verifyPhone() {
     if(app_data.timerID == undefined){
-        alert('你没有发短信。');
+        showMessage('你没有发短信。');
         return false;
     }
 
@@ -66,7 +66,7 @@ function confirm_verifyPhone() {
 
     var auth_code = $('#auth_code').val();
     if( auth_code != app_data.sms_code || app_data.sms_code == ""){
-        alert('验证码错误。');
+        showMessage('验证码错误。');
         return false;
     }
 
@@ -77,7 +77,7 @@ function confirm_verifyPhone() {
 function OnResetpassword(){
     app_data.phone_num = sessionStorage.getItem('phone_num');
     if( app_data.phone_num == undefined || app_data.phone_num.length != 11){
-        alert('手机号错误。');
+        showMessage('手机号错误。');
         return;
     }
 
@@ -85,17 +85,17 @@ function OnResetpassword(){
     var confirm_password = $('#confirm_passwd').val();
 
     if( password == "") {
-        alert('密码不能为空。');
+        showMessage('密码不能为空。');
         return;
     }
 
     if(password.length < 6 || password.length > 20){
-        alert('密码格式错误!');
+        showMessage('密码格式错误!');
         return;
     }
 
     if( password != confirm_password){
-        alert('确认密码错误。');
+        showMessage('确认密码错误。');
         return;
     }
 
