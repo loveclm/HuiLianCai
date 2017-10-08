@@ -38,7 +38,7 @@ function sendLoginRequest(phonenumber, password) {
                     sessionStorage.setItem('phone_num', phonenumber);
                     sessionStorage.setItem('auth_status', 1);
 
-                    window.location.href = '../../home.html';
+                    window.location.href = 'home.php';
                 }
             },
             error: function (data) {
@@ -48,7 +48,7 @@ function sendLoginRequest(phonenumber, password) {
     } else {
         sessionStorage.setItem('phone_num', phonenumber);
         sessionStorage.setItem('auth_status', 1);
-        window.location.href = '../../home.html';
+        window.location.href = 'home.php';
     }
 }
 
@@ -62,7 +62,7 @@ function sendRegisterRequest(phonenumber, password, servant_phone) {
             data: {'phone': phonenumber, 'password': password, 'servant': servant_phone}, // set function name and parameters
             success: function (data) {
                 if (data.status == false) {
-                    alert('这个用户已存在。');
+                    showMessage('这个用户已存在。');
                 } else {
                     sessionStorage.setItem('phone_num', phonenumber);
                     sessionStorage.setItem('auth_state', 0);
@@ -93,19 +93,19 @@ function sendSetforgetPassword() {
             data: {'phone': phonenumber, 'password': password}, // set function name and parameters
             success: function (data) {
                 if (data.status == false) {
-                    alert('用户不存在。');
+                    showMessage('用户不存在。');
                 } else {
                     showMessage('message_dialog', '密码已修改成功');
-                    window.location.href = '../../index.html';
+                    window.location.href = '../index.php';
                 }
             },
             error: function (data) {
-                alert('服务器错误。')
+                showMessage('服务器错误。')
             }
         });
     } else {
         showMessage('message_dialog', '密码已修改成功');
-        window.location.href = 'login.html';
+        window.location.href = 'user_login.php';
     }
 }
 
@@ -202,30 +202,38 @@ function clearTimer() {
     app_data.timerID = undefined;
 }
 
-function selectBottomItem(index) {
-    for (var i = 1; i < 5; i++) {
-        if (i == index) {
-            $("#bottom_item_image" + i).attr('src', 'assets/images/tabbar_icon' + i + '_d@3x.png');
-            $("#bottom_item_text" + i).attr('style', 'color: #38abff');
+function selectBottomItem(index, pageindex) {
+
+    if(pageindex==0) {
+        for (var i = 1; i < 5; i++) {
+            if (i == index) {
+                $("#bottom_item_image" + i).attr('src', 'assets/images/tabbar_icon' + i + '_d@3x.png');
+                $("#bottom_item_text" + i).attr('style', 'color: #38abff');
+            }
+            else {
+                $("#bottom_item_image" + i).attr('src', 'assets/images/tabbar_icon' + i + '_n@3x.png');
+                $("#bottom_item_text" + i).attr('style', '');
+            }
         }
-        else {
-            $("#bottom_item_image" + i).attr('src', 'assets/images/tabbar_icon' + i + '_n@3x.png');
-            $("#bottom_item_text" + i).attr('style', '');
+        if(data.cur_bottom_index == index) return;
+        sessionStorage.setItem('cur_bottom_index',index);
+        data.cur_bottom_index = index;
+        switch (index) {
+            case 1:
+                showNotification("李老师 - 参加这个顶买第一菜单。>");
+                break;
+            case 2:
+                showNotification("这是第二菜单。>");
+                break;
+            case 3:
+                showMessage("这是第三菜单。");
+                break;
+            case 4:
+                setTimeout(function () {
+                    location.href = "myfunction_manage.php";
+                }, 500)
+                break;
         }
-    }
-    switch (index) {
-        case 1:
-            showNotification("李老师 - 参加这个顶买第一菜单。>");
-            break;
-        case 2:
-            showNotification("这是第二菜单。>");
-            break;
-        case 3:
-            showMessage("这是第三菜单。");
-            break;
-        case 4:
-            showMessage("这是第四菜单。");
-            break;
     }
 }
 
@@ -242,16 +250,16 @@ function showModalToCenter(id) {
 }
 
 function showMessage(message) {
-    $('#message_dialog .modal-body').html('<b>' + message + '</b>')
+    $('#message_dialog .modal-body').html('<b>' + message + '</b>');
     $('#message_dialog').modal();
     setTimeout(function () {
-        $('#message_dialog').modal('hide');
+        //$('#message_dialog').modal('hide');
     }, 3000);
     showModalToCenter('message_dialog');
 }
 
-function showNotification(data) {
-    $('#notification_bar').html(data);
+function showNotification(message) {
+    $('#notification_bar').html(message);
 
     $('#notification_bar').show();
     setTimeout(function () {
@@ -261,124 +269,29 @@ function showNotification(data) {
 
 // generate simulation datas for menu bar
 function simulat_menu_infos() {
-    data.menu_info = [
-        {
-            'id': '0',       // product kind id
-            'name': '推荐',   // product kind name
-            'brand': [
-                {
-                    'id': '11',          // brand id
-                    'name': '康师傅'
-                },    // brand name
-                {'id': '12', 'name': '伊利'},
-                {'id': '13', 'name': '蒙牛'},
-                {'id': '14', 'name': '今麦郎'},
-                {'id': '15', 'name': '统一'},
-                {'id': '16', 'name': '白象'},
-                {'id': '17', 'name': '华丰'},
-                {'id': '18', 'name': '五谷道场'},
-                {'id': '19', 'name': '农心'}
-            ]
-        },
-        {
-            'id': '1',
-            'name': '食品',
-            'brand': [
-                {'id': '12', 'name': '伊利'},
-                {'id': '13', 'name': '蒙牛'},
-                {'id': '15', 'name': '统一'},
-                {'id': '17', 'name': '华丰'},
-                {'id': '18', 'name': '五谷道场'},
-            ]
-        },
-        {
-            'id': '2',
-            'name': '方便面',
-            'brand': [
-                {'id': '11', 'name': '康师傅'},
-                {'id': '13', 'name': '蒙牛'},
-                {'id': '14', 'name': '今麦郎'},
-                {'id': '16', 'name': '白象'},
-                {'id': '17', 'name': '华丰'},
-                {'id': '19', 'name': '农心'}]
-        },
-        {
-            'id': '3',
-            'name': '乳制品',
-            'brand': [
-                {'id': '11', 'name': '康师傅'},
-                {'id': '12', 'name': '伊利'},
-                {'id': '13', 'name': '蒙牛'},
-                {'id': '14', 'name': '今麦郎'},
-                {'id': '16', 'name': '白象'}]
-        },
-        {
-            'id': '4',
-            'name': '冰淇淋',
-            'brand': [
-                {'id': '12', 'name': '伊利'},
-                {'id': '13', 'name': '蒙牛'},
-                {'id': '15', 'name': '统一'},
-                {'id': '17', 'name': '华丰'},
-                {'id': '18', 'name': '五谷道场'},
-                {'id': '19', 'name': '农心'}]
-        },
-        {
-            'id': '5',
-            'name': '面包',
-            'brand': [
-                {'id': '11', 'name': '康师傅'},
-                {'id': '13', 'name': '蒙牛'},
-                {'id': '16', 'name': '白象'},
-                {'id': '17', 'name': '华丰'},
-                {'id': '18', 'name': '五谷道场'},
-                {'id': '19', 'name': '农心'}]
-        },
-        {
-            'id': '6',
-            'name': '火腿肠',
-            'brand': [
-                {'id': '16', 'name': '白象'},
-                {'id': '17', 'name': '华丰'},
-                {'id': '18', 'name': '五谷道场'},
-                {'id': '19', 'name': '农心'}]
-        },
-        {
-            'id': '7',
-            'name': '饮料',
-            'brand': [
-                {'id': '11', 'name': '康师傅'},
-                {'id': '12', 'name': '伊利'},
-                {'id': '16', 'name': '白象'},
-                {'id': '17', 'name': '华丰'},
-                {'id': '18', 'name': '五谷道场'},
-                {'id': '19', 'name': '农心'}]
-        },
-        {
-            'id': '8',
-            'name': '生活用品',
-            'brand': [
-                {'id': '14', 'name': '今麦郎'},
-                {'id': '15', 'name': '统一'},
-                {'id': '16', 'name': '白象'},
-                {'id': '17', 'name': '华丰'}]
-        }
-    ];
-
     display_menu_infos();
 }
 
 // generate advertise image list for the advertise part
 function simulate_advertise_images() {
-    data.advertise_imgs = [
-        'images/tmp/u1.png',
-        'images/tmp/u2.png',
-        'images/tmp/u3.jpg',
-        'images/tmp/u1.jpg',
-        'images/tmp/u2.jpg'
-    ];
-
     display_advertise_images();
+}
+
+// display the product list on the content
+function showProductDetailInfo(index) {
+    location.href = 'product_detail.php?productid=' + index;
+}
+
+function showOrderDetailInfo(orderId) {
+    data.cur_detail_index = orderId;
+    sessionStorage.setItem('cur_detail_index', orderId);
+    location.href = "order_detail.php"
+}
+
+function showGroupingDetailInfo(orderId) {
+    data.cur_detail_index = orderId;
+    sessionStorage.setItem('cur_detail_index', orderId);
+    location.href = "grouping_detail.php"
 }
 
 // This is the part that store and load the object in localStorage

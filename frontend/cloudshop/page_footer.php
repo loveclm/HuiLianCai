@@ -1,35 +1,17 @@
 
-<div class="page-footer">
-    <div class="bottom_item" onclick="selectBottomItem(1)">
-        <img src="assets/images/tabbar_icon1_d@3x.png" class="bottom_item_image" id="bottom_item_image1">
-        <h5 id="bottom_item_text1" style="color: #38abff">拼货</h5>
-    </div>
-    <div class="bottom_item"  onclick="selectBottomItem(2)">
-        <img src="assets/images/tabbar_icon2_n@3x.png" class="bottom_item_image" id="bottom_item_image2">
-        <h5 id="bottom_item_text2" >购物车</h5>
-    </div>
-    <div class="bottom_item"  onclick="selectBottomItem(3)">
-        <img src="assets/images/tabbar_icon3_n@3x.png" class="bottom_item_image" id="bottom_item_image3">
-        <h5 id="bottom_item_text3" >消息</h5>
-    </div>
-    <div class="bottom_item"  onclick="selectBottomItem(4)">
-        <img src="assets/images/tabbar_icon4_n@3x.png" class="bottom_item_image" id="bottom_item_image4">
-        <h5 id="bottom_item_text4" >我的</h5>
-    </div>
-</div>
-<div id="menu_dialog" class="modal" tabindex="-1" data-backdrop="basic" data-keyboard="false">
-    <div class="modal-body">
-    </div>
-</div>
-<div id="message_dialog" class="modal" tabindex="-1" data-backdrop="basic" data-keyboard="false">
+
+<div id="message_dialog" class="modal fade" tabindex="-1" data-backdrop="basic" data-keyboard="false">
     <div class="modal-body">
     </div>
     <div class="modal-footer" style="border: none;">
         <button type="button" class="btn btn-primary" onclick="">确认</button>
-        <button type="button" class="btn btn-default" onclick="$('#message_dialog').hide();">取消</button>
+        <button type="button" class="btn btn-default"
+                onclick="$('#message_dialog').modal('hide');">取消</button>
     </div>
 </div>
 <div id="notification_bar"></div>
+
+
 <script src="assets/global/plugins/jquery.min.js" type="text/javascript"></script>
 <script src="assets/global/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
 <script src="assets/global/plugins/js.cookie.min.js" type="text/javascript"></script>
