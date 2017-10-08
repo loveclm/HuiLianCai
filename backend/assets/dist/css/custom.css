@@ -94,3 +94,32 @@ h1 {
     width: 100px;
     height: 33px;
 }
+
+#donate label {
+    float: left;
+    width: 250px;
+    color:#333;
+    background-color:#d8d8d7;
+    border: 1px solid #848181;
+    overflow: auto;
+}
+
+#donate label span {
+    text-align: center;
+    padding: 5px;
+    font-size: 20px;
+    display: block;
+}
+#donate label input {
+    position:absolute;
+    top:-20px;
+}
+
+#donate input:checked + span {
+    background-color:#0fa00f;
+    color:white;
+}
+
+.home_item{
+    padding: 5px 20px;
+}

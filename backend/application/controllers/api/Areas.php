@@ -15,7 +15,7 @@ class Areas extends REST_Controller
     {
         parent::__construct();
         $this->load->model('area_model');
-        $this->load->model('order_model');
+        $this->load->model('activity_model');
         $this->load->model('auth_model');
         $this->load->model('user_model');
     }
@@ -123,7 +123,6 @@ class Areas extends REST_Controller
         $error = false;
         $files = array();
         $uploaddir = 'uploads/';
-        //var_dump($_FILES);
         foreach ($_FILES as $file) {
             if (move_uploaded_file($file['tmp_name'], $uploaddir . basename($file['name']))) {
                 $files[] = $file['name'];
@@ -227,7 +226,6 @@ class Areas extends REST_Controller
                     )
                 );
             }
-            //var_dump($course_list);
             $this->response(array('status' => true, 'Courses' => $course_list), 200);
         }
     }
@@ -262,7 +260,7 @@ class Areas extends REST_Controller
         $request = $this->post();
         //$this->response(array('status' => true, 'Orders' => '1'), 200);
         $mobile = $request['phone'];
-        $orders = $this->order_model->getMyOrderInfos($mobile);
+        $orders = $this->activity_model->getMyOrderInfos($mobile);
         if ($orders == '-1') {
             $this->response(array('status' => false, 'Orders' => $orders), 200);
         } else {
@@ -298,9 +296,9 @@ class Areas extends REST_Controller
                         }
                     }
                 }
-                $lastOrder = $this->order_model->getOrderByAreaIds($Ids, $mobile);
+                $lastOrder = $this->activity_model->getOrderByAreaIds($Ids, $mobile);
                 if (count($lastOrder) == 0) continue;
-                $status_ret = $this->order_model->getBuyStatusById($lastOrder->areaid, 1, $mobile);
+                $status_ret = $this->activity_model->getBuyStatusById($lastOrder->areaid, 1, $mobile);
                 if ($status_ret == '4') { // 1-using, 2-unpaid, 3-canceled, 4-expired
                     $status_ret = 2; // 2-expired
                 } else if ($status_ret == '1') {
@@ -352,7 +350,7 @@ class Areas extends REST_Controller
                     } else if ($phone == '') {
                         $buy_state = 3;//unpaid
                     } else {
-                        $buy_state = $this->order_model->getStatusByAttractionId($atts->id, $phone);
+                        $buy_state = $this->activity_model->getStatusByAttractionId($atts->id, $phone);
                     }
                     array_push(
                         $attractionList,
@@ -425,7 +423,7 @@ class Areas extends REST_Controller
                     "authid" => $shopid,
                     "ordered_time" => $date->format('Y-m-d H:i:s'),
                 ];
-                $this->order_model->AddBuyOrder($authOrderItem);
+                $this->activity_model->AddBuyOrder($authOrderItem);
             } else if ($type == '3') {  // 3-attraction
                 $area = explode('_', $areaid);
                 $authOrderItem = [
@@ -439,7 +437,7 @@ class Areas extends REST_Controller
                     "attractionid" => $areaid,
                     "ordered_time" => $date->format('Y-m-d H:i:s'),
                 ];
-                $this->order_model->AddBuyOrder($authOrderItem);
+                $this->activity_model->AddBuyOrder($authOrderItem);
             } else { // 4-authorization code
                 if ($shopid != '') {
                     $authOrderItem = [
@@ -450,7 +448,7 @@ class Areas extends REST_Controller
                         "authid" => $shopid,
                         "paid_time" => $date->format('Y-m-d H:i:s')
                     ];
-                    if (!$this->order_model->AddAuthOrder($authOrderItem))
+                    if (!$this->activity_model->AddAuthOrder($authOrderItem))
                         $this->response(array('status' => false, 'result' => '-1'), 200);
                 }
             }
@@ -465,7 +463,7 @@ class Areas extends REST_Controller
         $phone = $request['phone'];
         $shopid = $request['shop'];
 
-        $result = $this->order_model->addPayOrder($value, $phone, $shopid);
+        $result = $this->activity_model->addPayOrder($value, $phone, $shopid);
         if ($result == FALSE) {
             $this->response(array('status' => false, 'result' => '-1'), 200);
         } else {
@@ -480,7 +478,7 @@ class Areas extends REST_Controller
         $valueid = $request['id'];
         $phone = $request['phone'];
 
-        $orderData = $this->order_model->getOrdersByUser($phone);
+        $orderData = $this->activity_model->getOrdersByUser($phone);
         $date = new DateTime();
 
         if ($phone == '' || $valueid == '') {

@@ -10,11 +10,11 @@ if(!empty($userInfo))
 {
     foreach ($userInfo as $uf)
     {
-        $userId = $uf->userId;
+        $userId = $uf->userid;
         $name = $uf->name;
         $email = $uf->email;
         $mobile = $uf->mobile;
-        $roleId = $uf->roleId;
+        $roleId = $uf->id;
     }
 }
 ?>
@@ -45,7 +45,7 @@ if(!empty($userInfo))
                                         <label for="fname" >&nbsp;&nbsp;&nbsp;*姓 名 &nbsp;:&nbsp;</label>
                                         <input type="text" class="form-control required" id="fname" name="fname"
                                                maxlength="128" value="<?php echo isset($name)?$name:''; ?>">
-                                        <input type="hidden" value="<?php echo $userId; ?>" name="userId" id="userId" />
+                                        <input type="hidden" value="<?php echo $userId; ?>" name="userid" id="userid" />
                                     </div>
 
                                 </div>

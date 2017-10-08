@@ -10,11 +10,17 @@ class login_model extends CI_Model
      */
     function loginMe($username, $password)
     {
-        $this->db->select('BaseTbl.userId, BaseTbl.password, BaseTbl.name, BaseTbl.roleId, Roles.role');
-        $this->db->from('tbl_users as BaseTbl');
-        $this->db->join('tbl_roles as Roles','Roles.roleId = BaseTbl.roleId');
-        $this->db->where('BaseTbl.userId', $username);
-        $this->db->where('BaseTbl.isDeleted', 0);
+        $this->db->select('tbl_user.id, tbl_user.userid, tbl_user.username, tbl_user.password, tbl_user.role, tbl_user.level, tbl_user.role as role_text');
+        $this->db->from('tbl_user');
+        $this->db->join('tbl_role', 'tbl_role.id=tbl_user.role');
+        $this->db->where('tbl_user.userid', $username);
+        //$this->db->where('BaseTbl.isDeleted', 0);
+
+//        $this->db->select('BaseTbl.userId, BaseTbl.password, BaseTbl.name, BaseTbl.roleId, BaseTbl.level, Roles.role');
+//        $this->db->from('tbl_users as BaseTbl');
+//        $this->db->join('tbl_roles as Roles','Roles.roleId = BaseTbl.roleId');
+//        $this->db->where('BaseTbl.userId', $username);
+//        $this->db->where('BaseTbl.isDeleted', 0);
         $query = $this->db->get();
         
         $user = $query->row();
@@ -37,10 +43,10 @@ class login_model extends CI_Model
      */
     function checkEmailExist($email)
     {
-        $this->db->select('userId');
+        $this->db->select('userid');
         $this->db->where('email', $email);
-        $this->db->where('isDeleted', 0);
-        $query = $this->db->get('tbl_users');
+        //$this->db->where('isDeleted', 0);
+        $query = $this->db->get('tbl_user');
 
         if ($query->num_rows() > 0){
             return true;
@@ -73,10 +79,10 @@ class login_model extends CI_Model
      */
     function getCustomerInfoByEmail($email)
     {
-        $this->db->select('userId, email, name');
-        $this->db->from('tbl_users');
-        $this->db->where('isDeleted', 0);
-        $this->db->where('email', $email);
+        $this->db->select('id, userid, username');
+        $this->db->from('tbl_user');
+        //$this->db->where('isDeleted', 0);
+        $this->db->where('username', $email);
         $query = $this->db->get();
 
         return $query->result();
@@ -98,12 +104,12 @@ class login_model extends CI_Model
     }
 
     // This function used to create new password by reset link
-    function createPasswordUser($email, $password)
+    function createPasswordUser($userid, $password)
     {
-        $this->db->where('email', $email);
-        $this->db->where('isDeleted', 0);
-        $this->db->update('tbl_users', array('password'=>getHashedPassword($password)));
-        $this->db->delete('tbl_reset_password', array('email'=>$email));
+        $this->db->where('username', $userid);
+        //$this->db->where('isDeleted', 0);
+        $this->db->update('tbl_user', array('password'=>getHashedPassword($password)));
+        $this->db->delete('tbl_reset_password', array('userid'=>$userid));
     }
 }
 

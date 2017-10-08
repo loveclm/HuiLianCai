@@ -10,6 +10,7 @@
 class BaseController extends CI_Controller
 {
     protected $role = '';
+    protected $level = 0;
     protected $vendorId = '';
     protected $name = '';
     protected $roleText = '';
@@ -39,23 +40,32 @@ class BaseController extends CI_Controller
         if (!isset ($isLoggedIn) || $isLoggedIn != TRUE) {
             redirect('login_controller');
         } else {
+            $this->level = $this->session->userdata('level');
             $this->role = $this->session->userdata('role');
             $this->vendorId = $this->session->userdata('userId');
             $this->name = $this->session->userdata('name');
             $this->roleText = $this->session->userdata('roleText');
             $this->permission = $this->session->userdata('permission');
-            $this->shopnumber = $this->session->userdata('shopnumber');
+            $this->userId = $this->session->userdata('userId');
+            $this->login_id = $this->session->userdata('login_id');
 
+            $this->global['login_id'] = $this->login_id;
+            $this->global['userId'] = $this->userId;
             $this->global['name'] = $this->name;
+            $this->global['level'] = $this->level;
             $this->global['role'] = $this->role;
             $this->global['role_text'] = $this->roleText;
             $this->global['menu_access'] = $this->permission;
-            if (!$this->isTicketter())
-                $this->global['shop_manager_number'] = $this->shopnumber;
-            else if (!$this->isAdmin())
+
+            if (!$this->isTicketter()) {
+                $this->global['shop_manager_number'] = $this->user_model->getPublicNumberByUserId($this->userId);
+            }
+            else if (!$this->isAdmin()){
                 $this->global['shop_manager_number'] = '';
-            else
-                $this->global['shop_manager_number'] = $this->shopnumber;
+            }
+            else {
+                $this->global['shop_manager_number'] = $this->user_model->getPublicNumberByUserId($this->userId);
+            }
         }
     }
 
@@ -64,11 +74,16 @@ class BaseController extends CI_Controller
      */
     function isAdmin()
     {
-        if ($this->role != ROLE_ADMIN && $this->role != ROLE_MANAGER) {
+        if ($this->role != LEVEL_ADMIN && $this->role != LEVEL_MANAGER) {
             return true;
         } else {
             return false;
         }
+//        if ($this->role != ROLE_ADMIN && $this->role != ROLE_MANAGER) {
+//            return true;
+//        } else {
+//            return false;
+//        }
     }
 
     /**
@@ -76,11 +91,16 @@ class BaseController extends CI_Controller
      */
     function isTicketter()
     {
-        if ($this->role != ROLE_MANAGER) {
+        if ($this->role != LEVEL_MANAGER) {
             return true;
         } else {
             return false;
         }
+//        if ($this->role != ROLE_MANAGER) {
+//            return true;
+//        } else {
+//            return false;
+//        }
     }
 
     /**

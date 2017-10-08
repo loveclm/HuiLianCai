@@ -59,7 +59,7 @@ class Shops extends REST_Controller
             "name"=>$newShop['name'],
             "password"=>getHashedPassword($newShop['password']),
             "roleId"=>2, // shop manager
-            "isDeleted"=>0, //0-available, 1-deleted
+            //"isDeleted"=>0, //0-available, 1-deleted
             "createdBy"=>1, // 1- created by admin
             "createdDtm"=>date_format($date_now,"Y-m-d H:i:s"), // 1- created by admin
         ];
@@ -87,7 +87,7 @@ class Shops extends REST_Controller
             "name"=>$newShop->name,
             "password"=>getHashedPassword($newShop->password),
             "roleId"=>2, // shop manager
-            "isDeleted"=>1, //0-available, 1-deleted
+            //"isDeleted"=>1, //0-available, 1-deleted
             "createdBy"=>1, // 1- created by admin
             "updatedDtm"=>date_format($date_now,"Y-m-d H:i:s"), // 1- updated by admin
         ];

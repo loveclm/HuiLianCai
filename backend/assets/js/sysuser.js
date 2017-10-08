@@ -9,15 +9,15 @@ $(document).ready(function () {
 });
 
 function confirmDelete(id) {
-    $('#userId').html(id);
+    $('#userid').html(id);
     $('#custom-confirm-delete-view').show();
 }
 function deleteUser(url) {
-    location.href = url + 'deleteUser/' + $('#userId').html();
+    location.href = url + 'deleteUser/' + $('#userid').html();
 
 }
 function confirmPassword(id) {
-    $('#userId').html(id);
+    $('#userid').html(id);
     $('#custom-generate-auth-view').show();
 }
 function showPassword() {
@@ -28,7 +28,7 @@ function resetPassword(url) {
     var passwd = $('#passwd').val();
     var cpasswd = $('#cpasswd').val();
     var msg = '';
-    var id = $('#userId').html();
+    var id = $('#userid').html();
     if (passwd == '' || cpasswd == '' || passwd != cpasswd
         || passwd.length < 6 || passwd.length > 20) {
         msg = '不允许为空，密码6-20字符，<br>密码与确认密码，两次输入的必须一致.';

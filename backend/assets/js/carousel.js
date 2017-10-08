@@ -42,16 +42,70 @@ $('input[name="radio_caro_type"]').click(function () {
            $('#select_active_group').css({'display':'none'});
            break;
        case "2":  // 单品活动
+           loadActivities(1);
            $('#select_active_group').css({'display':'block'});
            break;
        case "3":  //餐装活动
+           loadActivities(2);
            $('#select_active_group').css({'display':'block'});
            break;
        case "4":  //供货商
+           loadProviders();
            $('#select_active_group').css({'display':'block'});
            break;
    }
 });
+
+function loadActivities(type){
+    var data = {
+        'searchType' : 0,
+        'searchName' : '',
+        'searchStatus' : 2,
+        'provider_id' : 0,
+        'kind' : type
+    };
+    $.ajax({
+        url: baseURL + "carousel_controller/getActivities",
+        type: 'post',
+        dataType:'json',
+        data: {'data': data},
+        success: function (res) {
+            console.log(res);
+            var activities = res.content;
+            var content_html = '';
+            for(var i = 0; i < activities.length; i++){
+                content_html += '<option value="'+activities[i]['id']+'">'+activities[i]['name']+'</option>';
+            }
+
+            $('#select_active_list').html(content_html);
+        }
+    });
+}
+
+function loadProviders(){
+    var data = {
+        'searchType' : 0,
+        'searchName' : '',
+        'searchStatus' : 1,
+        'address' : '',
+    };
+    $.ajax({
+        url: baseURL + "carousel_controller/getProviders",
+        type: 'post',
+        dataType:'json',
+        data: {'data': data},
+        success: function (res) {
+            console.log(res);
+            var activities = res.content;
+            var content_html = '';
+            for(var i = 0; i < activities.length; i++){
+                content_html += '<option value="'+activities[i]['id']+'">'+activities[i]['username']+'</option>';
+            }
+
+            $('#select_active_list').html(content_html);
+        }
+    });
+}
 
 $('#carousel_add_submit').on('click', function () {
     var image_name = $("#image_filename").html().trim();
@@ -71,7 +125,7 @@ $('#carousel_add_submit').on('click', function () {
     var activity = $('#select_active_list').val();
 
     var itemInfo = {
-        'image': image_name,
+        'image': 'uploads/' + image_name,
         'type': type,
         'sort': sort,
         'activity': activity,

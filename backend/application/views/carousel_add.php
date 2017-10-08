@@ -44,13 +44,6 @@
                     <label>*活动名称 :</label>
                     <div class="input-group margin">
                         <select id="select_active_list" class="form-control select2 select2-hidden-accessible" style="width: 100%;" tabindex="-1" aria-hidden="true">
-                            <option value="1">Alabama</option>
-                            <option value="2">Alaska</option>
-                            <option value="3">California</option>
-                            <option value="4">Delaware</option>
-                            <option value="5">Tennessee</option>
-                            <option value="6">Texas</option>
-                            <option value="7">Washington</option>
                         </select>
                     </div>
                 </div>

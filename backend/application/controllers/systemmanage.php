@@ -45,12 +45,12 @@ class systemmanage extends BaseController
 
             $this->load->library('pagination');
 
-            $count = $this->user_model->userListingCount($searchText);
+            $count = $this->user_model->userListingCount($this->global['level'], $searchText);
 
             $returns = $this->paginationCompress("userListing/", $count, 5);
 
             $data['userRecords'] = $this->user_model
-                ->userListing($searchText, $searchStatus, $returns["page"], $returns["segment"]);
+                ->userListing($this->global['level'], $searchText, $searchStatus, $returns["page"], $returns["segment"]);
 
             $this->global['pageTitle'] = '人员管理';
             $data['searchText'] = $searchText;
@@ -68,8 +68,8 @@ class systemmanage extends BaseController
         if ($this->isAdmin() == TRUE) {
             $this->loadThis();
         } else {
-
-            $data['userRecords'] = $this->user_model->roleListing();
+            $type = $this->login_id;
+            $data['userRecords'] = $this->user_model->roleListing($type);
 
             $this->global['pageTitle'] = '角色管理';
 
@@ -98,7 +98,7 @@ class systemmanage extends BaseController
      */
     function checkEmailExists()
     {
-        $userId = $this->input->post("userId");
+        $userId = $this->input->post("userid");
         $email = $this->input->post("email");
 
         if (empty($userId)) {
@@ -162,6 +162,15 @@ class systemmanage extends BaseController
     }
 
     /**
+     * This function is used to make tree view to manage user's role
+     */
+    function roleInfos(){
+        $type = ($this->global['shop_manager_number'] == '') ? 1 : 2;
+        $data = $this->user_model->getRoleInfos($type);
+
+        echo  json_encode($data);
+    }
+    /**
      * This function is used to add new user to the system
      */
     function addRole()
@@ -176,14 +185,19 @@ class systemmanage extends BaseController
                 echo(json_encode(array('status' => FALSE)));
                 return;
             }
+            $data = array(
+                'role' => $roleName,
+                'parent_id' => $this->login_id,
+                'permission' => '[]'
+            );
 
-            $result = $this->user_model->addNewRole($roleName);
+            $result = $this->user_model->addNewRole($data);
             if ($result > 0) {
                 $this->session->set_flashdata('success', '新角色创建成功.');
-                echo(json_encode(array('status' => TRUE)));
+                echo  json_encode(array('status' => TRUE));
             } else {
                 $this->session->set_flashdata('error', '角色创建失败.');
-                echo(json_encode(array('status' => FALSE)));
+                echo  json_encode(array('status' => FALSE));
             }
         }
     }
@@ -196,7 +210,7 @@ class systemmanage extends BaseController
         if ($this->isAdmin() == TRUE) {
             $this->loadThis();
         } else {
-            $roleId = $this->input->post('roleId');
+            $roleId = $this->input->post('id');
             $permission = $this->input->post('permission');
 
             $result = $this->user_model->getRoleById($roleId);
@@ -249,16 +263,15 @@ class systemmanage extends BaseController
         } else {
             $this->load->library('form_validation');
 
-            $userId = $this->input->post('userId');
+            $userId = $this->input->post('userid');
 
-            $this->form_validation->set_rules('fname', '账号', 'trim|required|max_length[20]|xss_clean');
-            $this->form_validation->set_rules('email', '姓名', 'trim|required|xss_clean|max_length[20]');
+            $this->form_validation->set_rules('userid', '账号', 'trim|required|max_length[20]|xss_clean');
+            $this->form_validation->set_rules('username', '姓名', 'trim|required|xss_clean|max_length[20]');
             $this->form_validation->set_rules('password', '密码', 'required|matches[cpassword]|min_length[6]|max_length[20]');
             $this->form_validation->set_rules('cpassword', '确认密码', 'required|matches[password]|min_length[6]|max_length[20]');
             $this->form_validation->set_rules('role', '用户角色', 'trim|required|numeric|is_natural_no_zero');
-//            $this->form_validation->set_rules('mobile','Mobile Number','required|min_length[10]|xss_clean');
 
-            $name = ucwords(strtolower($this->input->post('fname')));
+            $name = ucwords(strtolower($this->input->post('userid')));
             $email = $this->input->post('email');
             $password = $this->input->post('password');
             $cpassword = $this->input->post('cpassword');
@@ -308,7 +321,7 @@ class systemmanage extends BaseController
             echo(json_encode(array('status' => 'access')));
         } else {
             $userId = $id;
-            $userInfo = array('isDeleted' => 1, 'updatedBy' => $this->vendorId, 'update_time' => date('Y-m-d H:i:s'));
+            $userInfo = array(/*'isDeleted' => 1,*/ 'updatedBy' => $this->vendorId, 'update_time' => date('Y-m-d H:i:s'));
 
             $result = $this->user_model->deleteUser($userId, $userInfo);
 
@@ -382,18 +395,18 @@ class systemmanage extends BaseController
                 $this->session->set_flashdata('nomatch', '您的旧密码不正确.');
                 redirect('loadChangePass');
             } else {
-                $usersData = array('password' => getHashedPassword($newPassword), 'updatedBy' => $this->vendorId,
+                $usersData = array('password' => getHashedPassword($newPassword),
                     'update_time' => date('Y-m-d H:i:s'));
 
                 $result = $this->user_model->changePassword($this->vendorId, $usersData);
 
                 if ($result > 0) {
                     $this->session->set_flashdata('success', '密码更新成功.');
-                    echo(json_encode(array('status' => TRUE)));
+                    echo json_encode(array('status' => TRUE));
                     redirect('logout');
                 } else {
                     $this->session->set_flashdata('error', '密码更新失败.');
-                    echo(json_encode(array('status' => FALSE)));
+                    echo json_encode(array('status' => FALSE));
                 }
 
                 redirect('loadChangePass');

@@ -48,7 +48,7 @@ class ImgProcessor extends REST_Controller
         $tt = time();
         $ext = explode(".", $_FILES[0]['name']);
         $nn = rand(1000, 9999);
-        $filename = 'ayoubc' . $nn . $tt . '.' . $ext[1];
+        $filename = 'hlc' . $nn . $tt . '.' . $ext[1];
         foreach ($_FILES as $file) {
 //            if (move_uploaded_file($file['tmp_name'], $uploaddir . (basename($file['name'])))) {
             if (move_uploaded_file($file['tmp_name'], $uploaddir . $filename)) {
@@ -67,9 +67,7 @@ class ImgProcessor extends REST_Controller
         }
     }
 
-}
-
-;
+};
 
 /* End of file Image_processor.php */
 /* Location: ./application/controllers/api/Image_processor.php */

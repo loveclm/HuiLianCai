@@ -51,8 +51,7 @@ class login_controller extends CI_Controller
     public function loginMe()
     {
         $this->load->library('form_validation');
-        $this->form_validation->set_rules('account1', 'Account', 'max_length[20]|xss_clean|trim');
-        //$this->form_validation->set_rules('password', 'Password', 'required|max_length[20]|');
+        $this->form_validation->set_rules('account', 'Account', 'max_length[20]|xss_clean|trim');
 
         if($this->form_validation->run() == FALSE) {
             $this->index();
@@ -60,7 +59,6 @@ class login_controller extends CI_Controller
         else {
             $account = $this->input->post('account');
             $password = $this->input->post('password');
-
             if( $account == "" && $password == ""){
                 $this->session->set_flashdata('error', '账号/密码不能为空。');
                 redirect('/loginMe');
@@ -77,12 +75,15 @@ class login_controller extends CI_Controller
             // if login success then jump home page
             switch ($result['status']){
                 case 'success':
-                    $permission = $this->user_model->getRoleById($result['userinfo']->roleId);
-                    $sessionArray = array('userId'=>$result['userinfo']->userId,
-                        'role'=>$result['userinfo']->roleId,
-                        'roleText'=>$result['userinfo']->role,
-                        'name'=>$result['userinfo']->name,
-                        'shopnumber'=>$account,
+                    $permission = $this->user_model->getRoleById($result['userinfo']->role);
+
+                    $sessionArray = array(
+                        'login_id' => $result['userinfo']->id,
+                        'level'=>$result['userinfo']->level,
+                        'role'=>$result['userinfo']->role,
+                        'roleText'=>$result['userinfo']->role_text,
+                        'name'=>$result['userinfo']->username,
+                        'userId'=>$account,
                         'permission'=>$permission->permission,
                         'isLoggedIn' => TRUE
                     );
@@ -110,7 +111,7 @@ class login_controller extends CI_Controller
     {
         $this->load->view('forgotPassword');
     }
-    
+
     /**
      * This function used to generate reset password request link
      */

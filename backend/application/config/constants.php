@@ -42,6 +42,9 @@ define('ROLE_ADMIN',                            '1');
 define('ROLE_MANAGER',                         	'2');
 define('ROLE_EMPLOYEE',                         '3');
 
+define('LEVEL_ADMIN',                            '1');
+define('LEVEL_MANAGER',                          '2');
+
 define('SEGMENT',								2);
 
 /************************** EMAIL CONSTANTS *****************************/

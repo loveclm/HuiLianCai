@@ -18,6 +18,10 @@ class home_controller extends BaseController
     {
         parent::__construct();
         $this->load->model('user_model');
+        $this->load->model('shop_model');
+        $this->load->model('order_model');
+        $this->load->model('statistics_model');
+        $this->load->model('product_util_model');
         $this->isLoggedIn();
     }
 
@@ -37,6 +41,8 @@ class home_controller extends BaseController
         if ($this->isAdmin() == TRUE) {
             $this->loadThis();
         } else {
+            $this->global['pageTitle'] = '首页';
+
             $data['tab_headers'] = array(
                 "月供货商销售排行",
                 "月终端商便利店消费排行",
@@ -44,7 +50,39 @@ class home_controller extends BaseController
                 "月品牌销售排行",
                 "单品销售排名",
             );
-            $this->global['pageTitle'] = '首页';
+
+            if($this->global['shop_manager_number'] == '') {   // or $this->isTicketter()
+                // calculate the number of provider
+                // calculate the number of shop
+                $this->global['basic_data'] = array(
+                    'provider_cnt' => $this->shop_model->getUserCount(2),
+                    'shop_cnt' => $this->shop_model->getUserCount(3)
+                );
+            }else{
+                // provider's information
+                $provider_info = $this->user_model->getProviderInfos($this->user_model->getIdByUserId($this->userId));
+
+                $more_data = json_decode($provider_info->more_data);
+                $logo = json_decode($more_data->logo);
+
+                $this->global['basic_data'] = array(
+                    'logo' => $logo[1],
+                    'provider_id' => $provider_info->userid,
+                    'provider_name' => $provider_info->username,
+                    'contact_name' => $provider_info->contact_name,
+                    'contact_phone' => $provider_info->contact_phone,
+                    'address' => $provider_info->address
+                );
+            }
+
+            // yesterday's the number and money of sales
+            $sale_data = array();
+            $yesterday_sale = $this->order_model->getYesterdayOrderStatus();
+            array_push($sale_data, $yesterday_sale);
+            // current month's the number and money of sales
+            $month_sale = $this->order_model->getMonthOrderStatus();
+            array_push($sale_data, $month_sale);
+            $this->global['sale_data'] = $sale_data;
 
             $this->loadViews("home", $this->global, $data, NULL);
         }
@@ -66,37 +104,38 @@ class home_controller extends BaseController
             );
             if (!empty($_POST)) {
                 $id = $_POST['id'];
+                $provider_id = ($this->isTicketter()== FALSE) ? $this->global['shop_manager_number'] : '0';
                 // ????? get top list data in homepage
                 switch ($id) {
                     case 1:
                         $header = array("排名", "供货商账号", "供货商名称", "销量", "销售金额",);
-                        $footer = "掌握30日内销售最多的供货商";
                         $cols = 5;
-                        $contentList = [$header, $header, $header, $header, $header];//$this->shop_model->getTopLists($id);
+                        $contentList = $this->statistics_model->getTopProviderItems();
+                        $footer = (count($contentList) == 0) ? '没有数据' : "掌握30日内销售最多的供货商";
                         break; // get top1
                     case 2:
                         $header = array("排名", "终端便利店账号", "终端便利店", "销量", "销售金额",);
-                        $footer = "掌握30日内消费最多的终端便利店";
                         $cols = 5;
-                        $contentList = NULL;//$this->shop_model->getTopLists($id);
+                        $contentList = $this->statistics_model->getTopShopItems($provider_id);
+                        $footer = (count($contentList) == 0) ? '没有数据' : "掌握30日内消费最多的终端便利店";
                         break; // get top2
                     case 3:
                         $header = array("排列", "分类", "销量", "销售金额",);
-                        $footer = "掌握30日内最热销售的商品";
                         $cols = 4;
-                        $contentList = NULL;//$this->shop_model->getTopLists($id);
+                        $contentList = $this->statistics_model->getTopTypeItems($provider_id);
+                        $footer = (count($contentList) == 0) ? '没有数据' : "掌握30日内最热销售的商品";
                         break; // get top3
                     case 4:
                         $header = array("排名", "LOGO", "品牌", "销量", "销售金额",);
-                        $footer = "掌握30日内最热销售的商品";
                         $cols = 5;
-                        $contentList = NULL;//$this->shop_model->getTopLists($id);
+                        $contentList = $this->statistics_model->getTopBrandItems($provider_id);
+                        $footer = (count($contentList) == 0) ? '没有数据' : "掌握30日内最热销售的商品";
                         break; // get top4
                     case 5:
                         $header = array("排名", "商品条码", "封面", "商品名称", "销量", "销售金额",);
-                        $footer = "掌握30日内最热销售的商品";
                         $cols = 6;
-                        $contentList = [$header, $header, $header];//$this->shop_model->getTopLists($id);
+                        $contentList = $this->statistics_model->getTopProductItems($provider_id);
+                        $footer = (count($contentList) == 0) ? '没有数据' : "掌握30日内最热销售的商品";
                         break; // get top5
                 }
 
@@ -128,8 +167,8 @@ class home_controller extends BaseController
                 $badge = ($i < 3 ? '<span style="color:darkgoldenrod;"><i class="fa fa-gift"></i></span>' : '');
                 $output_html .= '<td>' . ($j == 0 ? $badge."&nbsp;&nbsp;".($i + 1) : $subitem) . '</td>';
 //            $output_html .= '<td>' . ($item->type == '1' ? '旅行社' : ($item->type == '2' ? '渠道商' : '')) . '</td>';
-//            $output_html .= '<td>' . $this->order_model->getAreaCountByShopId($item->id, 1) . '</td>';
-//            $output_html .= '<td>' . $this->order_model->getAreaCountByShopId($item->id, 2) . '</td>';
+//            $output_html .= '<td>' . $this->activity_model->getAreaCountByShopId($item->id, 1) . '</td>';
+//            $output_html .= '<td>' . $this->activity_model->getAreaCountByShopId($item->id, 2) . '</td>';
 //            $output_html .= '<td>' . $this->auth_model->getAuthCountByShopId($item->id) . '</td>';
 //            $output_html .= '<td>' . $item->address_1 . '</td>';
 //            $output_html .= '<td>' . ($item->status == 1 ? '已禁用' : '未禁用') . '</td>';
@@ -169,7 +208,7 @@ class home_controller extends BaseController
         foreach ($allLists as $item) {
             $output_html .= '<th>' . $item . '</th>';
         }
-        $output_html .= '<.tr>';
+        $output_html .= '</tr>';
         return $output_html;
     }
 
@@ -182,7 +221,7 @@ class home_controller extends BaseController
         $output_html = '';
         $output_html .= '<tr>';
         $output_html .= '<td colspan="' . $cols . '">' . $footer . '</td>';
-        $output_html .= '<.tr>';
+        $output_html .= '</tr>';
         return $output_html;
     }
 

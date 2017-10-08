@@ -26,6 +26,24 @@ class carousel_model extends CI_Model
     }
 
     /**
+     * This function is used to get first 5 carousel images
+     * @return array $result : This is result
+     */
+    function getCarouselItems()
+    {
+        $this->db->select('image as imgData, activity as linkData, type as linkType');
+        $this->db->from('tbl_carousel');
+        $this->db->where('status', 1);
+        $this->db->order_by('sort', 'asc');
+        $this->db->order_by('create_date', 'desc');
+        $this->db->limit(5);
+        $query = $this->db->get();
+        $result = $query->result();
+
+        return $result;
+    }
+
+    /**
      * This function is used to get Tourist Area by id
      * @return array $result : This is result
      */

@@ -47,4 +47,3 @@ class error extends CI_Controller
 /* Location: .application/controllers/error.php */
 
 
-?>

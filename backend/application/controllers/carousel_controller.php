@@ -18,6 +18,8 @@ class carousel_controller extends BaseController
     {
         parent::__construct();
         $this->load->model('carousel_model');
+        $this->load->model('activity_model');
+        $this->load->model('provider_model');
         $this->isLoggedIn();
     }
 
@@ -81,6 +83,36 @@ class carousel_controller extends BaseController
         }
     }
 
+    function getActivities(){
+        $ret = array(
+            'content' => '',
+            'status' => 'success'
+        );
+        if(!empty($_POST)){
+            $data = $_POST['data'];
+            $activities = $this->activity_model->getItems($data);
+            if($activities == NULL) $activities = array();
+            $ret['content'] = $activities;
+        }else
+            $ret['content'] = array();
+
+        echo json_encode($ret);
+    }
+    function getProviders(){
+        $ret = array(
+            'content' => '',
+            'status' => 'success'
+        );
+        if(!empty($_POST)){
+            $data = $_POST['data'];
+            $providers = $this->provider_model->getItems($data);
+            if($providers == NULL) $providers = array();
+            $ret['content'] = $providers;
+        }else
+            $ret['content'] = array();
+
+        echo json_encode($ret);
+    }
     /**
      * This function used to get activity name( provider or single activity, multiple activity) from carousel item information
      */
@@ -132,6 +164,7 @@ class carousel_controller extends BaseController
                     } else {
                         $output_html .= '<a href="#" onclick="deployConfirm(' . $item->id . ',0)">下架 &nbsp;&nbsp;</a>';
                     }
+                    $output_html .= '</td>';
                     $output_html .= '</tr>';
                     $i++;
                 }
@@ -151,7 +184,7 @@ class carousel_controller extends BaseController
         foreach ($allLists as $item) {
             $output_html .= '<th>' . $item . '</th>';
         }
-        $output_html .= '<.tr>';
+        $output_html .= '</tr>';
         return $output_html;
     }
 
@@ -164,7 +197,7 @@ class carousel_controller extends BaseController
         $output_html = '';
         $output_html .= '<tr>';
         $output_html .= '<td colspan="' . $cols . '">' . $footer . '</td>';
-        $output_html .= '<.tr>';
+        $output_html .= '</tr>';
         return $output_html;
     }
 

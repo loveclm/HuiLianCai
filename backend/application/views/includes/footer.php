@@ -9,9 +9,11 @@
 <script src="<?php echo base_url(); ?>assets/plugins/input-mask/jquery.inputmask.js"></script>
 <script src="<?php echo base_url(); ?>assets/plugins/input-mask/jquery.inputmask.date.extensions.js"></script>
 <script src="<?php echo base_url(); ?>assets/plugins/input-mask/jquery.inputmask.extensions.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.2/moment.min.js"></script>
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.2/moment.min.js"></script>-->
 <script src="<?php echo base_url(); ?>assets/plugins/daterangepicker/daterangepicker.js"></script>
 <script src="<?php echo base_url(); ?>assets/plugins/datepicker/bootstrap-datepicker.min.js"></script>
+<script src="<?php echo base_url(); ?>assets/plugins/datetimepicker/bootstrap-datetimepicker.js"></script>
+<script src="<?php echo base_url(); ?>assets/plugins/datetimepicker/bootstrap-datetimepicker.zh-CN.js"></script>
 <script src="<?php echo base_url(); ?>assets/plugins/colorpicker/bootstrap-colorpicker.min.js"></script>
 <script src="<?php echo base_url(); ?>assets/plugins/timepicker/bootstrap-timepicker.min.js"></script>
 <script src="<?php echo base_url(); ?>assets/plugins/slimScroll/jquery.slimscroll.min.js"></script>
@@ -24,7 +26,7 @@
 <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
-
+<script src="<?php echo base_url(); ?>assets/plugins/table2Excel/jquery.table2excel.js" type="text/javascript"></script>
 <script src="<?php echo base_url(); ?>assets/js/jquery.validate.js" type="text/javascript"></script>
 <script src="<?php echo base_url(); ?>assets/js/validation.js" type="text/javascript"></script>
 
@@ -50,19 +52,17 @@
         todayHighlight: true
     });
     $(document).one('ajaxloadstart.page', function (e) {
-        autosize.destroy('textarea[class*=autosize]')
+        autosize.destroy('textarea[class*=autosize]');
 
         $('.limiterBox,.autosizejs').remove();
         $('.daterangepicker.dropdown-menu,.colorpicker.dropdown-menu,.bootstrap-datetimepicker-widget.dropdown-menu').remove();
     });
     $(document).ready(function () {
-        var main_page_width = window.innerWidth;
-        if (main_page_width <= 1450)
-            $("#main_page_body").addClass("sidebar-collapse");
-        else
-            $("#main_page_body").removeClass("sidebar-collapse");
-        $(window).resize(function () {
-            main_page_width = window.innerWidth;
+         $(window).resize(function () {
+            var main_page_width = document.body.clientWidth
+                || document.documentElement.clientWidth
+                || window.innerWidth;
+
             if (main_page_width <= 1450)
                 $("#main_page_body").addClass("sidebar-collapse");
             else
