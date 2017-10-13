@@ -74,11 +74,12 @@
             <div class="row">
                 <div class="box main-shadow">
                     <div class="box-body table-responsive no-padding">
-                        <table class="table table-hover">
+                        <table id="contentInfo_tbl" class="table table-hover">
                             <thead id="header_tbl"></thead>
                             <tbody id="content_tbl"></tbody>
                             <tfoot id="footer_tbl"></tfoot>
                         </table>
+                        <div id="contentpageNavPosition"></div>
                     </div>
                     <!-- /.box-body -->
                 </div>
@@ -124,6 +125,6 @@
 
 </div>
 
-
 <!-- Course Management JS-->
+<script type="text/javascript" src="<?php echo base_url(); ?>assets/js/tbl_pagination.js" charset="utf-8"></script>
 <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/product_manage/product.js" charset="utf-8"></script>

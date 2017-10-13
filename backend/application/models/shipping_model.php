@@ -16,7 +16,7 @@ class shipping_model extends CI_Model
         $address = $data['address'];
         $status = $data['searchStatus'];
 
-        $this->db->select('a.*, b.username as provider');
+        $this->db->select('a.*, b.username as provider, b.address as provider_addr');
         $this->db->from('tbl_userinfo as a');
         $this->db->join('tbl_userinfo as b', 'a.provider_id = b.id');
         $this->db->where('a.type', 4);
@@ -123,6 +123,17 @@ class shipping_model extends CI_Model
         $query = $this->db->get();
 
         return $query->result();
+    }
+
+    function getShippingCount($id){
+        $result = $this->db->select('count(id) as cnt')
+            ->from('tbl_order')
+            ->where('status', 4)
+            ->where('ship_man', $id)
+            ->get()
+            ->result();
+
+        return $result[0]->cnt;
     }
 
     function getProductInfosByShipping($id){
@@ -239,8 +250,9 @@ class shipping_model extends CI_Model
 
             $this->db->trans_start();
             $this->db->insert('tbl_shipping', $shipping_info);
-            $result = $this->db->insert_id();
+            $this->db->insert_id();
             $this->db->trans_complete();
+            return $shipping_info['id'];
         }else{
             $shipping_info = array(
                 'order_id' => $result[0]->order_id . ',' . data['order_id'],

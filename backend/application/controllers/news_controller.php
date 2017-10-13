@@ -93,7 +93,7 @@ class news_controller extends BaseController
                 foreach ($allLists as $item) {
                     $i++;
                     $output_html .= '<tr>';
-                    $output_html .= '<td><input id="chk_' . $item->id . '" type="checkbox"></td>';
+                    $output_html .= '<td><input class="news_check" id="chk_' . $item->id . '" type="checkbox"></td>';
                     $output_html .= '<td>' . $i . '</td>';
                     $output_html .= '<td>' . $item->type . '</td>';
                     $output_html .= '<td>' . $item->message . '</td>';

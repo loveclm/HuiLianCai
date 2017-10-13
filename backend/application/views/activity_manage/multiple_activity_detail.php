@@ -75,13 +75,13 @@
                     <div class="row form-inline">
                         <label> 拼单人数 : </label>
                         <div class="input-group margin">
-                            <span><?php echo isset($model->man_cnt) ? $model->man_cnt : ''; ?>人</span>
+                            <span><?php echo isset($model->man_cnt) ? $model->man_cnt : ''; ?> 人</span>
                         </div>
                     </div>
                     <div class="row form-inline">
                         <label> 起团数量 : </label>
                         <div class="input-group margin">
-                            <span><?php echo isset($model->group_cnt) ? $model->group_cnt : ''; ?>人</span>
+                            <span><?php echo isset($model->group_cnt) ? $model->group_cnt : ''; ?></span>
                         </div>
                     </div>
                     <div class="row form-inline" style="padding-left: 75px;">
@@ -104,13 +104,13 @@
                     <div class="row form-inline">
                         <label> 活动原价 : </label>
                         <div class="input-group margin">
-                            <span id="origin_cost"><?= isset($model->origin_cost) ? number_format((float)$model->cost,2,'.','') : '0.00'; ?>元</span>
+                            <span><?= isset($model) ? $model->origin_cost : '0.00'; ?>元</span>
                         </div>
                     </div>
                     <div class="row form-inline">
                         <label> 拼团价 : </label>
                         <div class="input-group margin">
-                            <span name="group_cost" id="group_cost"><?php echo isset($model->group_cost) ? number_format((float)$model->group_cost, 2, '.',''): '0.00'; ?>元</span>
+                            <span><?php echo isset($model) ? $model->group_cost: '0.00'; ?>元</span>
                         </div>
                     </div>
                     <?php
@@ -121,7 +121,7 @@
 
                         <div class="form-group text-center" style="padding: 0px 20px;">
                             <?php
-                            $product_logo = isset($more_data->cover) ? json_decode($more_data->cover) : ['', 'assets/images/logo.png'];
+                            $product_logo = isset($more_data->cover) ? json_decode($more_data->cover) : ['', 'assets/images/picture.png'];
                             ?>
                             <img id="product_logo_image" src="<?= base_url() . $product_logo[1]; ?>"
                                  alt="user image" class="online"

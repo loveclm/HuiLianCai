@@ -125,7 +125,8 @@ class product_util_controller extends BaseController
                     $output_html .= '<td>' . $item->type . '</td>';
                     $output_html .= '<td>';
                     $output_html .= '<a href="#" onclick="deployConfirm(' . $item->id . ',' . $id . ')">编辑 &nbsp;&nbsp;</a>';
-                    $output_html .= '<a href="#" onclick="deleteConfirm(' . $item->id . ',' . $id . ')">删除 &nbsp;&nbsp;</a>';
+                    if($this->product_util_model->isDeletable($item->id, 1))
+                        $output_html .= '<a href="#" onclick="deleteConfirm(' . $item->id . ',' . $id . ')">删除 &nbsp;&nbsp;</a>';
                     $output_html .= '</td>';
                     $output_html .= '</tr>';
                 }
@@ -138,7 +139,8 @@ class product_util_controller extends BaseController
                     $output_html .= '<td>' . $item->name . '</td>';
                     $output_html .= '<td>';
                     $output_html .= '<a href="#" onclick="deployConfirm(' . $item->id . ',' . $id . ')">编辑 &nbsp;&nbsp;</a>';
-                    $output_html .= '<a href="#" onclick="deleteConfirm(' . $item->id . ',' . $id . ')">删除 &nbsp;&nbsp;</a>';
+                    if($this->product_util_model->isDeletable($item->id, 2))
+                        $output_html .= '<a href="#" onclick="deleteConfirm(' . $item->id . ',' . $id . ')">删除 &nbsp;&nbsp;</a>';
                     $output_html .= '</td>';
                     $output_html .= '</tr>';
                 }
@@ -153,7 +155,8 @@ class product_util_controller extends BaseController
                         '" style="width:150px;height:80px;"/></td>';
                     $output_html .= '<td>';
                     $output_html .= '<a href="' . base_url() . 'product_brand_edit/' . $item->id . '">编辑 &nbsp;&nbsp;</a>';
-                    $output_html .= '<a href="#" onclick="deleteConfirm(' . $item->id . ',' . $id . ')">删除 &nbsp;&nbsp;</a>';
+                    if($this->product_util_model->isDeletable($item->id, 3))
+                        $output_html .= '<a href="#" onclick="deleteConfirm(' . $item->id . ',' . $id . ')">删除 &nbsp;&nbsp;</a>';
                     $output_html .= '</td>';
                     $output_html .= '</tr>';
                 }

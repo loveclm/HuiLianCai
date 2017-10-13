@@ -136,7 +136,7 @@
                 <div class="modal-content">
                     <div class="modal-body">
                         <div class="row form-inline">
-                            <label class="col-sm-2 col-xs-12" style="width: 102px;">审核结果：</label>
+                            <label class="col-sm-2 col-xs-12" style="width: 110px;">审核结果：</label>
                             <div class="form-group">
                                 <div class="radio col-sm-4 col-xs-12">
                                     <label>
@@ -193,7 +193,6 @@
                     </div>
                     <div class="modal-body">
                         <div class="row">
-                            <div class="box main-shadow">
                                 <div class="box-body table-responsive no-padding">
                                     <table class="table table-hover">
                                         <thead id="ship_header_tbl"></thead>
@@ -202,8 +201,6 @@
                                     </table>
                                 </div>
                                 <!-- /.box-body -->
-                            </div>
-                            <!-- /.box -->
                         </div>
                     </div>
                 </div>

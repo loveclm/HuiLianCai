@@ -5,23 +5,24 @@ class user_model extends CI_Model
     /***###############################################********
      *  Following functions are the users that manage SYSTEM
      */
-    function getItems($data = ''){
+    function getItems($data = '')
+    {
         $type = $data['searchType'];
         $name = $data['searchName'];
         $login_user = $data['login_user'];
 
         $this->db->select('id, userid, username, role, create_time');
         $this->db->from('tbl_user');
-        $this->db->where('(id='. $login_user . ' or parent_id='. $login_user .')');
+        $this->db->where('(id=' . $login_user . ' or parent_id=' . $login_user . ')');
 
         $criteria = '';
-        if($name != ''){
-            switch ($type){
+        if ($name != '') {
+            switch ($type) {
                 case 0: //account
-                    $criteria = '(userid like \'%'. $name . '%\')';
+                    $criteria = '(userid like \'%' . $name . '%\')';
                     break;
                 case 1: //name
-                    $criteria = '(username like \'%'. $name . '%\')';
+                    $criteria = '(username like \'%' . $name . '%\')';
                     break;
             }
             $this->db->where($criteria);
@@ -34,16 +35,19 @@ class user_model extends CI_Model
     }
 
     // this function is used to get all roles within the scope of the current user
-    function getRoles(){
-        $login_user = 1 ;//$data['login_user'];
+    function getRoles($login_id)
+    {
 
-        $this->db->select('tbl_role.id, tbl_role.role');
-        $this->db->from('tbl_user');
-        $this->db->join('tbl_role', 'tbl_role.id = tbl_user.role');
-        $this->db->where('(tbl_user.id='. $login_user . ' or tbl_user.parent_id='. $login_user .')');
-        if($login_user == '1') // less provider
-            $this->db->where('tbl_user.level != 2');
+//        $this->db->select('tbl_role.id, tbl_role.role');
+//        $this->db->from('tbl_user');
+//        $this->db->join('tbl_role', 'tbl_role.id = tbl_user.role');
+//        $this->db->where('(tbl_user.id='. $login_user . ' or tbl_user.parent_id='. $login_user .')');
+//        if($login_user == '1') // less provider
+//            $this->db->where('tbl_user.level != 2');
 
+        $this->db->select('id, role');
+        $this->db->from('tbl_role');
+        $this->db->where('parent_id', $login_id);
         $query = $this->db->get();
         $result = $query->result();
 
@@ -51,7 +55,8 @@ class user_model extends CI_Model
     }
 
     // the function is used for getting role name from role id
-    function getRoleNameById($id){
+    function getRoleNameById($id)
+    {
         $this->db->select('role');
         $this->db->from('tbl_role');
         $this->db->where('id', $id);
@@ -62,8 +67,9 @@ class user_model extends CI_Model
     }
 
     // function is used to delete with user id from tbl_user table
-    function deleteSystemUser($id){
-        if(!$this->isDeletable($id)) return false;
+    function deleteSystemUser($id)
+    {
+        if (!$this->isDeletable($id)) return false;
 
         $this->db->where('id', $id);
         $this->db->delete('tbl_user');
@@ -71,12 +77,14 @@ class user_model extends CI_Model
         return true;
     }
 
-    // function is decided whether can be deleted current record (business user record)
-    function isDeletable($id){
-        $this->db->select('saleman');
-        $this->db->from('tbl_userinfo');
-        $this->db->where('saleman', $id);
-        $query = $this->db->get();
+
+    function isDeletable($id)
+    {
+        $query = $this->db->select('id')
+            ->from('tbl_userinfo')
+            ->where('saleman', $id)
+            ->limit(1)
+            ->get();
 
         return count($query->result()) > 0 ? false : true;
     }
@@ -87,8 +95,8 @@ class user_model extends CI_Model
      */
     function addSystemUser($userInfo)
     {
-        if( isset($userInfo->id)){
-            $this->updateUser();
+        if (isset($userInfo->id)) {
+            $this->updateSystemUser($userInfo);
         }
         $userInfo->create_time = date("Y-m-d H:i:s");
         $this->db->trans_start();
@@ -100,7 +108,8 @@ class user_model extends CI_Model
         return $insert_id;
     }
 
-    function updateSystemUser($userinfo){
+    function updateSystemUser($userinfo)
+    {
         $this->db->where('id', $userinfo->id);
         $this->db->update('tbl_user', $userinfo);
     }
@@ -119,6 +128,7 @@ class user_model extends CI_Model
 
         return $query->result()[0];
     }
+
     /**
      * This function is used to match users password for change password
      * @param number $userId : This is user id
@@ -156,14 +166,15 @@ class user_model extends CI_Model
         return $this->db->affected_rows();
     }
 
-    function addNewShop($userid, $password, $saleman){
-         $userinfo = array(
-             'userid' => $userid,
-             'password' => $password,
-             'saleman_mobile' => $saleman,
-             'type' => 3,
-             'created_time' =>  date('Y-m-d H:i:s')
-         );
+    function addNewShop($userid, $password, $saleman)
+    {
+        $userinfo = array(
+            'userid' => $userid,
+            'password' => $password,
+            'saleman_mobile' => $saleman,
+            'type' => 3,
+            'created_time' => date('Y-m-d H:i:s')
+        );
 
         $this->db->trans_start();
         $this->db->insert('tbl_userinfo', $userinfo);
@@ -172,6 +183,7 @@ class user_model extends CI_Model
 
         return $insert_id;
     }
+
     /**
      * This function is used to add new user to system
      * @return number $insert_id : This is last inserted id
@@ -179,7 +191,7 @@ class user_model extends CI_Model
     function addNewUser($user, $userInfo)
     {
         $users = $this->findAllUsersById($user['userid']);
-        if(count($users)>0) return 0;
+        if (count($users) > 0) return 0;
 
         $user['create_time'] = date('Y-m-d H:i:s');
 
@@ -207,7 +219,7 @@ class user_model extends CI_Model
      * @param string $searchText : This is optional search text
      * @return number $count : This is row count
      */
-    function userListingCount($level,$searchText = '')
+    function userListingCount($level, $searchText = '')
     {
         $this->db->select('BaseTbl.id, BaseTbl.userid, BaseTbl.username, BaseTbl.mobile, Role.role');
         $this->db->from('tbl_user as BaseTbl');
@@ -352,7 +364,7 @@ class user_model extends CI_Model
     function addNewOrderUser($userInfo)
     {
         $this->db->trans_start();
-        $this->db->insert('user', $userInfo);
+        $this->db->insert('tbl_user', $userInfo);
 
         $insert_id = $this->db->insert_id();
 
@@ -394,7 +406,8 @@ class user_model extends CI_Model
     }
 
 
-    function getUserInfoByid($id){
+    function getUserInfoByid($id)
+    {
         $this->db->select('*');
         $this->db->from('tbl_userinfo');
         $this->db->where('id', $id);
@@ -405,28 +418,33 @@ class user_model extends CI_Model
         return $result[0];
     }
 
-    function getUserName($id){
+    function getUserName($id)
+    {
         $this->db->select('username');
         $this->db->from('tbl_userinfo');
         $this->db->where('id', $id);
         $query = $this->db->get();
         $result = $query->result();
-        if(count($result) == 0) return '';
+        if (count($result) == 0) return '';
 
         return $result[0]->username;
     }
 
-    function getShipMans(){
+    function getShipMans($provider_id = '')
+    {
         $this->db->select('id, username, contact_phone, more_data');
         $this->db->from('tbl_userinfo');
-        $this->where('type', 4);
+        $this->db->where('type', 4);
+        if ($provider_id != '')
+            $this->db->where('provider_id', $provider_id);
 
         $query = $this->db->get();
 
         return $query->result();
     }
 
-    function getRoleinfos($type, $id = 0){
+    function getRoleinfos($type, $id = 0)
+    {
         $this->db->select('id, menu_id, menu');
         $this->db->from('tbl_menu');
         $this->db->where('( type = 0 or type =' . $type . ')');
@@ -436,13 +454,13 @@ class user_model extends CI_Model
         $top_menus = $query->result();
 
         $data = array();
-        if(count($top_menus) == 0) return $data;
+        if (count($top_menus) == 0) return $data;
         $i = 0;
-        foreach ($top_menus as  $key => $top_menu){
+        foreach ($top_menus as $key => $top_menu) {
             $data_item = array(
                 'id' => $top_menu->menu_id,
-                'text' =>$top_menu->menu,
-                'data' =>$this->getRoleinfos($type, $top_menu->id)
+                'text' => $top_menu->menu,
+                'data' => $this->getRoleinfos($type, $top_menu->id)
             );
             array_push($data, $data_item);
             $i++;
@@ -543,7 +561,8 @@ class user_model extends CI_Model
         return $query->result();
     }
 
-    function getProviderInfos($id){
+    function getProviderInfos($id)
+    {
         $this->db->select('*');
         $this->db->from('tbl_user');
         $this->db->join('tbl_userinfo', 'tbl_user.userid = tbl_userinfo.userid', 'left');
@@ -553,6 +572,25 @@ class user_model extends CI_Model
 
         return $query->row();
     }
+
+    function getProviderInfoFromTblUser($id)
+    {
+        $result = $this->db->select('tbl_userinfo.*')
+            ->from('tbl_user')
+            ->join('tbl_userinfo', 'tbl_user.userid = tbl_userinfo.userid')
+            ->where('tbl_user.id', $id)
+            ->get()->result();
+
+        if (count($result) == 0) return NULL;
+        return $result[0];
+    }
+
+    function getProviderId($user_id)
+    {
+        $userinfo = $this->getProviderInfoFromTblUser($user_id);
+        return ($userinfo == NULL) ? '0' : $userinfo->id;
+    }
+
     /**
      * This function is used to update the user information
      * @param array $userInfo : This is users updated information
@@ -599,21 +637,23 @@ class user_model extends CI_Model
      * This function is used to get the ip list related to user
      * @param number $userId : This is user id
      */
-    function getPublicNumberByUserId($userId){
+    function getPublicNumberByUserId($userId)
+    {
         $this->db->select('id, provider_id');
         $this->db->from('tbl_userinfo');
         $this->db->where('userid', $userId);
 
         $query = $this->db->get();
         $result = $query->result();
-        if(count($result) == 0) return 0;
+        if (count($result) == 0) return 0;
 
         $id = ($result[0]->provider_id == '0') ? $result[0]->id : $result[0]->provider_id;
 
         return $id;
     }
 
-    function getIdByUserId($userid){
+    function getIdByUserId($userid)
+    {
         $this->db->select('id');
         $this->db->from('tbl_userinfo');
         $this->db->where('userid', $userid);
@@ -623,15 +663,17 @@ class user_model extends CI_Model
         if (count($result) == 0) return 0;
         return $result[0]->id;
     }
+
     /***
      *  This function is used when add user. check whether userid exists
      */
-    function isExistUserId($userid, $type = 0){
-        if($type == 0){
+    function isExistUserId($userid, $type = 0)
+    {
+        if ($type == 0) {
             $this->db->select('userid');
             $this->db->from('tbl_user');
             $this->db->where('userid', $userid);
-        }else{
+        } else {
             $this->db->select('userid');
             $this->db->from('tbl_userinfo');
             $this->db->where('userid', $userid);
@@ -640,7 +682,7 @@ class user_model extends CI_Model
         $query = $this->db->get();
         $result = $query->result();
 
-        if(count($result) == 0) return FALSE;
+        if (count($result) == 0) return FALSE;
 
         return TRUE;
     }
@@ -648,12 +690,13 @@ class user_model extends CI_Model
     /***
      *  This function is used when add user. check whether username exists
      */
-    function isExistUserName($username, $type = 0){
-        if($type == 0){
+    function isExistUserName($username, $type = 0)
+    {
+        if ($type == 0) {
             $this->db->select('username');
             $this->db->from('tbl_user');
             $this->db->where('username', $username);
-        }else{
+        } else {
             $this->db->select('username');
             $this->db->from('tbl_userinfo');
             $this->db->where('username', $username);
@@ -661,7 +704,7 @@ class user_model extends CI_Model
 
         $query = $this->db->get();
         $result = $query->result();
-        if(count($result) == 0) return FALSE;
+        if (count($result) == 0) return FALSE;
 
         return TRUE;
     }

@@ -78,7 +78,7 @@ class login_controller extends CI_Controller
                     $permission = $this->user_model->getRoleById($result['userinfo']->role);
 
                     $sessionArray = array(
-                        'login_id' => $result['userinfo']->id,
+                        'login_id' => ($result['userinfo']->parent_id == '0') ? $result['userinfo']->id : $result['userinfo']->parent_id,
                         'level'=>$result['userinfo']->level,
                         'role'=>$result['userinfo']->role,
                         'roleText'=>$result['userinfo']->role_text,

@@ -48,7 +48,7 @@
                             $logo = isset($more_data) ? $more_data->logo : 'assets/images/user_logo.png';
                             ?>
                             <img id="logo_image" src="<?= base_url() . $logo; ?>"
-                                 alt="user image" class="online" style="height: 80px; width:100px; border-radius: 50%; padding: 20px; padding-bottom:2px;"><br>
+                                 alt="user image" class="online" style="height: 50px; width:50px; border-radius: 50%;"><br>
                         </div>
                     </div>
                 </div>
@@ -81,9 +81,6 @@
                         <label style="text-align: left"><?php echo isset($shop) ? $shop->contact_phone : ''; ?></label>
                     </div>
                 </div>
-                <?php
-                $more_data = json_decode(isset($shop) ? $shop->more_data : null);
-                ?>
                 <div class="row form-inline">
                     <label> 推荐人手机号 : </label>
 
@@ -97,10 +94,7 @@
                 <div class="row form-inline">
                     <div id="company_cert_content" class="input-group margin" style="left:100px;">
                         <div class="form-group text-center" style="padding: 0px 20px;">
-                            <?php
-                            $cert = isset($more_data) ? json_decode($more_data->cert) : 'assets/images/logo.png';
-                            ?>
-                            <img id="company_cert_image" src="<?= base_url() . $cert; ?>"
+                            <img id="company_cert_image" src="<?= base_url() . $more_data->cert; ?>"
                                  alt="user image" class="online" style="height: 200px; width:400px; padding: 20px; padding-bottom:2px;"><br>
                         </div>
                    </div>

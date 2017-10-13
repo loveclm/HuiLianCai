@@ -1,5 +1,5 @@
 /*
-fileName: area.js
+fileName: 
 description: process Tourist Area
 */
 
@@ -102,3 +102,46 @@ function showLists() {
     });
 }
 
+
+function deployConfirm(id, balance) {
+    $("#item_id").val(id);
+    $("#item_status").val(balance); // status=0-disable, 1-available
+    $("#confirm_deploy").show();
+}
+
+function deployItem() {
+    var id = $("#item_id").val();
+    var balance = parseFloat($("#item_status").val());
+    var req_money = parseFloat($('#req_money').val());
+
+    if( req_money > balance){
+        alert('已超出余额');
+        return;
+    }else if(req_money < 100) {
+        alert('提现金额要100元起');
+        return;
+    }
+
+    $("#confirm_deploy").hide();
+
+    var itemInfo = {
+        'provider_id': id,
+        'status' : 1,
+        'money' : req_money
+    };
+
+    $.ajax({
+        url: baseURL + "transaction_manage/withdraw_controller/addItem2DB",
+        type: "POST",
+        data: {'itemInfo': itemInfo},
+        success: function (result) {
+            console.log(result);
+            if (result != 0){
+                showLists();
+                $('#confirm_delete').show();
+            }
+        }
+
+    });
+
+}

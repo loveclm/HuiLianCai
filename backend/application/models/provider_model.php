@@ -70,6 +70,23 @@ class provider_model extends CI_Model
         return $result[0];
     }
 
+    function isDeletable($id)
+    {
+        $query = $this->db->select('id')
+            ->from('tbl_userinfo')
+            ->where('provider', $id)
+            ->limit(1)
+            ->get();
+
+        if(count($query->result()) > 0) return false;
+
+        $result = $this->db->select('id')
+            ->ftom('tbl_product')
+            ->where('provider_id', $id)
+            ->limit(1)->get()->result();
+
+        return count($result) == 0 ? true : false;
+    }
     /**
      * This function is used to get Tourist Area by id
      * @return array $result : This is result

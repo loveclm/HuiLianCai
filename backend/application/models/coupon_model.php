@@ -43,18 +43,23 @@ class coupon_model extends CI_Model
      */
     function add($item)
     {
-        if( !isset($item['id']) || ($item['id'] == '0')){
-            $this->db->trans_start();
+        $result = $this->db->select('id')
+            ->from('tbl_coupon')
+            ->where('user_id', $item['user_id'])
+            ->get()->result();
 
-            $item['pass_time'] = date('Y-m-d H:i:s');
-            $this->db->insert('tbl_coupon', $item);
-            $insert_id = $this->db->insert_id();
-            $this->db->trans_complete();
-        }else{
-            $insert_id = $this->update($item, $item['id']);
+        if(count($result) != 0){
+            $this->update($item, $item['user_id']);
+            return $result[0]->id;
         }
 
-        return $insert_id;
+        $this->db->trans_start();
+        $item['id'] = $item['user_id'] . sprintf("%'03d", mt_rand(100,999));
+        $this->db->insert('tbl_coupon', $item);
+        $insert_id = $this->db->insert_id();
+        $this->db->trans_complete();
+
+        return $item['id'];
     }
 
     /**
@@ -64,7 +69,7 @@ class coupon_model extends CI_Model
      */
     function update($item, $id)
     {
-        $this->db->where('userid', $id);
+        $this->db->where('user_id', $id);
         $result = $this->db->update('tbl_coupon', $item);
         return $result;
     }

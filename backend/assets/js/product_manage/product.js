@@ -1,5 +1,5 @@
 /*
-fileName: area.js
+fileName:
 description: process Tourist Area
 */
 
@@ -260,6 +260,7 @@ function showLists(id) {
                 $('#header_tbl').html(res.header);
                 $('#content_tbl').html(res.content);
                 $('#footer_tbl').html(res.footer);
+                executionPageNation();
             } else {
                 alert('search failed!');
                 console.log(res.data);

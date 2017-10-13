@@ -15,7 +15,7 @@
             <label for="confirm_passwd">确认密码</label>
         </div>
         <div style="height: 25px"></div>
-        <div class="btn_login" onclick="OnResetpassword()">完成</div>
+        <div id="confirm_reset_pwd" class="btn_login" onclick="">完成</div>
     </div>
 
 </body>
@@ -26,7 +26,7 @@
 
 <script type="text/javascript">
     $(function(){
-        app_data.phone_num = sessionStorage.getItem('phone_num');
+        app_data.phone_num = getPhoneNumber();
     });
 </script>
 </html>

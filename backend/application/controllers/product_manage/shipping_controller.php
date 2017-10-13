@@ -106,7 +106,7 @@ class shipping_controller extends BaseController
             if (!empty($_POST)) {
                 $id = $_POST['id'];
                 $searchData = $_POST['searchData'];
-                $searchData['provider_id'] = ($this->global['shop_manager_number'] != '') ? $this->global['shop_manager_number'] : '0';
+                $searchData['provider_id'] = $this->user_model->getProviderId($this->global['login_id']);
                 // get top list data in homepage
                 switch ($id) {
                     case 1:
@@ -171,11 +171,14 @@ class shipping_controller extends BaseController
                     $output_html .= '<tr>';
                     $output_html .= '<td>' . $item->userid . '</td>';
                     $output_html .= '<td>' . $item->username . '</td>';
-                    $output_html .= '<td>' . $item->address . '</td>';
-                    $output_html .= '<td>' . $item->contact_name . '</td>';
+                    $output_html .= '<td>' . $item->provider . '</td>';
+                    $output_html .= '<td>' . $item->provider_addr . '</td>';
                     $output_html .= '<td>' . $item->contact_phone . '</td>';
-                    $output_html .= '<td>' . '头像' . '</td>';
-                    $output_html .= '<td>' . '订单数量' . '</td>';
+                    $output_html .= '<td>';
+                    $output_html .=  '<img src="'. base_url() . $item->more_data . '" style="width:50px;height:50px; border-radius:50%; border:1px solid #f0f0f0;">';
+                    $output_html .= '</td>';
+
+                    $output_html .= '<td>' . $this->shipping_model->getShippingCount($this->user_model->getIdByUserId($item->userid)) . '</td>';
                     $output_html .= '<td>';
                     $output_html .= ($item->status == 1) ? '未禁用' : '已禁用';
                     $output_html .= '</td>';
@@ -322,7 +325,8 @@ class shipping_controller extends BaseController
             $this->loadViews("user_manage/shipman_add", $this->global, $data, NULL);
         } else {
             if ($this->user_model->isExistUserName($item->username, 1) ) {
-                $this->session->set_flashdata('error', '名称已存在。');
+                $this->form_validation->set_rules('userid', '名称已存在。', 'user_error');
+                $this->form_validation->run();
                 $data['id'] = $ship_id;
 
                 if ($ship_id != '')
@@ -336,23 +340,26 @@ class shipping_controller extends BaseController
 
             if ($ship_id == '') {
                 if ($this->user_model->isExistUserId($item->userid, 1) == true) {
-                    $this->session->set_flashdata('error', '账号已存在。');
+                    $this->form_validation->set_rules('userid', '账号已存在。', 'user_error');
+                    $this->form_validation->run();
 
                     $this->global['model'] = $item;
                     // the user list that manages site
                     $data['id'] = $ship_id;
 
                     $this->loadViews("user_manage/shipman_add", $this->global, $data, NULL);
+                    return;
                 }
 
                 if ($item->password != $confirm_password) {
-                    $this->session->set_flashdata('error', '密码和确认密码必须相同。');
-
+                    $this->form_validation->set_rules('userid', '密码和确认密码必须相同。', 'user_error');
+                    $this->form_validation->run();
                     $this->global['model'] = $item;
                     // the user list that manages site
                     $data['id'] = $ship_id;
 
                     $this->loadViews("user_manage/shipman_add", $this->global, $data, NULL);
+                    return;
                 }
             }
 
@@ -368,6 +375,7 @@ class shipping_controller extends BaseController
             } else {
                 $iteminfo['userid'] = $item->userid;
                 $iteminfo['orderID'] = $item->password;
+                $iteminfo['password'] = getHashedPassword($item->password);
                 $iteminfo['more_data'] = $item->more_data;
             }
 
@@ -402,6 +410,10 @@ class shipping_controller extends BaseController
                 );
                 $this->updateShippingData($shipping, $shipping_info->id);
             }
+            if(isset($data['orderID'])){
+                $data['password'] = getHashedPassword($data['orderID']);
+            }
+
             echo $this->shipping_model->add($result);
         }
     }
@@ -445,11 +457,11 @@ class shipping_controller extends BaseController
         if ($this->isAdmin() == TRUE) {
             $this->loadThis();
         } else {
-            $this->global['pageTitle'] = '供货商详情';
+            $this->global['pageTitle'] = '配送员详情';
             $this->global['pageName'] = 'shipping_show';
 
-            $this->global['shipping'] = $this->user_model->getshippingInfos($userId);
-            $data['salemans'] = $this->user_model->getOperatingUsers();
+            $this->global['model'] = $this->shipping_model->getItemById($userId);
+            $data['id'] = $userId;
 
             $this->loadViews("user_manage/shipman_detail", $this->global, $data, NULL);
         }

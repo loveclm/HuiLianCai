@@ -115,7 +115,10 @@ class product_format_controller extends BaseController
                     $output_html .= '<td>';
                     $output_html .= '<a href="'. base_url(). 'product_format_show/' . $item->id . '">查看 &nbsp;&nbsp;</a>';
                     $output_html .= '<a href="'. base_url(). 'product_format_edit/' . $item->id . '">编辑 &nbsp;&nbsp;</a>';
-                    $output_html .= '<a href="#" onclick="deleteConfirm(\'' . $item->id . '\')">删除 &nbsp;&nbsp;</a>';
+
+                    if($this->product_format_model->isDeletable($item->id))
+                        $output_html .= '<a href="#" onclick="deleteConfirm(\'' . $item->id . '\')">删除 &nbsp;&nbsp;</a>';
+
                     $output_html .= '</td>';
                     $output_html .= '</tr>';
                 }
@@ -184,7 +187,7 @@ class product_format_controller extends BaseController
         $this->load->library('form_validation');
 
         $this->form_validation->set_rules('barcode', '商品条码', 'trim|required|exact_length[13]');
-        $this->form_validation->set_rules('product_name', '商品名称', 'trim|required|exact_length[11]');
+        $this->form_validation->set_rules('product_name', '商品名称', 'trim|required|max_length[30]');
         $this->form_validation->set_rules('type', '分类', 'required|is_natural_no_zero');
         $this->form_validation->set_rules('standard', '规格型号', 'trim|required|max_length[15]');
         $this->form_validation->set_rules('brand', '品牌', 'trim|required|is_natural_no_zero');

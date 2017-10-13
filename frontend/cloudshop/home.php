@@ -4,75 +4,68 @@
 <?php include('page_header.php'); ?>
 
 <body>
+
+
 <div class="page-wrapper">
     <div class="page-content-wrapper">
         <div class="page-content" style="">
-            <div id="advertise_header" class="carousel slide vertical nicer" data-ride="carousel">
-                <!-- Indicators -->
-                <ol class="carousel-indicators">
-                    <li data-target="#advertise_header" data-slide-to="0" class="active"></li>
-                    <li data-target="#advertise_header" data-slide-to="1"></li>
-                    <li data-target="#advertise_header" data-slide-to="2"></li>
-                    <li data-target="#advertise_header" data-slide-to="3"></li>
-                    <li data-target="#advertise_header" data-slide-to="4"></li>
-                </ol>
-                <!-- Wrapper for slides -->
-                <div class="carousel-inner">
-                    <div class="item active">
-                        <div class="carousel_item">
-                            <img src="assets/images/tmp/u1.png">
-                        </div>
-                    </div>
-                    <div class="item">
-                        <div class="carousel_item">
-                            <img src="assets/images/tmp/u2.png">
-                        </div>
-                    </div>
-                    <div class="item">
-                        <div class="carousel_item">
-                            <img src="assets/images/tmp/u3.jpg">
-                        </div>
-                    </div>
-                    <div class="item">
-                        <div class="carousel_item">
-                            <img src="assets/images/tmp/u1.png">
-                        </div>
-                    </div>
-                    <div class="item">
-                        <div class="carousel_item">
-                            <img src="assets/images/tmp/u2.png">
-                        </div>
-                    </div>
-                </div>
-                <!-- Left and right controls -->
-<!---->
-<!--                <a class="left carousel-control" href="#advertise_header" data-slide="prev">-->
-<!--                    <span class="glyphicon glyphicon-chevron-left"></span>-->
-<!--                    <span class="sr-only">Previous</span>-->
-<!--                </a>-->
-<!--                <a class="right carousel-control" href="#advertise_header" data-slide="next">-->
-<!--                    <span class="glyphicon glyphicon-chevron-right"></span>-->
-<!--                    <span class="sr-only">Next</span>-->
-<!--                </a>-->
+            <div id="product_container" class="product_container" style="overflow-y: scroll;">
+            </div>
+            <div id="advertise_header" class="owl-carousel">
             </div>
             <div id="horizontal_menu_bar">
             </div>
             <div id="detail_menu">
                 <div id="detail_menu_content"></div>
-                <div id="detail_menu_mask"></div>
-            </div>
-            <div id="product_container" class="product_container" style="overflow-y: scroll;">
-
-
+                <div id="detail_menu_mask" onclick="selectCurMenuItem();"></div>
             </div>
         </div>
     </div>
-
 </div>
+
+<div id="addToCart_dialog" class="modal fade" tabindex="-1" data-backdrop="basic" data-keyboard="false">
+    <div class="modal-body">
+        <div class="product_amount"><span>选择数量</span>
+            <button class="btn-right" onclick="increaseAmount(9999)">+</button>
+            <input id="product_amount9999" value="0" oninput="validateAmount(9999)">
+            <input id="min_amount9999" value="1" style="display: none;">
+            <input id="max_amount9999" value="100" style="display: none;">
+            <button class="btn-left" onclick="decreaseAmount(9999)">-</button>
+        </div>
+    </div>
+    <div class="modal-footer" style="border: none;">
+        <button type="button" class="btn_custom btn-default"
+                onclick="$('#addToCart_dialog').modal('hide');">取消
+        </button>
+        <button type="button" class="btn_custom"
+                onclick="onAddCart()">加入购物车
+        </button>
+    </div>
+</div>
+
+<div class="page-footer" id="page-footer">
+    <div class="bottom_item" onclick="selectBottomItem(1,0)">
+        <img src="assets/images/tabbar_icon1_d@3x.png" id="bottom_item_image1">
+        <h5 id="bottom_item_text1" style="color: #38abff">拼货</h5>
+    </div>
+    <div class="bottom_item" onclick="selectBottomItem(2,0)">
+        <img src="assets/images/tabbar_icon2_n@3x.png" id="bottom_item_image2">
+        <span id="cart_amount" class="badge badge-alert" style="right:55%"></span>
+        <h5 id="bottom_item_text2">购物车</h5>
+    </div>
+    <div class="bottom_item" onclick="selectBottomItem(3,0)">
+        <img src="assets/images/tabbar_icon3_n@3x.png" id="bottom_item_image3">
+        <h5 id="bottom_item_text3">消息</h5>
+    </div>
+    <div class="bottom_item" onclick="selectBottomItem(4,0)">
+        <img src="assets/images/tabbar_icon4_n@3x.png" id="bottom_item_image4">
+        <h5 id="bottom_item_text4">我的</h5>
+    </div>
+</div>
+
 </body>
 
 <?php include('page_footer.php'); ?>
-
 <script type="text/javascript" src="assets/js/main.js"></script>
 <script type="text/javascript" src="assets/js/item_templates.js"></script>
 

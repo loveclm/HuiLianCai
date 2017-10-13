@@ -159,7 +159,7 @@ class user_controller extends BaseController
             $this->global['pageName'] = 'user_add';
 
             if(empty($_POST)){
-                $data['roles'] = $this->user_model->getRoles();
+                $data['roles'] = $this->user_model->getRoles($this->global['login_id']);
 
                 $this->loadViews("user_manage/user_add", $this->global, $data, NULL);
             }else{
@@ -190,7 +190,7 @@ class user_controller extends BaseController
             $cpassword = $this->input->post('cpassword');
         }
 
-        $data['roles'] = $this->user_model->getRoles();
+        $data['roles'] = $this->user_model->getRoles($this->global['login_id']);
         if ($this->form_validation->run() == FALSE) {
             if($id == 0) {
                 $item->password = '';
@@ -223,8 +223,8 @@ class user_controller extends BaseController
         } else {
             $this->global['pageTitle'] = '编辑用户';
             $this->global['pageName'] = 'user_add';
-            $data['roles'] = $this->user_model->getRoles();
-
+            $data['roles'] = $this->user_model->getRoles($this->global['login_id']);
+            $data['id'] = $Id;
             $this->global['model'] =  $this->user_model->getSystemUserById($Id);
             $this->loadViews("user_manage/user_add", $this->global, $data, NULL);
         }
@@ -243,14 +243,14 @@ class user_controller extends BaseController
             $this->global['typelist'] = $this->product_util_model->getProductTypeList();
 
             $data['empty'] = NULL;
-            $provider_id = ($this->isTicketter()== FALSE) ? $this->global['shop_manager_number'] : '0';
+
             $item = $this->getItemInfo($Id);
             $userinfo = $this->user_model->getProviderInfos($item->provider_id);
             $item->provider_name = $userinfo->username;
             $item->provider_userid = $userinfo->userid;
 
             $this->global['brandlist'] = $this->product_util_model->getProductBrandList($item->type);
-            $this->global['datalist'] = $this->user_model->getProductList($item->type, $item->brand, $provider_id);
+            $this->global['datalist'] = $this->user_model->getProductList($item->type, $item->brand, $item->provider_id);
 
             $this->global['model'] = $item;
             $this->loadViews("user_manage/user_detail", $this->global, $data, NULL);

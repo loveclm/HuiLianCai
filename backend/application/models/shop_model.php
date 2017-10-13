@@ -133,21 +133,24 @@ class shop_model extends CI_Model
      */
     function add($itemInfo)
     {
-        if (isset($itemInfo['userid'])) {
-            $item = $this->getItemById($itemInfo['userid']);
-        } else {
-            $item = $this->getItemByNumber($itemInfo['email']);
-        }
-        if (count($item) > 0) {
-            $itemInfo['update_time'] = date("Y-m-d");
-            $insert_id = $this->update($itemInfo, $item->userid);
-        } else {
-            $itemInfo['created_time'] = date("Y-m-d");
-            $this->db->trans_start();
-            $this->db->insert('tbl_userinfo', $itemInfo);
-            $insert_id = $this->db->insert_id();
-            $this->db->trans_complete();
-        }
+//        if (isset($itemInfo['userid'])) {
+//            $item = $this->getItemById($itemInfo['userid']);
+//        } else {
+//            $item = $this->getItemByNumber($itemInfo['email']);
+//        }
+//        if (count($item) > 0) {
+//            $itemInfo['update_time'] = date("Y-m-d");
+//            $insert_id = $this->update($itemInfo, $item->userid);
+//        } else {
+//            $itemInfo['created_time'] = date("Y-m-d");
+//            $this->db->trans_start();
+//            $this->db->insert('tbl_userinfo', $itemInfo);
+//            $insert_id = $this->db->insert_id();
+//            $this->db->trans_complete();
+//        }
+
+        $this->db->where('id', $itemInfo['id']);
+        $insert_id = $this->db->update('tbl_userinfo', $itemInfo);
 
         return $insert_id;
     }

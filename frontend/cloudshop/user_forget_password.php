@@ -16,7 +16,7 @@
             <span id="sms_button"  onclick="sendingSMS()">获取验证码</span>
         </div>
         <div style="height: 25px"></div>
-        <div class="btn_login" onclick="OnNext()">下一步</div>
+        <div id="confirm_verify" class="btn_login" onclick="">下一步</div>
     </div>
 
 </body>
@@ -29,21 +29,9 @@
     function OnNext() {
         if( !confirm_verifyPhone()) return;
         var phone_num = $('#phone_number').val();
-        sessionStorage.setItem('phone_num', phone_num);
+        setPhoneNumber(phone_num);
 
-        window.location.href = 'new_password.php';
-    }
-
-    function sendingSMS() {
-        var phone_num = $('#phone_number').val();
-        if( phone_num == "" || phone_num.length != 11){
-            showMessage('手机号不正确。');
-            return;
-        }
-        // show the prompt '您好，已将验证码发送到您的手机，请注意查收'
-        showMessage('您好，已将验证码发送到您的手机，请注意查收。');
-        //send message sending request to server
-        sendSMSToServer(phone_num);
+        window.location.href = 'user_new_password.php';
     }
 </script>
 

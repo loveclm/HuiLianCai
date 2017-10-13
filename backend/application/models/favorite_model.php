@@ -42,7 +42,7 @@ class favorite_model extends CI_Model
      */
     function add($item)
     {
-        if( !isset($item['id']) || ($item['id'] == '0')){
+        if( !isset($item['id'])){
             $this->db->select('id');
             $this->db->from('tbl_shop_favorite');
             $this->db->where('shop', $item['shop']);

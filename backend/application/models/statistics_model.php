@@ -21,7 +21,7 @@ class statistics_model extends CI_Model
 
         // get all days between start date and end date
         $days = $this->getAllDayInfos($start, $end, 'create_time');
-        if ($days == NULL) return NULL;
+        if ($days == NULL) return array();
 
         $records = array();
         // get distinct ship man record along with each date
@@ -48,6 +48,7 @@ class statistics_model extends CI_Model
                 $this->db->from('tbl_order');
                 $this->db->where('date(create_time)', $day->filter_date);
                 $this->db->where('ship_man', $ship_man->ship_man);
+                $this->db->where('status', 4);
                 if ($pay_type > 0)
                     $this->db->where('pay_method', $pay_type);
                 if ($provider_id != '0')
@@ -345,6 +346,10 @@ class statistics_model extends CI_Model
 
         $start = ($start_month != '0') ? $start_year . '-' . $start_month . '-1' : '';
         $end = ($end_month != '0') ? $end_year . '-' . $end_month . '-31' : '';
+
+        $result = $this->db->select('id')
+            ->from('tbl_order')->limit(1)->get()->result();
+        if(count($result) == 0) return $result;
 
         // get all days between start date and end date
         $sql = "select left(create_time, 7) as filter_date from tbl_order where status =4";
@@ -744,6 +749,10 @@ class statistics_model extends CI_Model
         $start = ($start_month != '0') ? $start_year . '-' . $start_month . '-1' : '';
         $end = ($end_month != '0') ? $end_year . '-' . $end_month . '-31' : '';
 
+        $result = $this->db->select('id')
+            ->from('tbl_order')->limit(1)->get()->result();
+        if(count($result) == 0) return $result;
+
         // get all days between start date and end date
         $sql = "select left(create_time, 7) as date_filter from tbl_order where status =4";
         if ($start != '')
@@ -807,25 +816,10 @@ class statistics_model extends CI_Model
         $start = ($start_month != '0') ? date("Y") . '-' . $start_month . '-' . $start_day : '';
         $end = ($end_month != '0') ? date("Y") . '-' . $end_month . '-' . $end_day : '';
         // get all users between start date and end date
-//        $this->db->select('saleman');
-//        $this->db->from('tbl_userinfo');
-//        $this->db->where('type', 2);
-//
-//        if ($start != '')
-//            $this->db->where('date(created_time)>=' . $start);
-//        if ($end != '')
-//            $this->db->where('date(created_time)<=' . $end);
-//
-//        $this->db->group_by('saleman');
-//        $query = $this->db->get();
-//        $result = $query->result();
-//        if( count($result) == 0) return;
-//        $users = $result;
-
         $records = array();
+
         // get recommended number of the user
-//        foreach ($users as $user) {
-        $this->db->select('count(tbl_userinfo.saleman)  as cnt, tbl_user.username, tbl_user.userid');
+        $this->db->select('count(tbl_userinfo.saleman)  as cnt, tbl_user.username, tbl_user.userid, tbl_user.id');
         $this->db->from('tbl_userinfo');
         $this->db->join('tbl_user', 'tbl_userinfo.saleman = tbl_user.id');
         $this->db->where('tbl_userinfo.type', 2);
@@ -848,7 +842,7 @@ class statistics_model extends CI_Model
                 $item->userid,
                 $item->username,
                 $item->cnt,
-                '<a href="' . base_url() . 'showProviders/' . $item->userid . '">推荐明细</a>'
+                '<a href="' . base_url() . 'showProviders/' . $item->id . '">推荐明细</a>'
             ];
 
             array_push($records, $record);
@@ -869,7 +863,7 @@ class statistics_model extends CI_Model
         $end = ($end_month != '0') ? date("Y") . '-' . $end_month . '-' . $end_day : '';
 
         // get all users between start date and end date
-        $this->db->select('saleman_mobile');
+        $this->db->select('count(saleman_mobile)  as cnt, saleman_mobile');
         $this->db->from('tbl_userinfo');
         $this->db->where('type', 3);
 
@@ -881,33 +875,18 @@ class statistics_model extends CI_Model
         $this->db->group_by('saleman_mobile');
         $query = $this->db->get();
         $result = $query->result();
-        if (count($result) == 0) return;
 
-        $users = $result;
         $records = array();
         // get recommended number of the user
-        foreach ($users as $user) {
-            $this->db->select('count(saleman_mobile)  as cnt, saleman_mobile');
-            $this->db->from('tbl_userinfo');
-            $this->db->where('type', 3);
-
-            if ($start != '')
-                $this->db->where('date(created_time)>=' . $start);
-            if ($end != '')
-                $this->db->where('date(created_time)<=' . $end);
-
-            $this->db->group_by('saleman_mobile');
-            $query = $this->db->get();
-            $result = $query->result();
-            if (count($result) == 0) continue;
+        foreach ($result as $user) {
             if ($name != '') {
-                if (strpos($result[0]->saleman_mobile, $name) === false) continue;
+                if (strpos($user->saleman_mobile, $name) === false) continue;
             }
 
             $record = [
-                $result[0]->saleman_mobile,
-                $result[0]->cnt,
-                '<a href="' . base_url() . 'showShops/' . $result[0]->saleman_mobile . '">推荐明细</a>'
+                $user->saleman_mobile,
+                $user->cnt,
+                '<a href="' . base_url() . 'showShops/' . $user->saleman_mobile . '">推荐明细</a>'
             ];
 
             array_push($records, $record);
@@ -926,7 +905,7 @@ class statistics_model extends CI_Model
 
         $query = $this->db->get();
         $result = $query->result();
-        if (count($result) == 0) return NULL;
+        if (count($result) == 0) return $result;
 
         $activities = array();
         foreach ($result as $item) {
@@ -1058,6 +1037,10 @@ class statistics_model extends CI_Model
 
     function getAllDayInfos($start, $end, $time_field)
     {
+        $result = $this->db->select('id')
+            ->from('tbl_order')->limit(1)->get()->result();
+        if(count($result) == 0) return NULL;
+
         $this->db->select('date(' . $time_field . ') as filter_date');
         $this->db->from('tbl_order');
         if ($start != '')

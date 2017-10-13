@@ -1,5 +1,5 @@
 /*
-fileName: area.js
+fileName:
 description: process Tourist Area
 */
 
@@ -15,26 +15,18 @@ $(document).ready(function () {
 });
 
 function allchecked(state){
-    var i = 0;
-    while(1){
-        i++;
-        var item = $('#chk_' + i);
-        if( item[0] == undefined) break;
-        item[0].checked = state;
+    var items = document.getElementsByClassName('news_check');
+    for( var i = 0; i < items.length; i++){
+        items[i].checked=state;
     }
 }
 
 function delete_messages(){
-    var i = 0;
     var ids = '';
-    while(1){
-        i++;
-        var item = $('#chk_' + i);
-        if( item[0] == undefined) break;
-        var id = item[0].id;
-        id = id.substring(4);
-
-        if( item[0].checked) ids +=',' + id;
+    var items = document.getElementsByClassName('news_check');
+    for( var i = 0; i < items.length; i++){
+        var id = items[i].id.substring(4);
+        if( items[i].checked) ids +=',' + id;
     }
     ids = ids.substring(1);
     if(ids == '') return;

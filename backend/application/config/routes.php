@@ -106,6 +106,9 @@ $route['withdraw_edit/(:any)'] = 'transaction_manage/withdraw_controller/editite
 
 $route['transaction'] = 'transaction_manage/transaction_controller';
 $route['showMyMoney'] = 'transaction_manage/transaction_controller/showMyMoney';
+$route['bankinfo_add'] = 'transaction_manage/transaction_controller/additem';
+$route['bankinfo_show/(:any)'] = 'transaction_manage/transaction_controller/showitem/$1';
+
 $route['coupon'] = 'coupon_controller';
 
 $route['news'] = 'news_controller';
@@ -178,6 +181,8 @@ $route['api/myFavorite'] = "api/Data_manager/shop_favoriteItems";
 
 $route['api/addFeedback'] = "api/Data_manager/shop_feedback";
 
+$route['api/activityStatus'] = "api/Data_manager/get_ActivityStatus";
+
 ////////-------------shipping-----------------------------/////////
 
 $route['api/shipping_login'] = "api/Shop_Authorization/shipping_login";
@@ -185,6 +190,14 @@ $route['api/shipping_login'] = "api/Shop_Authorization/shipping_login";
 $route['api/shippingComplete'] = "api/Data_manager/shipping_complete";
 $route['api/shippingItems'] = "api/Data_manager/get_shippingItems";
 $route['api/shippingHistory'] = "api/Data_manager/get_shippingHistory";
+
+$route['api/setLocation'] = "api/Data_manager/setLocation";
+
+$route['api/activity_detail'] = "api/Data_manager/activity_detail";
+$route['api/provider_detail'] = "api/Data_manager/provider_detail";
+$route['api/test'] = "api/Data_manager/test";
+
+$route['api/check_auth'] = "api/Shop_Authorization/check_auth";
 
 
 /* End of file routes.php */

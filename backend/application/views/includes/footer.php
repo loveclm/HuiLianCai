@@ -32,6 +32,7 @@
 
 <script type="text/javascript">
     var baseURL = "<?php echo base_url(); ?>";
+    var loginID = "<?php echo $login_id; ?>";
 
     var windowURL = window.location.href;
     pageURL = windowURL.substring(0, windowURL.lastIndexOf('/'));
@@ -71,6 +72,57 @@
 
     });
 
+    // check activity state each every year ror month
+    setInterval( function(){
+        //return;
+        $.ajax({
+           type : 'post',
+           url : baseURL + 'cron_controller',
+           data : { 'data' : 'test'},
+            success: function (data, textStatus, jqXHR) {
+                var currentdate = new Date();
+                var datetime = "Last Sync: " + currentdate.getDate() + "/"
+                    + (currentdate.getMonth()+1)  + "/"
+                    + currentdate.getFullYear() + " @ "
+                    + currentdate.getHours() + ":"
+                    + currentdate.getMinutes() + ":"
+                    + currentdate.getSeconds();
+                console.log(datetime);
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                // Handle errors here
+                console.log('ERRORS: ' + textStatus);
+                // STOP LOADING SPINNER
+            }
+        });
+    }, 500000);
+
+    // check message status
+    setTimeout( chkMessage(), 2000);
+    setInterval( chkMessage(), 100000);
+
+    function chkMessage(){
+        $.ajax({
+            type : 'post',
+            url : baseURL + 'cron_controller/chkMessages',
+            data : { 'id' : loginID},
+            success: function (data, textStatus, jqXHR) {
+                //console.log(data);
+                if(data == '0'){
+                    $('#message_detail').css({'display':'none'});
+                }else{
+                    $('#message_detail').html(data);
+                    $('#message_detail').css({'display':'block'});
+                    $('#message_detail').attr('data-original-title', data + ' 新消息');
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                // Handle errors here
+                console.log('ERRORS: ' + textStatus);
+                // STOP LOADING SPINNER
+            }
+        });
+    }
 </script>
 </body>
 </html>

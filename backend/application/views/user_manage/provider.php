@@ -56,16 +56,21 @@
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-xs-6 col-sm-4 form-inline">
-                    <div class="form-group area-search-control-view">
-                        <a class="btn btn-primary form-control" href="<?php echo base_url(); ?>provider_add">
-                            <span>新增</span>
-                        </a>
+            <?php
+            if($shop_manager_number == '') {
+                ?>
+                <div class="row">
+                    <div class="col-xs-6 col-sm-4 form-inline">
+                        <div class="form-group area-search-control-view">
+                            <a class="btn btn-primary form-control" href="<?php echo base_url(); ?>provider_add" onclick="addProvider()">
+                                <span>新增</span>
+                            </a>
+                        </div>
                     </div>
                 </div>
-            </div>
-
+                <?php
+            }
+            ?>
             <div class="row">
                 <div class="box main-shadow">
                     <div class="box-body table-responsive no-padding">

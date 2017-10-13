@@ -20,6 +20,7 @@ class carousel_controller extends BaseController
         $this->load->model('carousel_model');
         $this->load->model('activity_model');
         $this->load->model('provider_model');
+        $this->load->model('user_model');
         $this->isLoggedIn();
     }
 
@@ -145,7 +146,7 @@ class carousel_controller extends BaseController
         switch ($id) {
             case 1:
                 foreach ($allLists as $item) {
-                    $imageName = $item->image == '' ? 'assets/image/logo.png' : 'uploads/' . $item->image;
+                    $imageName = $item->image == '' ? 'assets/image/logo.png' : $item->image;
                     $output_html .= '<tr>';
                     $output_html .= '<td>' . ($i + 1) . '</td>';
                     $output_html .= '<td><img src="' . base_url() . $imageName .
@@ -253,7 +254,7 @@ class carousel_controller extends BaseController
         } else {
             $this->global['pageTitle'] = '编辑轮播图';
             $this->global['pageName'] = 'carousel_edit';
-            $data['imagefile'] = base_url() . 'uploads/' . $fname;
+            $data['imagefile'] = base_url() .  $fname;
 
             $this->loadViews("carousel_add", $this->global, $data, NULL);
         }

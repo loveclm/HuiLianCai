@@ -74,12 +74,14 @@
             </div>
             <div class="row text-center">
                 <div id="image_content" class="form-group">
-                    <img src="<?php echo isset($imagefile) ? $imagefile : 'assets/images/logo.png'; ?>" alt="user image"
+                    <img src="<?php
+                        $fname = isset($imagefile) ? explode('/', $imagefile) : '';
+                        echo isset($imagefile) ? base_url() . 'uploads/' . $fname[count($fname)-1] : 'assets/images/picture.png';
+                    ?>" alt="user image"
                          class="online">
                 </div>
-                <div class="form-group">
+                <div class="form-group" hidden>
                     <span id="image_filename"><?php
-                        $fname = isset($imagefile) ? explode('/', $imagefile) : '';
                         echo isset($fname[count($fname)-1]) ? $fname[count($fname)-1] : 'logo.png';
                         ?>
                     </span>

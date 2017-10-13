@@ -1,5 +1,5 @@
 /*
-fileName: area.js
+fileName:
 description: process Tourist Area
 */
 
@@ -21,6 +21,7 @@ $(document).ready(function () {
             display_product_table();
             break;
     }
+
 });
 
 function display_product_table(){
@@ -64,14 +65,21 @@ function display_product_table(){
                         content_html += '</td>';
                         content_html += '<td>' + product_list[i]['name'] + '</td>';
                         content_html += '<td id="origin_' + product_list[i]['id'] + '">' + (parseFloat(product_list[i]['cost'])).toFixed(2) + '</td>';
-                        content_html += '<td><input onchange="calculate_group_cost()" id="cost_' + product_list[i]['id'] + '" value="' + (parseFloat(cur_cost)).toFixed(2) + '"/></td>';
-                        content_html += '<td><input onchange="calculate_group_cost()" id="cnt_' + product_list[i]['id'] + '" value="' + cur_cnt + '"/></td>';
+                        if($("#page_Name").val() == 'multiple_activity_detail'){
+                            content_html += '<td>' + (parseFloat(cur_cost)).toFixed(2) + '</td>';
+                            content_html += '<td>' + cur_cnt + '</td>';
+                        }else {
+                            content_html += '<td><input onchange="calculate_group_cost()" id="cost_' + product_list[i]['id'] + '" value="' + (parseFloat(cur_cost)).toFixed(2) + '"/></td>';
+                            content_html += '<td><input onchange="calculate_group_cost()" id="cnt_' + product_list[i]['id'] + '" value="' + cur_cnt + '"/></td>';
+                        }
                         content_html += '</tr>';
                     }
                 }
                 $('#content_tbl').html(content_html);
                 $('#origin_cost').html(origin_cost.toFixed(2));
+                $('#origin_cost_input').val(origin_cost.toFixed(2));
                 $('#group_cost').html(total_cost.toFixed(2));
+                $('#group_cost_input').val(total_cost.toFixed(2));
                 calculate_group_cost();
             } else {
                 alert('search failed!');
@@ -95,9 +103,9 @@ function calculate_group_cost(){
     }
     buy_cnt += ']';
     $('#origin_cost').html(origin_cost.toFixed(2));
-    $('#origin_cost_input').html(origin_cost.toFixed(2));
+    $('#origin_cost_input').val(origin_cost.toFixed(2));
     $('#group_cost').html(total_cost.toFixed(2));
-    $('#group_cost_input').html(total_cost.toFixed(2));
+    $('#group_cost_input').val(total_cost.toFixed(2));
     $('#buy_cnt').val(buy_cnt);
 }
 

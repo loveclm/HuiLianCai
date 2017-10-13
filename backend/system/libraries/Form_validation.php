@@ -979,8 +979,14 @@ class CI_Form_validation {
 			return (mb_strlen($str) < $val) ? FALSE : TRUE;
 		}
 
+		//return (strlen($str) < $val) ? FALSE : TRUE;
 		return (strlen($str) < $val) ? FALSE : TRUE;
 	}
+
+    public function user_error($str, $val)
+    {
+        return FALSE;
+    }
 
 	// --------------------------------------------------------------------
 
@@ -1004,6 +1010,7 @@ class CI_Form_validation {
 			return (mb_strlen($str) > $val) ? FALSE : TRUE;
 		}
 
+		//return (strlen($str) > $val) ? FALSE : TRUE;
 		return (strlen($str) > $val) ? FALSE : TRUE;
 	}
 
@@ -1376,6 +1383,9 @@ class CI_Form_validation {
 		return str_replace(array('<?php', '<?PHP', '<?', '?>'),  array('&lt;?php', '&lt;?PHP', '&lt;?', '?&gt;'), $str);
 	}
 
+	public function set_error(){
+	    $this->_safe_form_data = false;
+    }
 }
 // END Form Validation Class
 

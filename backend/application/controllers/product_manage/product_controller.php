@@ -69,6 +69,7 @@ class product_controller extends BaseController
             if (!empty($_POST)) {
                 $id = $_POST['id'];
                 $searchData = $_POST['searchData'];
+                $searchData['provider_id'] = $this->user_model->getProviderId($this->global['login_id']);
                 // get top list data in homepage
                 switch ($id) {
                     case 1:
@@ -241,7 +242,7 @@ class product_controller extends BaseController
         $this->form_validation->set_rules('id', '商品名称', 'trim|required|is_natural_no_zero');
         $this->form_validation->set_rules('type', '分类', 'required|is_natural_no_zero');
         $this->form_validation->set_rules('brand', '品牌', 'trim|required|is_natural_no_zero');
-        $this->form_validation->set_rules('cost', '原价', 'trim|required|decimal|greater_than[0]|max_length[8]');
+        $this->form_validation->set_rules('cost', '原价', 'trim|required|numeric|greater_than[0]|max_length[8]');
         $this->form_validation->set_rules('store', '库存量', 'trim|required|numeric|max_length[8]');
 
         $product = new stdClass();

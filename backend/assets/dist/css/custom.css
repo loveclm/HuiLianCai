@@ -123,3 +123,9 @@ h1 {
 .home_item{
     padding: 5px 20px;
 }
+
+#contentpageNavPosition{
+    text-align: right;
+    padding-right: 50px;
+    padding-bottom: 10px;
+}

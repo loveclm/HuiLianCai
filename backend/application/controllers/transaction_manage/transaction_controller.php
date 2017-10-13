@@ -37,7 +37,12 @@ class transaction_controller extends BaseController
         } else {
             $this->global['pageTitle'] = '交易列表';
             $this->global['pageName'] = 'transaction';
-            $data['balance'] = '10';
+
+            $provider_info = $this->user_model->getProviderInfoFromTblUser($this->global['login_id']);
+            $bankinfo = $this->transaction_model->getBankinfo($provider_info->id);
+            $data['bankinfo_id'] = ($bankinfo == NULL) ? '' : $bankinfo->id;
+            $data['card_info'] = ($bankinfo == NULL) ? '' : $bankinfo->bank_name . '储蓄卡(' . substr($bankinfo->card_no, -4) . ')';
+            $data['balance'] = 200; //$provider_info->balance;
             $data['searchType'] = '0';
             $data['searchName'] = '';
             $data['searchStatus'] = '0';
@@ -78,6 +83,7 @@ class transaction_controller extends BaseController
             if (!empty($_POST)) {
                 $id = $_POST['id'];
                 $searchData = $_POST['searchData'];
+
                 // get top list data in homepage
                 switch ($id) {
                     case 1:
@@ -231,13 +237,13 @@ class transaction_controller extends BaseController
         if ($this->isAdmin() == TRUE) {
             $this->loadThis();
         } else {
-            $this->global['pageTitle'] = '新增单品活动';
-            $this->global['pageName'] = 'transaction_add';
+            $this->global['pageTitle'] = '绑定银行卡';
+            $this->global['pageName'] = 'bankinfo_add';
 
             if (empty($_POST)) {
                 $data['empty'] = NULL;
 
-                $this->loadViews("transaction_manage/transaction_add", $this->global, $data, NULL);
+                $this->loadViews("transaction_manage/bankinfo_add", $this->global, $data, NULL);
             } else {
                 $this->item_validate();
             }
@@ -248,63 +254,29 @@ class transaction_controller extends BaseController
     {
         $this->load->library('form_validation');
 
-        $this->form_validation->set_rules('note', '备注', 'trim|required|max_length[100]');
+        $this->form_validation->set_rules('bank_name', '银行卡开户行', 'trim|required|max_length[30]');
+        $this->form_validation->set_rules('provider_name', '持卡人', 'trim|required|min_length[2]|max_length[5]');
+        $this->form_validation->set_rules('cert_no', '身份证号', 'trim|required|exact_length[18]');
+        $this->form_validation->set_rules('card_no', '银行卡号', 'trim|required||numeric|max_length[25]');
+        $this->form_validation->set_rules('reserve_mobile', '手机号', 'trim|required|exact_length[11]');
 
         $item = new stdClass();
-        $item->transaction_id = $this->input->post('transaction_id');
-        $item->note = $this->input->post('note');
-        $item->status = $this->input->post('status');
-        if(intval($item->status) < 2) {
-            $this->session->set_flashdata('error', '必选项，单选项。');
-
-            $iteminfo = $this->transaction_model->getItemById($item->transaction_id);
-            $iteminfo->note = $item->note;
-            $iteminfo->status = $item->status;
-
-            $this->global['model'] = $iteminfo;
-            // the user list that manages site
-            $data['empty'] = NULL;
-
-            $this->loadViews("transaction_manage/transaction_add", $this->global, $data, NULL);
-        }
+        $item->bank_name = $this->input->post('bank_name');
+        $item->provider_name = $this->input->post('provider_name');
+        $item->cert_no = $this->input->post('cert_no');
+        $item->card_no = $this->input->post('card_no');
+        $item->reserve_mobile = $this->input->post('reserve_mobile');
 
         if ($this->form_validation->run() == FALSE) {
-            $iteminfo = $this->transaction_model->getItemById($item->transaction_id);
-            $iteminfo->note = $item->note;
-            $iteminfo->status = $item->status;
-
-            $this->global['model'] = $iteminfo;
+            $this->global['model'] = $item;
             // the user list that manages site
-            $data['empty'] = NULL;
+            $data['bankinfo_id'] = '';
 
-            $this->loadViews("transaction_manage/transaction_add", $this->global, $data, NULL);
+            $this->loadViews("transaction_manage/bankinfo_add", $this->global, $data, NULL);
         } else {
-            $iteminfo = array(
-                'id' => $item->transaction_id,
-                'note' => $item->note,
-                'status' => $item->status,
-            );
-            $this->transaction_model->add($iteminfo);
+            $this->transaction_model->addBankinfo($item);
 
-            redirect('transaction');
-        }
-    }
-
-    /**
-     * This function is used to edit the user information
-     */
-    function edititem($Id)
-    {
-        if ($this->isAdmin() == TRUE) {
-            $this->loadThis();
-        } else {
-            $this->global['pageTitle'] = '打款';
-            $this->global['pageName'] = 'transaction_add';
-
-            $data['empty'] = NULL;
-            $this->global['model'] = $this->transaction_model->getItemById($Id);
-
-            $this->loadViews("transaction_manage/transaction_add", $this->global, $data, NULL);
+            redirect('showMyMoney');
         }
     }
 
@@ -316,13 +288,13 @@ class transaction_controller extends BaseController
         if ($this->isAdmin() == TRUE) {
             $this->loadThis();
         } else {
-            $this->global['pageTitle'] = '提现详情';
+            $this->global['pageTitle'] = '查看银行卡';
             $this->global['pageName'] = 'transaction_detail';
 
             $data['empty'] = NULL;
-            $this->global['model'] = $this->transaction_model->getItemById($Id);
+            $this->global['model'] = $this->transaction_model->getBankinfo($Id);
 
-            $this->loadViews("transaction_manage/transaction_detail", $this->global, $data, NULL);
+            $this->loadViews("transaction_manage/bankinfo_detail", $this->global, $data, NULL);
         }
     }
 

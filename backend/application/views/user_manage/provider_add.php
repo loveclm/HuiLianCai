@@ -9,7 +9,7 @@
         <div class="container">
             <div>
                 <form role="form" id="addProvider" action="<?php echo base_url() ?>provider_add" method="post">
-                    <input id="provider_id" value="<?= isset($id) ? $id : '' ?>" type="hidden">
+                    <input name="provider_id" value="<?= isset($id) ? $id : '' ?>" type="hidden">
                     <div class="row form-inline">
                         <label> *供货商账号 : </label>
                         <div class="input-group margin">
@@ -108,7 +108,7 @@
                         <div id="company_logo_content" class="input-group margin">
                             <div class="form-group text-center" style="padding: 0px 20px;">
                                 <?php
-                                $company_logo = isset($more_data) ? json_decode($more_data->logo) : ['', 'assets/images/logo.png'];
+                                $company_logo = isset($more_data) ? json_decode($more_data->logo) : ['', 'assets/images/picture.png'];
                                 ?>
                                 <img id="company_logo_image" src="<?= base_url() . $company_logo[1]; ?>"
                                      alt="user image" class="online" style="height: 130px; width:180px; padding: 20px; padding-bottom:2px;"><br>
@@ -136,7 +136,7 @@
                         <div id="company_cert_content" class="input-group margin">
                             <div class="form-group text-center" style="padding: 0px 20px;">
                                 <?php
-                                $company_cert = isset($more_data) ? json_decode($more_data->cert) : ['', 'assets/images/logo.png'];
+                                $company_cert = isset($more_data) ? json_decode($more_data->cert) : ['', 'assets/images/picture.png'];
                                 ?>
                                 <img id="company_cert_image" src="<?= base_url() . $company_cert[1]; ?>"
                                      alt="user image" class="online" style="height: 200px; width:400px; padding: 20px; padding-bottom:2px;"><br>
@@ -237,6 +237,7 @@
             <?php
             $this->load->helper('form');
             $error = $this->session->flashdata('error');
+
             if ($error) {
                 ?>
                 <div class="alert alert-danger alert-dismissable">

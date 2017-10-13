@@ -49,7 +49,7 @@
 
                         <div class="form-group text-center" style="padding: 0px 20px;">
                             <?php
-                            $product_logo = isset($product_format) ? $product_format->image : 'assets/images/logo.png';
+                            $product_logo = isset($product_format) ? $product_format->image : 'assets/images/picture.png';
                             ?>
                             <img id="product_logo_image" src="<?= base_url() . $product_logo; ?>"
                                  alt="user image" class="online"

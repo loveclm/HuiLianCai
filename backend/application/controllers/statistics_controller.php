@@ -175,7 +175,7 @@ class statistics_controller extends BaseController
             if (!empty($_POST)) {
                 $id = $_POST['id'];
                 $searchData = $_POST['searchData'];
-                $searchData['provider_id'] = ($this->isTicketter()== FALSE) ? $this->global['shop_manager_number'] : '0';
+                $searchData['provider_id'] = $this->user_model->getProviderId($this->global['login_id']);
 
                 // get top list data in homepage
                 switch ($id) {
@@ -183,7 +183,7 @@ class statistics_controller extends BaseController
                         $header = array("日期", "账号", "配送员", "所属供货商", "供货商账号", "配送数量", "订单金额");
                         $cols = 7;
                         $pay_type = $_POST['pay_type'];
-                        $contentList = $this->statistics_model->getShipItems($searchData, intval($pay_type)-1);
+                        $contentList = $this->statistics_model->getShipItems($searchData, $pay_type);
 
                         if(count($contentList) == 0){
                             $footer = "没有数据.";
@@ -413,9 +413,10 @@ class statistics_controller extends BaseController
     function showProviders($id){
         $this->global['pageTitle'] = '供货商列表';
         $this->global['pageName'] = 'provider';
+        $userinfo = $this->user_model->getUserInfo($id);
 
         $data['searchType'] = '3';
-        $data['searchName'] = $id;
+        $data['searchName'] = $userinfo->username;
         $data['address'] = '';
         $data['searchStatus'] = '0';
 
@@ -427,7 +428,7 @@ class statistics_controller extends BaseController
         $this->global['pageName'] = 'shop';
 
         $data['searchType'] = '3';
-        $data['searchName'] = $id;
+        $data['searchName'] = ($id == '') ? '' : $id;
         $data['address'] = '';
         $data['searchStatus'] = '0';
         $data['searchShoptype']='0';
@@ -448,7 +449,7 @@ class statistics_controller extends BaseController
             $this->global['pageName'] = 'order_detail';
 
             $data['empty'] = NULL;
-            //$provider_id = ($this->isTicketter()== FALSE) ? $this->global['shop_manager_number'] : '0';
+
             $item = $this->getItemInfo($Id);
             $userinfo = $this->user_model->getProviderInfos($item->provider_id);
             $item->provider_name = $userinfo->username;

@@ -38,7 +38,14 @@ class product_format_model extends CI_Model
         return $result;
     }
 
+    function isDeletable($id){
+        $result = $this->db->select('id')
+            ->from('tbl_product')
+            ->where('product_id', $id)
+            ->get()->result();
 
+        return count($result) == 0 ? true : false;
+    }
 
     /**
      * This function is used to get Tourist Area by id

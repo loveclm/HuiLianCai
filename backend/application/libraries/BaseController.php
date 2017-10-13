@@ -74,10 +74,10 @@ class BaseController extends CI_Controller
      */
     function isAdmin()
     {
-        if ($this->role != LEVEL_ADMIN && $this->role != LEVEL_MANAGER) {
-            return true;
-        } else {
+        if ($this->level == LEVEL_ADMIN || $this->level == LEVEL_MANAGER) {
             return false;
+        } else {
+            return true;
         }
 //        if ($this->role != ROLE_ADMIN && $this->role != ROLE_MANAGER) {
 //            return true;
@@ -91,7 +91,7 @@ class BaseController extends CI_Controller
      */
     function isTicketter()
     {
-        if ($this->role != LEVEL_MANAGER) {
+        if ($this->level != LEVEL_MANAGER) {
             return true;
         } else {
             return false;

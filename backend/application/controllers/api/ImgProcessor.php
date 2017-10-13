@@ -1,5 +1,5 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
-
+header('Access-Control-Allow-Origin: *');
 require_once('./application/libraries/REST_Controller.php');
 
 /**

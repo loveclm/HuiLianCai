@@ -85,10 +85,12 @@ class order_model extends CI_Model
     // this function is used to get orders for canceling
     function getOrdersForCanceling()
     {
-        $query = $this->db->select('id, start_time, end_time')
+        $cur_date = date('Y-m-d H:i:s',strtotime("-3 hours"));
+
+        $query = $this->db->select('id, status')
             ->from('tbl_order')
             ->where('status', 1)
-            ->where('create_time<', date('Y-m-d H:i:s',strtotime("-3 hours")))
+            ->where('create_time < "'. $cur_date .'"')
             ->get();
 
         return $query->result();
@@ -97,12 +99,13 @@ class order_model extends CI_Model
     // this function is used to get orders for canceling
     function getOrdersForCompleting()
     {
-        $query = $this->db->select('id, start_time, end_time')
+        $cur_date = date('Y-m-d H:i:s',strtotime("-3 days"));
+        //var_dump( $cur_date);
+        $query = $this->db->select('id, status')
             ->from('tbl_order')
             ->where('status', 3)
-            ->where('success_time<', date('Y-m-d H:i:s',strtotime("-3 days")))
+            ->where('success_time < "'. $cur_date .'"')
             ->get();
-
         return $query->result();
     }
 
@@ -236,13 +239,14 @@ class order_model extends CI_Model
      */
     function add($item)
     {
-        if( !isset($item) || ($item['id'] == '0')){
-            $item['id'] =  sprintf("%d%'.02d%'.09d", $item['pay_method'], $item['shop'], time()%1e9);
+        if( !isset($item['id'])){
+            $item['id'] =  sprintf("%d%'.02d%'.09d%'.05d", $item['pay_method'], $item['shop'], time()%1e9, mt_rand(10000, 99999));
             $this->db->trans_start();
             $item['create_time'] = date("Y-m-d H:i:s");
             $this->db->insert('tbl_order', $item);
-            $insert_id = $this->db->insert_id();
+            $this->db->insert_id();
             $this->db->trans_complete();
+            return $item['id'];
         }else{
             //$item['update_time'] = date("Y-m-d H:i:s");
             $insert_id = $this->update($item, $item['id']);

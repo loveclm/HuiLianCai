@@ -19,6 +19,18 @@ class news_model extends CI_Model
         return $result;
     }
 
+    function getNewItems($id){
+        $this->db->select('*');
+        $this->db->from('tbl_news');
+        $this->db->where('receiver', $id);
+        $this->db->where('status', 0);
+
+        $query = $this->db->get();
+        $result = $query->result();
+
+        return $result;
+    }
+
     /**
      * This function is used to get Tourist Area by id
      * @return array $result : This is result

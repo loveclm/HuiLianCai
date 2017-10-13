@@ -70,7 +70,7 @@ class multiple_activity_controller extends BaseController
                 $id = $_POST['id'];
                 $searchData = $_POST['searchData'];
                 $searchData['kind'] = 2;
-                $searchData['provider_id'] = ($this->isTicketter()== FALSE) ? $this->global['shop_manager_number'] : '0';
+                $searchData['provider_id'] = $this->user_model->getProviderId($this->global['login_id']);
 
                 // get top list data in homepage
                 switch ($id) {
@@ -214,7 +214,6 @@ class multiple_activity_controller extends BaseController
 
                     $output_html .= '</td>';
                     $output_html .= '</tr>';
-                    $i++;
                 }
                 break;
             case 2:
@@ -369,7 +368,7 @@ class multiple_activity_controller extends BaseController
             $this->global['pageName'] = 'multiple_activity_detail';
 
             $data['empty'] = NULL;
-            $provider_id = ($this->isTicketter()== FALSE) ? $this->global['shop_manager_number'] : '0';
+
             $item = $this->getItemInfo($Id);
             $userinfo = $this->user_model->getProviderInfos($item->provider_id);
             $item->provider_name = $userinfo->username;

@@ -19,6 +19,7 @@ class shop_controller extends BaseController
         parent::__construct();
         $this->load->model('shop_model');
         $this->load->model('user_model');
+        $this->load->model('news_model');
         $this->isLoggedIn();
     }
 
@@ -66,7 +67,7 @@ class shop_controller extends BaseController
             if (!empty($_POST)) {
                 $id = $_POST['id'];
                 $searchData = $_POST['searchData'];
-                $searchData['provider_id'] = ($this->global['shop_manager_number'] != '') ? $this->global['shop_manager_number'] : '0';
+                $searchData['provider_id'] = $this->user_model->getProviderId($this->global['login_id']);
 
                 // get top list data in homepage
                 switch ($id) {
@@ -170,8 +171,8 @@ class shop_controller extends BaseController
                             $output_html .= '<a href="#" onclick="deployConfirm(\'' . $item->userid . '\',1)">解除禁用 &nbsp;&nbsp;</a>';
                         }
                     }else{                                  // provider
-                        if ($item->ship_man == 0) {
-                            $output_html .= '<a href="#" onclick="userConfirm(\'' . $item->ship_man . '\')">选择配送员 &nbsp;&nbsp;</a>';
+                        if ($item->ship_man == 0 && $item->auth == 3) {
+                            $output_html .= '<a href="#" onclick="userConfirm(\'' . $item->ship_man . '\', \'' . $item->id . '\')">选择配送员 &nbsp;&nbsp;</a>';
                         }
                     }
                     $output_html .= '</td>';
@@ -227,7 +228,7 @@ class shop_controller extends BaseController
         $this->form_validation->set_rules('contact_phone', '联系电话', 'trim|required|exact_length[12]');
         $this->form_validation->set_rules('content', '公司简介', 'trim|required|max_length[50]');
         $this->form_validation->set_rules('cert_no', '营业执照编号', 'trim|required|numeric|exact_length[15]');
-        $this->form_validation->set_rules('percent', '平台佣金', 'trim|required|decimal|less_than[5]|greater_than[0]');
+        $this->form_validation->set_rules('percent', '平台佣金', 'trim|required|numeric|less_than[5]|greater_than[0]');
 
         $shop = new stdClass();
         $shop->userid = ucwords(strtolower($this->input->post('userid')));
@@ -312,6 +313,38 @@ class shop_controller extends BaseController
         } else {
             $result = $_POST['itemInfo'];
             $result['update_time'] = date("Y-m-d");
+            // add authorization message to message list
+            $userinfo = $this->shop_model->getItemById($result['userid']);
+            if($result['auth'] == 3) {
+                $news_data = array(
+                    'sender' => 0,
+                    'receiver' => $this->user_model->getIdByUserId($result['userid']),
+                    'type' => '企业认证申请',
+                    'message' => '恭喜！' . $userinfo->username . '企业认证通过。'
+                );
+
+                // modify coupon using status
+                $coupon_info = array(
+                    'using' => 1,
+                    'pass_time' => date('Y-m-d H:i:s')
+                );
+                $this->coupon_model->update($coupon_info, $this->user_model->getIdByUserId($result['userid']));
+
+                // set coupon to user
+                $userinfo = array(
+                    'coupon' => 30
+                );
+                $this->shop_model->update($userinfo, $result['userid']);
+            }else{
+                $news_data = array(
+                    'sender' => 0,
+                    'receiver' => $this->user_model->getIdByUserId($result['userid']),
+                    'type' => '企业认证申请',
+                    'message' => '企业认证失败。'. $result['reason']
+                );
+            }
+            $this->news_model->add($news_data);
+
             echo $this->shop_model->update($result, $result['userid']);
         }
     }
@@ -352,11 +385,12 @@ class shop_controller extends BaseController
         }
     }
 
-    function shop_manlist(){
+    function ship_manlist(){
         $ret = array();
         $header = array("序号", "姓名", "联系电话", "头像", "操作");
 
-        $ship_mans = $this->user_model->getShipMans();
+        $ship_mans = $this->user_model->getShipMans($this->user_model->getProviderId($this->global['login_id']));
+
         $ret['header'] = $this->output_header($header);
         $ret['content'] = $ship_mans;
         $footer = '';

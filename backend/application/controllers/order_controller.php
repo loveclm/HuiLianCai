@@ -66,7 +66,7 @@ class order_controller extends BaseController
             if (!empty($_POST)) {
                 $id = $_POST['id'];
                 $searchData = $_POST['searchData'];
-                $searchData['provider_id'] = ($this->isTicketter()== FALSE) ? $this->global['shop_manager_number'] : '0';
+                $searchData['provider_id'] =$this->user_model->getProviderId($this->global['login_id']);
 
                 // get top list data in homepage
                 switch ($id) {
@@ -252,7 +252,7 @@ class order_controller extends BaseController
             $this->global['pageName'] = 'order_detail';
 
             $data['empty'] = NULL;
-            $provider_id = ($this->isTicketter()== FALSE) ? $this->global['shop_manager_number'] : '0';
+
             $item = $this->getItemInfo($Id);
 
             $userinfo = $this->user_model->getProviderInfos($this->user_model->getIdByUserId($item->provider_id));

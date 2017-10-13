@@ -66,7 +66,7 @@
                                 ?>
                                 <img id="product_logo_image" src="<?= base_url() . $product_logo; ?>"
                                      alt="user image" class="online"
-                                     style="height: 80px; width:100px; padding: 20px; padding-bottom:2px;""><br>
+                                     style="height: 50px; width:5px;border-radius: 50%;"><br>
                                 <input id="upload_product_logo" type="file" style="display: none"/>
                                 <input name="cover" id="product_logo_src" type="text" style="display: none;"
                                        value='<?= $product_logo; ?>'>

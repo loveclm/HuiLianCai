@@ -104,7 +104,7 @@ class home_controller extends BaseController
             );
             if (!empty($_POST)) {
                 $id = $_POST['id'];
-                $provider_id = ($this->isTicketter()== FALSE) ? $this->global['shop_manager_number'] : '0';
+                $provider_id = $this->user_model->getProviderId($this->global['login_id']);
                 // ????? get top list data in homepage
                 switch ($id) {
                     case 1:

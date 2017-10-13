@@ -1,5 +1,5 @@
 /*
- fileName: area.js
+ fileName:
  description: process Tourist Area
  */
 
@@ -10,7 +10,7 @@ $(document).ready(function () {
     switch (pageName) {
         case 'shop':
             showLists(1);
-            //loadShopMans();
+            //loadShipMans();
             break;
         case 'shop_add':
             break;
@@ -52,48 +52,45 @@ function showLists(id) {
     });
 }
 
-function loadShopMans() {
+function loadShipMans() {
     $.ajax({
         type: 'post',
-        url: baseURL + 'user_manage/shop_controller/shop_manlist',
+        url: baseURL + 'user_manage/shop_controller/ship_manlist',
         dataType: 'json',
-        success: function (data) {
-            if (res.status == 'success') {
-                $('#header_tbl').html(res.header);
-                $('#footer_tbl').html(res.footer);
+        success: function (res) {
+            $('#ship_header_tbl').html(res.header);
+            $('#ship_footer_tbl').html(res.footer);
 
-                var content_html = '';
-                for( var i = 0; i < res.content.length; i++){
-                    content_html += '<tr>';
-                    content_html += '<td>'+ (i+1)+'</td>';
-                    content_html += '<td>'+ res.content[i]['username']+'</td>';
-                    content_html += '<td>'+ res.content[i]['contact_phone']+'</td>';
-                    content_html += '<td><img src="' + baseURL + JSON.parse(res.content[i]['more_data'])['cover']+'" style="width: 50px; height: 50px; border-radius: 50%;"></td>';
-                    content_html += '<td><a id="item_'+res.content[i]['id']+'" href="#" onclick="userItem('+ res.content[i]['id']+')">选择</a></td>';
-                    content_html += '</tr>';
-                }
-
-                $('#ship_content_tbl').html(content_html);
-            } else {
-                alert('search failed!');
-                console.log(res.data);
+            var content_html = '';
+            for( var i = 0; i < res.content.length; i++){
+                content_html += '<tr>';
+                content_html += '<td>'+ (i+1)+'</td>';
+                content_html += '<td>'+ res.content[i]['username']+'</td>';
+                content_html += '<td>'+ res.content[i]['contact_phone']+'</td>';
+                content_html += '<td><img src="' + baseURL + res.content[i]['more_data']+'" style="width: 50px; height: 50px; border-radius: 50%;"></td>';
+                content_html += '<td><a id="item_'+res.content[i]['id']+'" href="#" onclick="userItem('+ res.content[i]['id']+')">选择</a></td>';
+                content_html += '</tr>';
             }
+
+            $('#ship_content_tbl').html(content_html);
         }
     });
 }
 
-function userConfirm(id){
+function userConfirm(id, shop_id){
     $('#item_'+ id).css({display : 'none'});
+    $("#item_id").val(shop_id);
+    loadShipMans();
 
     $('#confirm_user').show();
 }
 
 function userItem(ship_id) {
     $('#confirm_user').hide();
-    $('#item_'+ id).css({display :'block'});
+    //$('#item_'+ id).css({display :'block'});
 
     var itemInfo = {
-        'id': id,
+        'id': $("#item_id").val(),
         'ship_man' : ship_id
     };
 

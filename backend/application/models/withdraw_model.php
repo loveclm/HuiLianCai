@@ -64,9 +64,9 @@ class withdraw_model extends CI_Model
      */
     function add($item)
     {
-        if( !isset($item) || ($item['id'] == '0')){
+        if( !isset($item['id'])){
             $this->db->trans_start();
-
+            $item['time'] = date('Y-m-d H:i:s');
             $this->db->insert('tbl_provider_withdraw', $item);
             $insert_id = $this->db->insert_id();
             $this->db->trans_complete();

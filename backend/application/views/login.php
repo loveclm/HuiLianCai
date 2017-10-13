@@ -52,16 +52,17 @@
 
         <form action="<?php echo base_url(); ?>loginMe" method="post">
             <div class="form-group has-feedback">
-                <input type="account" class="form-control" placeholder="账号" name="account" />
+                <input type="account" class="form-control" placeholder="账号" name="account" autocomplete="on"/>
                 <span class="glyphicon glyphicon-user form-control-feedback"></span>
             </div>
 
             <div class="form-group has-feedback">
-                <input type="password" class="form-control" placeholder="密码" name="password" />
+                <input type="password" class="form-control" placeholder="密码" name="password"
+                       autocomplete="on"/>
                 <span class="glyphicon glyphicon-lock form-control-feedback"></span>
             </div>
             <div class="form-group has-feedback">
-                <input type="checkbox" name="vehicle" value="Bike"/> 记住密码
+                <input id='rememberMe' type="checkbox" name="vehicle" value=""/> 记住密码
             </div>
             <div class="row">
                 <div class="col-xs-offset-1 col-xs-10">
@@ -78,5 +79,34 @@
 
 <script src="<?php echo base_url(); ?>assets/js/jQuery-2.1.4.min.js"></script>
 <script src="<?php echo base_url(); ?>assets/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        document.getElementById('rememberMe').checked=JSON.parse(localStorage.getItem('rememberMe'));
+        if(localStorage.getItem('rememberMe')=='false') {
+            setTimeout(function () {
+                $("[name='password']").val('')
+            },500)
+        }
+
+        $("[name='vehicle']").on('click',function () {
+            localStorage.setItem('rememberMe',JSON.stringify(document.getElementById('rememberMe').checked))
+        })
+
+        $("[name='account']").on('input',function () {
+            if(localStorage.getItem('rememberMe')=='true')
+                $("[name='password']").val(localStorage.getItem($("[name='account']").val()))
+            else
+                $("[name='password']").val('')
+
+        })
+        $("[type='submit']").on('click',function () {
+            if(localStorage.getItem('rememberMe')=='true')
+                localStorage.setItem($("[name='account']").val(),$("[name='password']").val())
+            else
+                localStorage.removeItem($("[name='account']").val())
+
+        })
+    })
+</script>
 </body>
 </html>

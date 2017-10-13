@@ -110,7 +110,7 @@
             <!-- sidebar menu: : style can be found in sidebar.less -->
             <ul class="sidebar-menu">
                 <li class="treeview"
-                    style="<?php echo(($login_id <3 || array_search('m_1',$menu_acc) >= 0) ? '' : 'display:none'); ?>">
+                    style="<?php echo(($role >2 && array_search('m_1',$menu_acc) == false) ? 'display:none' : ''); ?>">
                     <a href="<?php echo base_url(); ?>home">
                         <i class="fa fa-dashboard"></i> <span>首页</span></i>
                     </a>
@@ -119,14 +119,14 @@
                 if($shop_manager_number == '') {
                     ?>
                     <li class="treeview"
-                        style="<?php echo(($login_id <3 || array_search('m_2',$menu_acc) >= 0) ? '' : 'display:none'); ?>">
+                        style="<?php echo(($role > 2 && array_search('m_2',$menu_acc) == false) ? 'display:none' : ''); ?>">
                         <a href="<?php echo base_url(); ?>carousel">
                             <i class="fa fa-plane"></i>
                             <span>轮播图管理</span>
                         </a>
                     </li>
                     <li class="treeview"
-                        style="<?php echo(($login_id <3 || array_search('m_3',$menu_acc) >= 0) ? '' : 'display:none'); ?>">
+                        style="<?php echo(($role > 2 && array_search('m_3',$menu_acc) == false) ? 'display:none' : ''); ?>">
                         <a href="<?php echo base_url(); ?>">
                             <i class="fa fa-laptop"></i>
                             <span>用户管理</span>
@@ -135,19 +135,19 @@
                             </span>
                         </a>
                         <ul class="treeview-menu" style="display: none;">
-                            <li style="<?= (($login_id <3 || array_search('m_3_1',$menu_acc) >= 0) ? '' : 'display:none');?>">
+                            <li style="<?= (($role > 2 && array_search('m_3_1',$menu_acc) == false) ? 'display:none' : '');?>">
                                 <a href="<?php echo base_url(); ?>provider">
                                     <i class="fa fa-circle-o"></i>
                                     供货商
                                 </a>
                             </li>
-                            <li style="<?= (($login_id <3 || array_search('m_3_2',$menu_acc) >= 0) ? '' : 'display:none');?>">
+                            <li style="<?= (($role > 2 && array_search('m_3_2',$menu_acc) == false) ? 'display:none' : '');?>">
                                 <a href="<?php echo base_url(); ?>shipman">
                                     <i class="fa fa-circle-o"></i>
                                     配送员
                                 </a>
                             </li>
-                            <li style="<?= (($login_id <3 || array_search('m_3_3',$menu_acc) >= 0) ? '' : 'display:none');?>">
+                            <li style="<?= (($role > 2 && array_search('m_3_3',$menu_acc) == false) ? 'display:none' : '');?>">
                                 <a href="<?php echo base_url(); ?>shop">
                                     <i class="fa fa-circle-o"></i>
                                     终端便利店
@@ -159,7 +159,7 @@
                 }else {
                     ?>
                     <li class="treeview"
-                        style="<?= (($login_id <3 || array_search('m_4',$menu_acc) >= 0) ? '' : 'display:none');?>">
+                        style="<?= (($role > 2 && array_search('m_4',$menu_acc) == false) ? 'display:none' : '');?>">
                         <a href="<?php echo base_url(); ?>shop">
                             <i class="fa fa-plane"></i>
                             <span>终端便利店</span>
@@ -171,7 +171,7 @@
                 if($shop_manager_number == '') {
                     ?>
                     <li class="treeview"
-                        style="<?= (($login_id <3 || array_search('m_5',$menu_acc) >= 0) ? '' : 'display:none');?>">
+                        style="<?= (($role > 2 && array_search('m_5',$menu_acc) == false) ? 'display:none' : '');?>">
                         <a href="<?php echo base_url(); ?>">
                             <i class="fa fa-laptop"></i>
                             <span>商品模板</span>
@@ -180,25 +180,25 @@
                             </span>
                         </a>
                         <ul class="treeview-menu" style="display: none;">
-                            <li style="<?= (($login_id <3 || array_search('m_5_1',$menu_acc) >= 0) ? '' : 'display:none');?>">
+                            <li style="<?= (($role > 2 && array_search('m_5_1',$menu_acc) == false) ? 'display:none' : '');?>">
                                 <a href="<?php echo base_url(); ?>product_format">
                                     <i class="fa fa-circle-o"></i>
                                     商品模板
                                 </a>
                             </li>
-                            <li style="<?= (($login_id <3 || array_search('m_5_2',$menu_acc) >= 0) ? '' : 'display:none');?>">
+                            <li style="<?= (($role > 2 && array_search('m_5_2',$menu_acc) == false) ? 'display:none' : '');?>">
                                 <a href="<?php echo base_url(); ?>product_type">
                                     <i class="fa fa-circle-o"></i>
                                     分类管理
                                 </a>
                             </li>
-                            <li style="<?= (($login_id <3 || array_search('m_5_3',$menu_acc) >= 0) ? '' : 'display:none');?>">
+                            <li style="<?= (($role > 2 && array_search('m_5_3',$menu_acc) == false) ? 'display:none' : '');?>">
                                 <a href="<?php echo base_url(); ?>product_brand">
                                     <i class="fa fa-circle-o"></i>
                                     品牌管理
                                 </a>
                             </li>
-                            <li style="<?= (($login_id <3 || array_search('m_5_4',$menu_acc) >= 0) ? '' : 'display:none');?>">
+                            <li style="<?= (($role > 2 && array_search('m_5_4',$menu_acc) == false) ? 'display:none' : '');?>">
                                 <a href="<?php echo base_url(); ?>product_unit">
                                     <i class="fa fa-circle-o"></i>
                                     单位管理
@@ -210,14 +210,14 @@
                 }
                 ?>
                 <li class="treeview"
-                    style="<?= (($login_id <3 || array_search('m_6',$menu_acc) >= 0) ? '' : 'display:none');?>">
+                    style="<?= (($role > 2 && array_search('m_6',$menu_acc) == false) ? 'display:none' : '');?>">
                     <a href="<?php echo base_url(); ?>product">
                         <i class="fa fa-upload"></i>
                         <span>商品管理</span>
                     </a>
                 </li>
                 <li class="treeview"
-                    style="<?= (($login_id <3 || array_search('m_7',$menu_acc) >= 0) ? '' : 'display:none');?>">
+                    style="<?= (($role > 2 && array_search('m_7',$menu_acc) == false) ? 'display:none' : '');?>">
                     <a href="<?php echo base_url(); ?>">
                         <i class="fa fa-laptop"></i>
                         <span>餐装活动</span>
@@ -226,13 +226,13 @@
                             </span>
                     </a>
                     <ul class="treeview-menu" style="display: none;">
-                        <li style="<?= (($login_id <3 || array_search('m_7_1',$menu_acc) >= 0) ? '' : 'display:none');?>">
+                        <li style="<?= (($role > 2 && array_search('m_7_1',$menu_acc) == false) ? 'display:none' : '');?>">
                             <a href="<?php echo base_url(); ?>single_activity">
                                 <i class="fa fa-circle-o"></i>
                                 单品活动
                             </a>
                         </li>
-                        <li style="<?= (($login_id <3 || array_search('m_7_2',$menu_acc) >= 0) ? '' : 'display:none');?>">
+                        <li style="<?= (($role > 2 && array_search('m_7_2',$menu_acc) == false) ? 'display:none' : '');?>">
                             <a href="<?php echo base_url(); ?>multiple_activity">
                                 <i class="fa fa-circle-o"></i>
                                 套装活动
@@ -241,7 +241,7 @@
                     </ul>
                 </li>
                 <li class="treeview"
-                    style="<?= (($login_id <3 || array_search('m_8',$menu_acc) >= 0) ? '' : 'display:none');?>">
+                    style="<?= (($role > 2 && array_search('m_8',$menu_acc) == false) ? 'display:none' : '');?>">
                     <a href="<?php echo base_url(); ?>order">
                         <i class="fa fa-upload"></i>
                         <span>订单管理</span>
@@ -251,7 +251,7 @@
                 if($shop_manager_number == '') {
                     ?>
                     <li class="treeview"
-                        style="<?= (($login_id <3 || array_search('m_10',$menu_acc) >= 0) ? '' : 'display:none');?>">
+                        style="<?= (($role > 2 && array_search('m_10',$menu_acc) == false) ? 'display:none' : '');?>">
                         <a href="<?php echo base_url(); ?>withdraw">
                             <i class="fa fa-upload"></i>
                             <span>提现管理</span>
@@ -261,14 +261,14 @@
                 }else{
                     ?>
                     <li class="treeview"
-                        style="<?= (($login_id <3 || array_search('m_9',$menu_acc) >= 0) ? '' : 'display:none');?>">
+                        style="<?= (($role > 2 && array_search('m_9',$menu_acc) == false) ? 'display:none' : '');?>">
                         <a href="<?php echo base_url(); ?>shipping">
                             <i class="fa fa-upload"></i>
                             <span>配送管理</span>
                         </a>
                     </li>
                     <li class="treeview"
-                        style="<?= (($login_id <3 || array_search('m_12',$menu_acc) >= 0) ? '' : 'display:none');?>">
+                        style="<?= (($role > 2 && array_search('m_12',$menu_acc) == false) ? 'display:none' : '');?>">
                         <a href="<?php echo base_url(); ?>showMyMoney">
                             <i class="fa fa-upload"></i>
                             <span>我的钱包</span>
@@ -280,14 +280,14 @@
                 if($shop_manager_number == '') {
                     ?>
                     <li class="treeview"
-                        style="<?= (($login_id <3 || array_search('m_11',$menu_acc) >= 0) ? '' : 'display:none');?>">
+                        style="<?= (($role > 2 && array_search('m_11',$menu_acc) == false) ? 'display:none' : '');?>">
                         <a href="<?php echo base_url(); ?>transaction">
                             <i class="fa fa-upload"></i>
                             <span>交易明细</span>
                         </a>
                     </li>
                     <li class="treeview"
-                        style="<?= (($login_id <3 || array_search('m_13',$menu_acc) >= 0) ? '' : 'display:none');?>">
+                        style="<?= (($role > 2 && array_search('m_13',$menu_acc) == false) ? 'display:none' : '');?>">
                         <a href="<?php echo base_url(); ?>coupon">
                             <i class="fa fa-upload"></i>
                             <span>优惠券管理</span>
@@ -297,7 +297,7 @@
                 }
                 ?>
                 <li class="treeview"
-                    style="<?= (($login_id <3 || array_search('m_14',$menu_acc) >= 0) ? '' : 'display:none');?>">
+                    style="<?= (($role > 2 && array_search('m_14',$menu_acc) == false) ? 'display:none' : '');?>">
                     <a href="<?php echo base_url(); ?>">
                         <i class="fa fa-laptop"></i>
                         <span>销售统计</span>
@@ -306,19 +306,19 @@
                             </span>
                     </a>
                     <ul class="treeview-menu" style="display: none;">
-                        <li style="<?= (($login_id <3 || array_search('m_14_1',$menu_acc) >= 0) ? '' : 'display:none');?>">
+                        <li style="<?= (($role > 2 && array_search('m_14_1',$menu_acc) == false) ? 'display:none' : '');?>">
                             <a href="<?php echo base_url(); ?>shipman_statistics">
                                 <i class="fa fa-circle-o"></i>
                                 配送员统计
                             </a>
                         </li>
-                        <li style="<?= (($login_id <3 || array_search('m_14_2',$menu_acc) >= 0) ? '' : 'display:none');?>">
+                        <li style="<?= (($role > 2 && array_search('m_14_2',$menu_acc) == false) ? 'display:none' : '');?>">
                             <a href="<?php echo base_url(); ?>productsale">
                                 <i class="fa fa-circle-o"></i>
                                 商品销量统计
                             </a>
                         </li>
-                        <li style="<?= (($login_id <3 || array_search('m_14_3',$menu_acc) >= 0) ? '' : 'display:none');?>">
+                        <li style="<?= (($role > 2 && array_search('m_14_3',$menu_acc) == false) ? 'display:none' : '');?>">
                             <a href="<?php echo base_url(); ?>shop_statistics">
                                 <i class="fa fa-circle-o"></i>
                                 便利店统计
@@ -327,7 +327,7 @@
                         <?php
                         if($shop_manager_number == '') {
                             ?>
-                            <li style="<?= (($login_id <3 || array_search('m_14_4',$menu_acc) >= 0) ? '' : 'display:none');?>">
+                            <li style="<?= (($role > 2 && array_search('m_14_4',$menu_acc) == false) ? 'display:none' : '');?>">
                                 <a href="<?php echo base_url(); ?>provider_statistics">
                                     <i class="fa fa-circle-o"></i>
                                     供货商统计
@@ -336,19 +336,19 @@
                             <?php
                         }
                         ?>
-                        <li style="<?= (($login_id <3 || array_search('m_14_5',$menu_acc) >= 0) ? '' : 'display:none');?>">
+                        <li style="<?= (($role > 2 && array_search('m_14_5',$menu_acc) == false) ? 'display:none' : '');?>">
                             <a href="<?php echo base_url(); ?>brand_statistics">
                                 <i class="fa fa-circle-o"></i>
                                 品牌统计
                             </a>
                         </li>
-                        <li style="<?= (($login_id <3 || array_search('m_14_6',$menu_acc) >= 0) ? '' : 'display:none');?>">
+                        <li style="<?= (($role > 2 && array_search('m_14_6',$menu_acc) == false) ? 'display:none' : '');?>">
                             <a href="<?php echo base_url(); ?>type_statistics">
                                 <i class="fa fa-circle-o"></i>
                                 分类统计
                             </a>
                         </li>
-                        <li style="<?= (($login_id <3 || array_search('m_14_7',$menu_acc) >= 0) ? '' : 'display:none');?>">
+                        <li style="<?= (($role > 2 && array_search('m_14_7',$menu_acc) == false) ? 'display:none' : '');?>">
                             <a href="<?php echo base_url(); ?>sale_performance">
                                 <i class="fa fa-circle-o"></i>
                                 销售业绩
@@ -360,7 +360,7 @@
                 if($shop_manager_number == '') {
                     ?>
                     <li class="treeview"
-                        style="<?= (($login_id <3 || array_search('m_15',$menu_acc) >= 0) ? '' : 'display:none');?>">
+                        style="<?= (($role > 2 && array_search('m_15',$menu_acc) == false) ? 'display:none' : '');?>">
                         <a href="<?php echo base_url(); ?>">
                             <i class="fa fa-laptop"></i>
                             <span>推荐人统计</span>
@@ -369,13 +369,13 @@
                             </span>
                         </a>
                         <ul class="treeview-menu" style="display: none">
-                            <li  style="<?= (($login_id <3 || array_search('m_15_1',$menu_acc) >= 0) ? '' : 'display:none');?>">
+                            <li  style="<?= (($role > 2 && array_search('m_15_1',$menu_acc) == false) ? 'display:none' : '');?>">
                                 <a href="<?php echo base_url(); ?>recommend_provider">
                                     <i class="fa fa-circle-o"></i>
                                     供货商
                                 </a>
                             </li>
-                            <li style="<?= (($login_id <3 || array_search('m_15_2',$menu_acc) >= 0) ? '' : 'display:none');?>">
+                            <li style="<?= (($role > 2 && array_search('m_15_2',$menu_acc) == false) ? 'display:none' : '');?>">
                                 <a href="<?php echo base_url(); ?>recommend_shop">
                                     <i class="fa fa-circle-o"></i>
                                     终端便利店
@@ -387,13 +387,13 @@
                 }
                 ?>
                 <li class="treeview"
-                    style="<?= (($login_id <3 || array_search('m_16',$menu_acc) >= 0) ? '' : 'display:none');?>">
+                    style="<?= (($role > 2 && array_search('m_16',$menu_acc) == false) ? 'display:none' : '');?>">
                     <a href="<?php echo base_url(); ?>news">
                         <i class="fa fa-upload"></i>
                         <span>消息管理</span>
-                        <span data-toggle="tooltip" title=""
-                              class="badge bg-light-blue pull-right-container" data-original-title="3 新消息">
-                                3
+                        <span id="message_detail" data-toggle="tooltip" title="" style="display: none;"
+                              class="badge bg-light-blue pull-right-container" data-original-title="">
+
                             </span>
 
                     </a>
@@ -402,7 +402,7 @@
                 if ($shop_manager_number != '') {
                     ?>
                     <li class="treeview"
-                        style="<?= (($login_id <3 || array_search('m_17',$menu_acc) >= 0) ? '' : 'display:none');?>">
+                        style="<?= (($role > 2 && array_search('m_17',$menu_acc) == false) ? 'display:none' : '');?>">
                         <a href="<?php echo base_url(); ?>shipman_manage">
                             <i class="fa fa-upload"></i>
                             <span>配送员管理</span>
@@ -411,7 +411,7 @@
                     <?php
                 }
                 ?>
-                <li class="treeview" style="<?= (($login_id <3 || array_search('m_18',$menu_acc) >= 0) ? '' : 'display:none');?>">
+                <li class="treeview" style="<?= (($role > 2 && array_search('m_18',$menu_acc) == false) ? 'display:none' : '');?>">
                     <a href="<?php echo base_url(); ?>">
                         <i class="fa fa-laptop"></i>
                         <span>系统管理</span>
@@ -420,19 +420,19 @@
                             </span>
                     </a>
                     <ul class="treeview-menu" style="display: none;">
-                        <li style="<?= (($login_id <3 || array_search('m_18_1',$menu_acc) >= 0) ? '' : 'display:none');?>">
+                        <li style="<?= (($role > 2 && array_search('m_18_1',$menu_acc) == false) ? 'display:none' : '');?>">
                             <a href="<?php echo base_url(); ?>userlist">
                                 <i class="fa fa-users"></i>
                                 运营人员管理
                             </a>
                         </li>
-                        <li style="<?= (($login_id <3 || array_search('m_18_2',$menu_acc) >= 0) ? '' : 'display:none');?>">
+                        <li style="<?= (($role > 2 && array_search('m_18_2',$menu_acc) == false) ? 'display:none' : '');?>">
                             <a href="<?php echo base_url(); ?>roleListing">
                                 <i class="fa fa-circle-o"></i>
                                 角色管理
                             </a>
                         </li>
-                        <li style="<?= (($login_id <3 || array_search('m_18_3',$menu_acc) >= 0) ? '' : 'display:none');?>">
+                        <li style="<?= (($role > 2 && array_search('m_18_3',$menu_acc) == false) ? 'display:none' : '');?>">
                             <a href="<?php echo base_url(); ?>changePassword">
                                 <i class="fa fa-circle-o"></i>
                                 修改密码

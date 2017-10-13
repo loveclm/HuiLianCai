@@ -13,6 +13,8 @@ class product_model extends CI_Model
         $name = $data['searchName'];
         $kind = $data['searchKind'];
         $brand = $data['searchBrand'];
+        $provider_id = $data['provider_id'];
+
         $this->db->select('tbl_product_format.*, products.id as storeId, tbl_userinfo.username as provider_name, products.store, products.cost');
         $this->db->from('tbl_product as products');
         $this->db->join('tbl_userinfo', 'products.provider_id=tbl_userinfo.id');
@@ -30,6 +32,8 @@ class product_model extends CI_Model
                 break;
         }
         if ($likeCriteria != '') $this->db->where($likeCriteria);
+
+        if($provider_id != '0') $this->db->where('products.provider_id', $provider_id);
 
         if ($kind!= '0') $this->db->where('tbl_product_format.type', $kind);
         if ($brand!= '0') $this->db->where('tbl_product_format.brand', $brand);

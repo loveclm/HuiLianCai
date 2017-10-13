@@ -69,7 +69,7 @@ class single_activity_controller extends BaseController
                 $id = $_POST['id'];
                 $searchData = $_POST['searchData'];
                 $searchData['kind'] = 1;
-                $searchData['provider_id'] = ($this->isTicketter()== FALSE) ? $this->global['shop_manager_number'] : '0';
+                $searchData['provider_id'] = $this->user_model->getProviderId($this->global['login_id']);
                 // get top list data in homepage
                 switch ($id) {
                     case 1:
@@ -167,7 +167,6 @@ class single_activity_controller extends BaseController
 
                     $output_html .= '</td>';
                     $output_html .= '</tr>';
-                    $i++;
                 }
                 break;
             case 2:
@@ -254,7 +253,7 @@ class single_activity_controller extends BaseController
         $item->group_cost = $this->input->post('group_cost');
         $item->origin_cost = $this->input->post('origin_cost');
 
-        $provider_id = ($this->isTicketter()== FALSE) ? $this->global['shop_manager_number'] : '0';
+        $provider_id = $this->user_model->getProviderId($this->global['login_id']);
 
         if ($this->form_validation->run() == FALSE) {
             if($item->type != 0){
@@ -315,7 +314,7 @@ class single_activity_controller extends BaseController
             $this->global['typelist'] = $this->product_util_model->getProductTypeList();
 
             $data['empty'] = NULL;
-            $provider_id = ($this->isTicketter()== FALSE) ? $this->global['shop_manager_number'] : '0';
+            $provider_id = $this->user_model->getProviderId($this->global['login_id']);
             $item = $this->getItemInfo($Id);
             $this->global['brandlist'] = $this->product_util_model->getProductBrandList($item->type);
             $this->global['datalist'] = $this->activity_model->getProductList($item->type, $item->brand, $provider_id);
@@ -338,14 +337,14 @@ class single_activity_controller extends BaseController
             $this->global['typelist'] = $this->product_util_model->getProductTypeList();
 
             $data['empty'] = NULL;
-            $provider_id = ($this->isTicketter()== FALSE) ? $this->global['shop_manager_number'] : '0';
+
             $item = $this->getItemInfo($Id);
             $userinfo = $this->user_model->getProviderInfos($item->provider_id);
             $item->provider_name = $userinfo->username;
             $item->provider_userid = $userinfo->userid;
 
             $this->global['brandlist'] = $this->product_util_model->getProductBrandList($item->type);
-            $this->global['datalist'] = $this->activity_model->getProductList($item->type, $item->brand, $provider_id);
+            $this->global['datalist'] = $this->activity_model->getProductList($item->type, $item->brand, $item->provider_id);
 
             $this->global['model'] = $item;
             $this->loadViews("activity_manage/single_activity_detail", $this->global, $data, NULL);
@@ -361,7 +360,7 @@ class single_activity_controller extends BaseController
         if(!empty($_POST)){
             $type = $_POST['type'];
             $brand = $_POST['brand'];
-            $provider_id = ($this->isTicketter()== FALSE) ? $this->global['shop_manager_number'] : '0';
+            $provider_id = $this->user_model->getProviderId($this->global['login_id']);
 
             $ret['content'] = $this->activity_model->getProductList($type, $brand, $provider_id);
             if($ret['content'] != NULL) $ret['status'] = 'success';
@@ -378,7 +377,7 @@ class single_activity_controller extends BaseController
         if(!empty($_POST)){
             $id = $_POST['id'];
             $item = $this->product_model->getItemById($id);
-
+            $item->unit_name = $this->product_util_model->getUnitNameById($item->unit);
             $ret['content'] = $item;
             if($ret['content'] != NULL) $ret['status'] = 'success';
         }

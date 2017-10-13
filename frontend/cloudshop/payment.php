@@ -16,7 +16,8 @@
     $total_fee = floatval($_GET['cost'])*100;
     $buy_type = $_GET['type'];
     $product_name = $_GET['product'];
-                
+
+    var_dump($product_name);
     //②、统一下单
 //    $input = new WxPayUnifiedOrder();
 //    $input->SetBody($buy_type.'('.$product_name.')');
@@ -205,9 +206,9 @@
     $(function(){
         bPhoneverified = parseInt(localStorage.getItem('phone_verified'));
         if(bPhoneverified == 0)
-            localStorage.setItem('phone_number', "");
+            setPhoneNumber('');
         else
-            phone_num = localStorage.getItem('phone_number');
+            phone_num = getPhoneNumber();
 
         display_data();
         resize_buypage();
@@ -236,7 +237,7 @@
 
     function sendOrder(){
         // send the order information to back-end
-        var phone_num = localStorage.getItem('phone_number');
+        var phone_num = getPhoneNumber();
         var shop_id = sessionStorage.getItem('shopid');
 
         var order_status = sessionStorage.getItem('order_status');
@@ -273,7 +274,7 @@
     }
 
     function  sendPaidOrderRequest() {
-        var phone_num = localStorage.getItem('phone_number');
+        var phone_num = getPhoneNumber();
         var shop_id = sessionStorage.getItem('shopid');
         // send payment state to server
         $.ajax({

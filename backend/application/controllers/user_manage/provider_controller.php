@@ -17,6 +17,7 @@ class provider_controller extends BaseController
     public function __construct()
     {
         parent::__construct();
+
         $this->load->model('provider_model');
         $this->load->model('user_model');
 
@@ -122,7 +123,8 @@ class provider_controller extends BaseController
                     if ($item->status == 1) {
                         $output_html .= '<a href="#" onclick="deployConfirm(\'' . $item->userid . '\',2)">禁用 &nbsp;&nbsp;</a>';
                     } else {
-                        $output_html .= '<a href="#" onclick="deleteConfirm(\'' . $item->userid . '\')">删除 &nbsp;&nbsp;</a>';
+                        if($this->provider_model->isDeletable($item->id))
+                            $output_html .= '<a href="#" onclick="deleteConfirm(\'' . $item->userid . '\')">删除 &nbsp;&nbsp;</a>';
                         $output_html .= '<a href="#" onclick="deployConfirm(\'' . $item->userid . '\',1)">解除禁用 &nbsp;&nbsp;</a>';
                     }
                     $output_html .= '</td>';
@@ -178,6 +180,10 @@ class provider_controller extends BaseController
             $this->global['pageName'] = 'provider_add';
             if(empty($_POST)){
                 $data['salemans'] = $this->user_model->getOperatingUsers();
+                if(count($data['salemans']) == 0){
+                    $this->session->set_flashdata('error', '推荐业务员不存在。添加运营人员之后，可以新增供货商。');
+                }
+
                 $this->loadViews("user_manage/provider_add", $this->global, $data, NULL);
 
             }else{
@@ -198,7 +204,7 @@ class provider_controller extends BaseController
         $this->form_validation->set_rules('contact_phone', '联系电话', 'trim|required|exact_length[12]');
         $this->form_validation->set_rules('content', '公司简介', 'trim|required|max_length[50]');
         $this->form_validation->set_rules('cert_no', '营业执照编号', 'trim|required|numeric|exact_length[15]');
-        $this->form_validation->set_rules('ratio', '平台佣金', 'trim|required|decimal|less_than[5]|greater_than[0]');
+        $this->form_validation->set_rules('ratio', '平台佣金', 'trim|required|numeric|less_than[5]|greater_than[0]');
 
         $id = $this->input->post('provider_id');
         $provider = new stdClass();
@@ -229,16 +235,22 @@ class provider_controller extends BaseController
         $tmp_data->brand = json_encode($brand);
 
         $provider->more_data = json_encode($tmp_data);
+        $data['salemans'] = $this->user_model->getOperatingUsers();
 
         if ($this->form_validation->run() == FALSE) {
             $this->global['id'] = $id;
             $this->global['provider'] = $provider;
             // the user list that manages site
 
-            $data['salemans'] = $this->user_model->getOperatingUsers();
-
             $this->loadViews("user_manage/provider_add", $this->global, $data, NULL);
         } else {
+
+            if(count($data['salemans']) == 0){
+                $this->form_validation->set_rules('userid', '推荐业务员不存在。添加运营人员之后，可以新增供货商。', 'user_error');
+                $this->form_validation->run();
+                $this->loadViews("user_manage/provider_add", $this->global, $data, NULL);
+                return;
+            }
 
             $user = array(
                 'userid' => $provider->userid,
@@ -260,15 +272,17 @@ class provider_controller extends BaseController
                 'ratio' => $provider->ratio,
                 'more_data' => $provider->more_data
             );
+
             if($id == ''){ // new user
                 $result = $this->user_model->addNewUser($user, $userInfo);
                 if ($result == 0 ) {
                     $this->global['id'] = $id;
                     $this->global['provider'] = $provider;
-                    $data['salemans'] = $this->user_model->getOperatingUsers();
+                    $this->form_validation->set_rules('userid', '该账号不存在', 'user_error');
+                    $this->form_validation->run();
 
-                    $this->session->set_flashdata('error', '该账号不存在。');
                     $this->loadViews("user_manage/provider_add", $this->global, $data, NULL);
+                    return;
                 }
             }else {    //update user
                 $result = $this->user_model->updateUser($user, $userInfo);
@@ -312,8 +326,11 @@ class provider_controller extends BaseController
         } else {
             $this->global['pageTitle'] = '编辑供货商';
             $this->global['pageName'] = 'provider_edit';
-            $this->global['id'] = 1;
-            $this->global['provider'] = $this->user_model->getProviderInfos($this->user_model->getIdByUserId($userId));
+
+            $provider_info = $this->user_model->getProviderInfos($this->user_model->getIdByUserId($userId));
+
+            $this->global['provider'] = $provider_info;
+            $this->global['id'] = $provider_info->id;
             $data['salemans'] = $this->user_model->getOperatingUsers();
 
             $this->loadViews("user_manage/provider_add", $this->global, $data, NULL);

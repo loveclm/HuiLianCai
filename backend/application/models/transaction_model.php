@@ -72,15 +72,26 @@ class transaction_model extends CI_Model
 
         return $query->result();
     }
+
+    function getBankinfo($id){
+        $result = $this->db->select('*')
+            ->from('tbl_provider_bankinfo')
+            ->where('provider_id', $id)
+            ->get()->result();
+        if(count($result) == 0) return NULL;
+
+        return $result[0];
+    }
+
     /**
      * This function is used to add new item to system
      * @return number $insert_id : This is last inserted id
      */
     function add($item)
     {
-        if( !isset($item) || ($item['id'] == '0')){
+        if( !isset($item['id'])){
             $this->db->trans_start();
-            $item['id'] = sprintf("%'.02d", $item['shop_id']) . $item['order_id'];
+            $item['id'] = sprintf("%'.02d%'05d", $item['shop_id'], mt_rand(10000,99999)) . $item['order_id'];
             $item['time'] = date("Y-m-d H:i:s");
             $this->db->insert('tbl_transaction', $item);
             $insert_id = $this->db->insert_id();
@@ -90,6 +101,17 @@ class transaction_model extends CI_Model
         }else{
             $insert_id = $this->update($item, $item['id']);
         }
+
+        return $insert_id;
+    }
+
+    function addBankinfo($item)
+    {
+        $this->db->trans_start();
+        $item['create_time'] = date("Y-m-d H:i:s");
+        $this->db->insert('tbl_provider_bankinfo', $item);
+        $insert_id = $this->db->insert_id();
+        $this->db->trans_complete();
 
         return $insert_id;
     }

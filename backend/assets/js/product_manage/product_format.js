@@ -1,5 +1,5 @@
 /*
-fileName: area.js
+fileName:
 description: process Tourist Area
 */
 
@@ -12,12 +12,37 @@ $(document).ready(function () {
             showLists(1);
             break;
         case 'product_format_add':
+            $('#searchKind').on('change', function(){
+                var type = $("#searchKind :selected").val()
+                typeSelected(type);
+            });
+
             //upload company logo image
             $('#upload_product_logo').on('change', uploadSingleImage);
             $('#upload_product_imgs').on('change', uploadImageAndInsertTag);
             break;
     }
 });
+
+function typeSelected(type) {
+    $.ajax({
+        type : 'post',
+        url : baseURL + 'product_manage/product_controller/getBrandListByTypeID',
+        dataType : 'json',
+        data :{type : type},
+        success : function (res) {
+            var content_html = '<option value="0">请选择</option>';
+            if (res.status == 'success') {
+                for( var i = 0; i < res.content.length; i++){
+                    content_html += '<option value="'+ res.content[i].id + '">' + res.content[i].name + '</option>';
+                }
+            }else{
+
+            }
+            $('#searchBrand').html(content_html);
+        }
+    })
+}
 
 function ModifyImage(index) {
     $('#upload_company_brand' + index).trigger('click');

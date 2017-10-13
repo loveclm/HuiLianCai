@@ -19,6 +19,9 @@ class cron_controller extends BaseController
         parent::__construct();
         $this->load->model('order_model');
         $this->load->model('user_model');
+        $this->load->model('news_model');
+        $this->load->model('transaction_model');
+        $this->load->model('activity_model');
         $this->isLoggedIn();
     }
 
@@ -78,15 +81,42 @@ class cron_controller extends BaseController
             // change order's status
             $order = $this->order_model->getOrderByActivityId($activity->id);
             if($order == NULL) continue;
-            // add activity starting message to message list
-            $news_data = array(
-                'sender' => $order->shop,
-                'receiver' => $order->provider,
-                'type' => '拼团结果',
-                'message' => $activity->name .((status==3) ? '' : '')
-            );
-            $this->news_model->add($news_data);
 
+            $order_info = array(
+                'status' => 3,
+                'isSuccess' => $status - 2,
+                'success_time' => date('Y-m-d H:i:s')
+            );
+            if($status == 3){
+                // refund extra money
+                $money = number_format(floatval($order->origin_cost) - floatval($order->group_cost), 2,'.','');
+                $order_info['refund_cost'] = $money;
+                $order_info['refund_time'] = date('Y-m-d H:i:s');
+
+                //add transaction to message list
+                $transaction_info = array(
+                    'order_id' => $order->id,
+                    'provider_id' => $order->provider,
+                    'shop_id' => $order->shop,
+                    'money' => '-' . $money,
+                    'pay_type' => 1,
+                    'note' => '退还差额（拼团成功）'
+                );
+                $this->transaction_model->add($transaction_info);
+            }
+            $this->order_model->update($order_info, $order->id);
+
+            // add activity starting message to message list
+            foreach ($users as $user) {
+                $news_data = array(
+                    'sender' => $user,
+                    'receiver' => $order->provider,
+                    'type' => '拼团活动消息',
+                    'message' => '（'. $activity->name . (($status == 3) ? '）拼团成功，按拼团价结算，系统已自动退还终端便利店差价。' : '）拼团失败，该拼团活动订单按原价结算。')
+
+                );
+                $this->news_model->add($news_data);
+            }
         }
 
     }
@@ -97,10 +127,42 @@ class cron_controller extends BaseController
      */
     function chkOrderCanceling(){
         $orders = $this->order_model->getOrdersForCanceling();
+        foreach ($orders as $order){
+            $order_info = array(
+                'status' => 5,
+                'cancel_time' => date('Y-m-d H:i:s')
+            );
+
+            $this->order_model($order_info, $order->id);
+        }
     }
 
     // this function is used to complete order that past 3 days from shipping time
     function chkOrderCompleting(){
         $orders = $this->order_model->getOrdersForCompleting();
+        foreach ($orders as $order){
+            $order_info = array(
+                'status' => 4,
+                'complete_time' => date('Y-m-d H:i:s')
+            );
+            $this->order_model($order_info, $order->id);
+        }
     }
+
+    // this function is used for message notification
+    function chkMessages(){
+        $logined_id = $_POST['id'];
+        $msg_cnt = 0;
+        $user = $this->user_model->getUserInfo($logined_id);
+        if($user == NULL)
+            $user_id = 0;
+        else
+            $user_id = $this->user_model->getIdByUserId($user->userid);
+
+        $result = $this->news_model->getNewItems($user_id);
+        $msg_cnt = count($result);
+
+        echo $msg_cnt;
+    }
+
 }

@@ -250,6 +250,28 @@ class product_util_model extends CI_Model
         return $result;
     }
 
+    function isDeletable($id, $type){
+        $this->db->select('id')
+            ->from('tbl_product_format');
+
+        switch ($type){
+            case 1:
+                $this->db->where('type', $id);
+                break;
+            case 3:
+                $this->db->where('brand', $id);
+                break;
+            case 2:
+                $this->db->where('unit', $id);
+                break;
+            default:
+                return 0;
+        }
+
+        $result = $this->db->limit(1)->get();
+
+        return count($result) ? false : true;
+    }
 }
 
 /* End of file shop_model.php */

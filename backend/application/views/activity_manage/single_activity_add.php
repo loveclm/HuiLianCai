@@ -152,7 +152,7 @@
                         <label> 商品封面 : </label>
                         <div class="form-group text-center" style="padding: 0px 20px;">
                             <?php
-                            $model_logo = isset($model->cover) ? json_decode($model->cover) : ['', 'assets/images/logo.png'];
+                            $model_logo = isset($model->cover) ? json_decode($model->cover) : ['', 'assets/images/picture.png'];
                             ?>
                             <img id="product_logo_image" src="<?= base_url() . $model_logo[1]; ?>"
                                  alt="user image" class="online"

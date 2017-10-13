@@ -21,6 +21,7 @@ class withdraw_controller extends BaseController
         $this->load->model('product_model');
         $this->load->model('product_util_model');
         $this->load->model('user_model');
+        $this->load->model('news_model');
         $this->isLoggedIn();
     }
 
@@ -196,7 +197,7 @@ class withdraw_controller extends BaseController
         $item->note = $this->input->post('note');
         $item->status = $this->input->post('status');
         if(intval($item->status) < 2) {
-            $this->session->set_flashdata('error', '必选项，单选项。');
+            $this->form_validation->set_rules('userid', '必选项，单选项。', 'user_error');
 
             $iteminfo = $this->withdraw_model->getItemById($item->withdraw_id);
             $iteminfo->note = $item->note;
@@ -226,6 +227,34 @@ class withdraw_controller extends BaseController
                 'status' => $item->status,
             );
             $this->withdraw_model->add($iteminfo);
+
+            $withdrowItem = $this->withdraw_model->getItemById($item->withdraw_id);
+            $providerinfo = $this->user_model->getProviderInfos($item->withdraw_id);
+            // add message list
+            if($item->status == 2){
+                //add pay status message to message list
+                $news_data = array(
+                    'sender' => 0,
+                    'receiver' => $withdrowItem->provider_id,
+                    'type' => '提现申请',
+                    'message' => '恭喜！您提现申请'. $withdrowItem->money. '元，已提现成功。'
+                );
+                // minus balance
+                $userinfo = array(
+                    'balance' => number_format(floatval($providerinfo->balance) - floatval($withdrowItem->money), 2, '.','')
+                );
+
+                $this->shop_model->update($userinfo, $providerinfo->userid);
+            }else{
+                //add pay status message to message list
+                $news_data = array(
+                    'sender' => 0,
+                    'receiver' => $withdrowItem->provider_id,
+                    'type' => '提现申请',
+                    'message' => '抱歉！您提现申请'. $withdrowItem->money. '元，已提现失败。'
+                );
+            }
+            $this->news_model->add($news_data);
 
             redirect('withdraw');
         }
@@ -276,6 +305,17 @@ class withdraw_controller extends BaseController
             $this->loadThis();
         } else {
             $result = $_POST['itemInfo'];
+
+            $providerinfo = $this->user_model->getProviderInfoFromTblUser( $this->global['login_id']);
+            //add pay status message to message list
+            $news_data = array(
+                'sender' => $providerinfo->id,
+                'receiver' => 0,
+                'type' => '提现申请',
+                'message' => '恭喜！'. $providerinfo->username .'提现申请'. $result['money'].'元，已提现申请。'
+            );
+            $this->news_model->add($news_data);
+
             echo $this->withdraw_model->add($result);
         }
     }

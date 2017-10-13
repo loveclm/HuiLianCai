@@ -1,197 +1,155 @@
 var data = {
-    'bAuthorization': 0,
     'phone_num': '',
-    'menu_info': [
-        {
-            'id': '0',       // product kind id
-            'name': '推荐',   // product kind name
-            'brand': [
-                {
-                    'id': '11',          // brand id
-                    'name': '康师傅'
-                },    // brand name
-                {'id': '12', 'name': '伊利'},
-                {'id': '13', 'name': '蒙牛'},
-                {'id': '14', 'name': '今麦郎'},
-                {'id': '15', 'name': '统一'},
-                {'id': '16', 'name': '白象'},
-                {'id': '17', 'name': '华丰'},
-                {'id': '18', 'name': '五谷道场'},
-                {'id': '19', 'name': '农心'}
-            ]
-        },
-        {
-            'id': '1',
-            'name': '食品',
-            'brand': [
-                {'id': '12', 'name': '伊利'},
-                {'id': '13', 'name': '蒙牛'},
-                {'id': '15', 'name': '统一'},
-                {'id': '17', 'name': '华丰'},
-                {'id': '18', 'name': '五谷道场'},
-            ]
-        },
-        {
-            'id': '2',
-            'name': '方便面',
-            'brand': [
-                {'id': '11', 'name': '康师傅'},
-                {'id': '13', 'name': '蒙牛'},
-                {'id': '14', 'name': '今麦郎'},
-                {'id': '16', 'name': '白象'},
-                {'id': '17', 'name': '华丰'},
-                {'id': '19', 'name': '农心'}]
-        },
-        {
-            'id': '3',
-            'name': '乳制品',
-            'brand': [
-                {'id': '11', 'name': '康师傅'},
-                {'id': '12', 'name': '伊利'},
-                {'id': '13', 'name': '蒙牛'},
-                {'id': '14', 'name': '今麦郎'},
-                {'id': '16', 'name': '白象'}]
-        },
-        {
-            'id': '4',
-            'name': '冰淇淋',
-            'brand': [
-                {'id': '12', 'name': '伊利'},
-                {'id': '13', 'name': '蒙牛'},
-                {'id': '15', 'name': '统一'},
-                {'id': '17', 'name': '华丰'},
-                {'id': '18', 'name': '五谷道场'},
-                {'id': '19', 'name': '农心'}]
-        },
-        {
-            'id': '5',
-            'name': '面包',
-            'brand': [
-                {'id': '11', 'name': '康师傅'},
-                {'id': '13', 'name': '蒙牛'},
-                {'id': '16', 'name': '白象'},
-                {'id': '17', 'name': '华丰'},
-                {'id': '18', 'name': '五谷道场'},
-                {'id': '19', 'name': '农心'}]
-        },
-        {
-            'id': '6',
-            'name': '火腿肠',
-            'brand': [
-                {'id': '16', 'name': '白象'},
-                {'id': '17', 'name': '华丰'},
-                {'id': '18', 'name': '五谷道场'},
-                {'id': '19', 'name': '农心'}]
-        },
-        {
-            'id': '7',
-            'name': '饮料',
-            'brand': [
-                {'id': '11', 'name': '康师傅'},
-                {'id': '12', 'name': '伊利'},
-                {'id': '16', 'name': '白象'},
-                {'id': '17', 'name': '华丰'},
-                {'id': '18', 'name': '五谷道场'},
-                {'id': '19', 'name': '农心'}]
-        },
-        {
-            'id': '8',
-            'name': '生活用品',
-            'brand': [
-                {'id': '14', 'name': '今麦郎'},
-                {'id': '15', 'name': '统一'},
-                {'id': '16', 'name': '白象'},
-                {'id': '17', 'name': '华丰'}]
-        }
-    ],
-    'advertise_imgs': [
-        'assets/images/tmp/u1.png',
-        'assets/images/tmp/u2.png',
-        'assets/images/tmp/u3.jpg',
-        'assets/images/tmp/u1.png',
-        'assets/images/tmp/u2.png',
-    ],
+    'menu_info': [],
+    'advertise_imgs': [],
     'cur_menu_index': 0,
     'cur_detail_index': 0,
     'cur_bottom_index': 0,
-    'bShow_detal_menu': 0
+    'bShow_detal_menu': 0,
+    'paginationCnt': 5,////for Pagination variable-PMS-CODE
+    'productPageCnt': 0////for Pagination variable-PMS-CODE
 };
 
 $(document).ready(function () {
-    simulate_advertise_images();
-    simulat_menu_infos();
-
-    resize_main_page();
-    loadDatafromStorage();
+    getCarouselDatas();
 });
 
-$(window).resize(function () {
+function showContents() {
+    loadDatafromStorage();
     simulate_advertise_images();
     simulat_menu_infos();
+    selectBottomItem(1, 0);
+    showCartStatus();
+    if (!getAuthorizationStatus()) {
+        if (getRegisterStatus()) {
+            if (pageItemId != 0) {
+                showAuthRequire('' +
+                    '由于您还未进行认证,<br>无法看到商品价格！',
+                    '立即认证',
+                    '我知道了'
+                );
+            }
+        }
+    }
+    if (data.cur_menu_index != 100 && data.cur_detail_index != 100) {
+        data.cur_menu_index = 100;
+        data.cur_detail_index = 100;
+        selectCurMenuItem();
+    }
+    setTimeout(function () {
+        resize_main_page();
+    }, 100);
+}
 
+// display menu items on the horizontal menu bar
+function showSetAmount(index) {
+    data['all_products'] = JSON.parse(sessionStorage.getItem('productDatas'))
+    for (var i = 0; i < data.all_products.length; i++) {
+        if (parseInt(data.all_products[i].id) == index)
+            break;
+    }
+    index = i
+    setCurActivityDetailInfo(data.all_products[index]);
+    data['cur_product'] = data.all_products[index];
+    $('#min_amount9999').val(data.cur_product.min_amount)
+    $('#max_amount9999').val(data.cur_product.amount)
+    $('#product_amount9999').val(data.cur_product.cur_amount)
+    $('#addToCart_dialog').modal()
+    showModalToCenter('addToCart_dialog')
+}
+
+function onAddCart() {
+    $('#addToCart_dialog').modal('hide')
+    data.cur_product.cur_amount = $('#product_amount9999').val()
+    addToSessionCart(data.cur_product.id, data.cur_product.cur_amount)
+    location.href = "product_detail.php?iId=" + data.cur_product.id
+}
+
+function OnOk() {
+    window.location.href = 'user_register_detail.php';
+}
+
+function OnCancel() {
+    $('#auth_question').modal('hide');
+}
+
+$(window).resize(function () {
     resize_main_page();
-    loadDatafromStorage();
 });
 
 // loading setting information
 function loadDatafromStorage() {
     initializeData();
 
-    data.phone_num = sessionStorage.getItem('phone_num');
+    data.phone_num = getPhoneNumber();
     data.cur_detail_index = parseInt(sessionStorage.getItem('cur_detail_index'));
     data.cur_menu_index = parseInt(sessionStorage.getItem('cur_menu_index'));
-    data.bAuthorization = parseInt(sessionStorage.getItem('auth_status'));
+    data.cur_bottom_index = parseInt(sessionStorage.getItem('cur_bottom_index'));
+    data.bAuthorization = parseInt(getAuthorizationStatus());
+    data.advertise_imgs = JSON.parse(sessionStorage.getItem('carouselDatas'));
+    data.menu_info = JSON.parse(sessionStorage.getItem('menuDatas'));
 }
 
 function initializeData() {
     if (sessionStorage.getItem('cur_menu_index') === null) {
-        sessionStorage.setItem('cur_menu_index', 0);
+        sessionStorage.setItem('cur_menu_index', 100);
+    }
+    if (sessionStorage.getItem('cur_bottom_index') === null) {
+        sessionStorage.setItem('cur_bottom_index', 1);
     }
     if (sessionStorage.getItem('cur_detail_index') === null) {
-        sessionStorage.setItem('cur_detail_index', 0);
+        sessionStorage.setItem('cur_detail_index', 100);
     }
-    if (sessionStorage.getItem('phone_num') === null) {
-        sessionStorage.setItem('phone_num', '');
-    }
-    if (sessionStorage.getItem('auth_status') === null) {
-        sessionStorage.setItem('auth_status', 0);
-    }
-
 }
 
 // display advertise images on the slider
 function display_advertise_images() {
-    var indicator_content_html = "";
     var carousel_content_html = "";
     if (data.advertise_imgs != undefined) {
 
         for (var i = 0; i < data.advertise_imgs.length; i++) {
-            indicator_content_html += '<li data-target="#advertise_header" data-slide-to="' + i + '"'
-                + (i == 0 ? ' class="active"' : '') + '></li>';
-            carousel_content_html += '<div ' + (i == 0 ? 'class="item active"' : 'class="item"') + '>'
-                + '<div class="carousel_item">'
-                + '<img src="' + data.advertise_imgs[i] + '"></div></div>';
+            var item = data.advertise_imgs[i];
+            carousel_content_html += '<div class="owl-item">';
+            carousel_content_html += '<img src="' + getImageURL(item.imgData) + '"'
+            carousel_content_html += ' alt="' + getImageURL(item.imgData) + '"'
+            switch(parseInt(item.linkType)){
+                case 1:
+                    carousel_content_html += ' onclick="">';
+                    break;
+                case 2:
+                    carousel_content_html += ' onclick="showProductDetailInfo(\'' + item.linkData + '\')">';
+                    break;
+                case 3:
+                    carousel_content_html += ' onclick="showProductDetailInfo(\'' + id + '\')">';
+                    break;
+                case 4:
+                    carousel_content_html += ' onclick="showProviderDetailInfo(\'' + item.linkData  + '\')">';
+                    break;
+                default:
+                    carousel_content_html += ' onclick="">';
+                    break;
+            }
+            carousel_content_html += '</div>';
         }
+        $('#advertise_header').html(carousel_content_html);
+
+        // $('#advertise_header').owlCarousel({
+        //     autoPlay: 3000,
+        //     stopOnHover: true,
+        // });
     }
-
-    $('.carousel-indicators').html(indicator_content_html);
-    $('.carousel-inner').html(carousel_content_html);
-
-    $('#advertise_header').carousel({
-        interval: 3000,
-        pause: "hover"
-    });
     resize_main_page();
-
 }
-
 
 // display menu items on the horizontal menu bar
 function display_menu_infos() {
     var menu_item_html = "";
     if (data.menu_info != undefined) {
         for (var i = 0; i < data.menu_info.length; i++) {
-            menu_item_html += '<ul id="menuItem' + i + '" onclick="selectMenu(' + i + ')">' + data.menu_info[i]['name'] + '</ul>';
+            item = data.menu_info[i];
+            menu_item_html += '<ul id="menuItem' + i;
+            menu_item_html += '" onclick="selectMenu(' + i + ')">' + item.name;
+            menu_item_html += '</ul>';
         }
     }
 
@@ -201,16 +159,16 @@ function display_menu_infos() {
 // shows the detail menu items of any menu
 function selectMenu(index) {
     if (data.bShow_detal_menu == 1 && data.cur_menu_index == index) return;
-    if (data.cur_menu_index != index) data.cur_detail_index = -1;
 
     var content_html = "";
     if (data.menu_info == undefined) return;
+    if (index > (data.menu_info.length - 1)) index = 0;
 
     // when menu is selected, shows selected status along the design
     $('#menuItem' + data.cur_menu_index).css({'border': 'none', 'color': 'black'});
     data.cur_menu_index = index;
-    sessionStorage.setItem('cur_menu_index', index);
-    $('#menuItem' + data.cur_menu_index).css({'color': '#38abff', 'border-bottom': '2px solid'});
+    $('#menuItem' + index).css({'color': '#38abff', 'border-bottom': '2px solid'});
+    if (index > data.menu_info.length) return;
 
     // show detail menu information
     for (var i = 0; i < data.menu_info[index].brand.length; i++) {
@@ -218,8 +176,8 @@ function selectMenu(index) {
         content_html += data.menu_info[index].brand[i]['name'] + '</ul>'
     }
     $('#detail_menu_content').html(content_html);
-    $('#detail_menu_item' + data.cur_detail_index).css({color: '#38abff'});
-
+    if (parseInt(sessionStorage.getItem('cur_menu_index')) == index)
+        $('#detail_menu_item' + data.cur_detail_index).css({color: '#38abff'});
 
     // shows the detail menu informations with popup format
     var height = document.body.clientHeight
@@ -235,17 +193,26 @@ function selectMenu(index) {
 }
 
 function selectDetailMenu(index) {
-    if (data.cur_detail_index == index) {
+    if (index > (data.menu_info[data.cur_menu_index].brand.length - 1)) index = 0;
+    if (data.cur_menu_index == sessionStorage.getItem('cur_menu_index') && data.cur_detail_index == index) {
         hideDetailMenu();
         return;
     }
+    if (data.menu_info[data.cur_menu_index].brand.length == 0) return;
+
+    if (data.menu_info[data.cur_menu_index].brand.length != 0)
+        getMainActivityItemTemplate(data.menu_info[data.cur_menu_index].brand[index].id);
+    else
+        getMainActivityItemTemplate(0)
 
     $('#detail_menu_item' + data.cur_detail_index).css({color: 'black'});
     data.cur_detail_index = index;
+    sessionStorage.setItem('cur_detail_index', data.cur_detail_index);
+    sessionStorage.setItem('cur_menu_index', data.cur_menu_index);
     $('#detail_menu_item' + data.cur_detail_index).css({color: '#38abff'});
+    $("#product_container").html('');
+    data.productPageCnt = 0;
 
-    display_product_infos(index);
-    hideDetailMenu();
 
     //loading data from menu index and detail menu index
 }
@@ -256,15 +223,37 @@ function hideDetailMenu() {
     data.bShow_detal_menu = 0;
 }
 
-// display the product list on the content
-function display_product_infos(index) {
-
-    var product_data = '';
-    for (var i = 0; i < index + 1; i++) {
-        product_data += mainProductItemTemplate('');
-    }
-    $("#product_container").html(product_data);
+function selectCurMenuItem() {
+    data.cur_detail_index = 100;
+    selectMenu(parseInt(sessionStorage.getItem('cur_menu_index')));
+    selectDetailMenu(parseInt(sessionStorage.getItem('cur_detail_index')));
 }
+
+function display_product_infos() {
+    hideDetailMenu();
+    if (sessionStorage.getItem('productDatas') == undefined) {
+        $("#product_container").html('');
+    } else if (sessionStorage.getItem('productDatas') == '[]') {
+        $("#product_container").html('');
+    } else {
+        var product_datas = JSON.parse(sessionStorage.getItem('productDatas'));
+        if (data.productPageCnt * data.paginationCnt > product_datas.length) return;
+        var pageOffset = Math.min((data.productPageCnt + 1) * data.paginationCnt, product_datas.length);
+        for (var i = data.productPageCnt * data.paginationCnt; i < pageOffset; i++) {
+            $("#product_container").append(mainActivityItemTemplate(product_datas[i]));
+        }
+    }
+    data.productPageCnt++;
+    resize_main_page()
+}
+
+//////////////////////////////////////////////PMS-Code/////////////////
+$('#product_container').on('scroll', function () {
+    if (scrollEndDetection(this)) {
+        display_product_infos();
+    }
+});
+
 
 function resize_main_page() {
     var width = document.body.clientWidth
@@ -278,12 +267,17 @@ function resize_main_page() {
     var menu_height = parseInt($('#horizontal_menu_bar').css('height'));
     var carousel_height = width / 2.2;
     var content_height = height - footer_height - menu_height - carousel_height;
-    var progress_width = width - 200;
+    var progress_width = width * .6 - 70;
     $('.product_container').css({
-        'height': content_height - 3,
-        'top': carousel_height+ menu_height + 3
+        'height': content_height - 2,
+        'top': carousel_height + menu_height
     });
-
-    $('.carousel_item').css({'height': carousel_height});
+    $('#advertise_header').owlCarousel({
+        autoPlay: 3000,
+        stopOnHover: true,
+    });
+    $('#advertise_header').css({'height': carousel_height});
+    $('.owl-item img').css({'height': carousel_height});
     $('.commodity_progress').css({'width': progress_width});
+    $('.commodity_body img').css({height: $('.commodity_body img').css('width')});
 }

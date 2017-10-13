@@ -6,7 +6,7 @@
 #RewriteRule ^(.*)$ ./index.php?$1 [L,QSA]
 
 RewriteEngine on
-RewriteBase /yundian/backend
+RewriteBase /huiliancai/backend
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^ index.php [QSA,L]

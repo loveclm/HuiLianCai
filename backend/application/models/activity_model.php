@@ -107,6 +107,7 @@ class activity_model extends CI_Model
         $query = $this->db->select('id, start_time, end_time')
             ->from('tbl_activity')
             ->where('status', 1)
+            ->where('start_time < \'' . date('Y-m-d H:i:s') . '\'')
             ->get();
 
         return $query->result();
@@ -115,14 +116,24 @@ class activity_model extends CI_Model
     // this function is used to get activities for ending
     function getActivitiesForEnding()
     {
-        $query = $this->db->select('id, end_time, man_cnt, group_cnt, users, nums, provider_id')
+        $query = $this->db->select('id, end_time, man_cnt, group_cnt, users, nums, provider_id, name')
             ->from('tbl_activity')
             ->where('status', 2)
+            ->where('end_time < \'' . date('Y-m-d H:i:s') . '\'')
             ->get();
 
         return $query->result();
     }
 
+    function getActivityStatus($ids){
+        if($ids == '') return array();
+
+        $result = $this->db->select('id, status')
+            ->from('tbl_activity')
+            ->where('id in(' . $ids . ')')
+            ->get()->result();
+        return $result;
+    }
     /**
      * This function is used to get Tourist Area by id
      * @return array $result : This is result
@@ -198,7 +209,7 @@ class activity_model extends CI_Model
     function add($item)
     {
         if (!isset($item) || ($item['id'] == '0')) {
-            $item['id'] = sprintf("%d%'.02d%'.09d", $item['kind'], $item['provider_id'], time() % 1e9);
+            $item['id'] = sprintf("%d%'.02d%'.09d%'04d", $item['kind'], $item['provider_id'], time() % 1e9, mt_rand(1000,9999));
             $this->db->trans_start();
             $item['create_time'] = date("Y-m-d H:i:s");
             $this->db->insert('tbl_activity', $item);
@@ -221,6 +232,7 @@ class activity_model extends CI_Model
     {
         $this->db->where('id', $id);
         $result = $this->db->update('tbl_activity', $item);
+
         return $result;
     }
 
