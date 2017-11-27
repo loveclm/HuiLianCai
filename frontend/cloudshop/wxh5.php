@@ -1,0 +1,34 @@
+<?php
+//namespace weixinpayApp;
+include 'wechatH5Pay.php';
+
+class wxh5{
+    //$data 金额和订单号
+    public function wxh5Request($data){
+        $appid = 'wx76b2bf6b8c1dae12';
+        $mch_id = '1486887662';//商户号
+        $key = 't2soso349kxlkeklxmxles3sldsfmxlk';//商户key
+        $notify_url = "https://www.gujia.la/wxnativepay";//回调地址
+        $wechatAppPay = new wechatAppPay($appid, $mch_id, $notify_url, $key);
+        $params['body'] = '估价啦';                       //商品描述
+        $params['out_trade_no'] = $data['oid'];           //自定义的订单号
+        $params['total_fee'] = '1';                       //订单金额 只能为整数 单位为分
+        $params['trade_type'] = 'MWEB';                   //交易类型 JSAPI | NATIVE | APP | WAP
+        $params['scene_info'] = '{"h5_info": {"type":"Wap","wap_url": "https://api.lanhaitools.com/wap","wap_name": "估价啦"}}';
+        $result = $wechatAppPay->unifiedOrder( $params );
+        $url = $result['mweb_url'].'&redirect_url=https%3A%2F%2Fwww.gujia.la';//redirect_url 是支付完成后返回的页面
+        return $url;
+    }
+}
+
+if(!isset($_POST)) return 'no settings';
+
+$data = array(
+    'oid' => $_POST['id'],
+    'cost' =>  number_format( floatval($_POST['cost']) *100, 2, '.', '')
+);
+
+$weh5pay = new wxh5();
+
+return $weh5pay->wxh5Request($data);
+
