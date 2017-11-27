@@ -12,10 +12,16 @@ $(document).ready(function () {
             showLists(1);
             break;
         case 'provider_add':
+        case 'provider_edit':
             //upload company logo image
             $('#upload_company_logo').on('change', uploadSingleImage);
             $('#upload_company_cert').on('change', uploadSingleImage);
-            $('.upload_company_brand').on('change', uploadSingleImage);
+
+            $('.company_brand').hover(function () {
+                $('.item_group').show();
+            }, function () {
+                $('.item_group').hide();
+            });
 
             $('#upload_company_brand').on('change', uploadImageAndInsertTag);
             break;
@@ -24,6 +30,82 @@ $(document).ready(function () {
 
 function ModifyImage(index) {
     $('#upload_company_brand' + index).trigger('click');
+    $('#upload_company_brand' + index).on('change', change_image);
+}
+
+function change_image(){
+    event.stopPropagation(); // Stop stuff happening
+    event.preventDefault(); // Totally stop stuff happening
+
+    files = event.target.files;
+    if (this.files[0].type != "image/jpeg" && this.files[0].type != "image/png") {
+        window.alert("图片格式错误，要求是jpg、jpeg、png格式。");
+        return;
+    }
+    if (this.files[0].size > 10000000) {
+        window.alert("图片不超过10M。");
+        return;
+    }
+    var data = new FormData();
+    $.each(files, function (key, value) {
+        data.append(key, value);
+    });
+
+    $("#" + str + "_filename").html('图片上传中...');
+    $("#" + str + "_filename").show();
+
+    var str = event.target.id;
+    str = str.substr(7, str.length - 7);
+
+    $.ajax({
+        url: baseURL + "api/ImgProcessor/uploadAnyData",
+        type: 'POST',
+        data: data,
+        cache: false,
+        dataType: 'json',
+        processData: false, // Don't process the files
+        contentType: false, // Set content type to false as jQuery will tell the server its a query string request
+        success: function (data, textStatus, jqXHR) {
+            if (typeof data.error === 'undefined') {
+                if (data['status'] == true) {
+                    var url = baseURL + 'uploads/' + data['file'];
+                    $("#" + str + "_image").attr("src", url);
+                    $("#" + str + "_image").show();
+                    $("#" + str + "_filename").html(data['originfile']);
+                    $("#" + str + "_src").val(JSON.stringify([data['originfile'], 'uploads/' + data['file']]));
+                }
+            }
+            else {
+                // Handle errors here
+                console.log('ERRORS: ' + data.error);
+            }
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            // Handle errors here
+            console.log('ERRORS: ' + textStatus);
+            // STOP LOADING SPINNER
+        }
+    });
+
+}
+
+function delete_image(index){
+    $('#company_brand'+index).remove();
+    var n = parseInt($('#brand_count').val());
+    for( var i = index+1; i <= n; i++){
+        $('#company_brand' + i + ' .close_item').attr('onclick', 'delete_item(' +(i-1) + ')');
+        $('#company_brand' + i + ' .modify_item').attr('onclick', 'ModifyImage(' +(i-1) + ')');
+
+        $('#company_brand' + i + '_image').attr('id','#company_brand' + (i-1) + '_image');
+        $('#upload_company_brand' + i).attr('id','#upload_company_brand' + (i-1));
+        $('#upload_company_brand' + i).attr('id','#upload_company_brand' + (i-1));
+        $('#company_brand'+ i+'_src' ).attr('name','#brand'+ (i-1));
+        $('#company_brand'+ i+'_src' ).attr('id','#company_brand'+ (i-1)+'_src');
+        $('#company_brand' + i + '_filename').attr('id','#company_brand' + (i-1) + '_filename');
+
+        $('#company_brand' + i).attr('id','#company_brand' + (i-1));
+    }
+    $('#brand_count').attr('value', n-1);
 }
 
 function uploadSingleImage(event) {
@@ -123,16 +205,27 @@ function uploadImageAndInsertTag(event) {
                     console.log($('#brand_count').val());
                     // insert tag
                     var content_html = $('#company_brand_content div').html();
-                    content_html += '<div class="company_brand" style="float: left;">' +
+                    content_html += '<div class="company_brand" id="company_brand' + index + '" style="float: left; position: relative">' +
                         '    <img id="company_brand' + index + '_image" src="' + url + '"' +
                         '         onclick="ModifyImage(' + index + ');"' +
                         '         alt="user image" class="online" style="height: 130px; width:180px; padding: 20px; padding-bottom:2px;"><br>' +
                         '    <input id="upload_company_brand' + index + '" class="upload_company_brand" type="file" style="display: none"/>' +
                         '    <input name="brand' + index + '" id="company_brand' + index + '_src" type="text" style="display: none"' +
                         '           value=\'' + JSON.stringify([data['originfile'], 'uploads/' + data['file']]) + '\'>' +
-                        '    <span id="company_brand' + index + '_filename">' + data['originfile'] + '</span>' +
-                        '</div>'
+                        '    <span id="company_brand' + index + '_filename" style="display: none;">' + data['originfile'] + '</span>' +
+                        '<div class="item_group">' +
+                        '    <div class="close_item" onclick="delete_image('+index+')">' +
+                        '        <i class="fa fa-fw fa-close"></i></div>' +
+                        '    <span class="modify_item" onclick="ModifyImage('+index+')">修改</span>' +
+                        '</div></div>'
                     $('#company_brand_content div').html(content_html);
+
+                    $('.company_brand').hover(function () {
+                        $('.item_group').show();
+                    }, function () {
+                        $('.item_group').hide();
+                    })
+
                 }
             }
             else {
@@ -173,6 +266,7 @@ function showLists(id) {
                 $('#header_tbl').html(res.header);
                 $('#content_tbl').html(res.content);
                 $('#footer_tbl').html(res.footer);
+                executionPageNation();
             } else {
                 alert('search failed!');
                 console.log(res.data);
@@ -231,9 +325,9 @@ function deleteConfirm(id) {
 
 function deployConfirm(id, status) {
     if (status == 1)// status=0-disable, 1-available
-        $("#confirm-deploy-message").html("确定要解除禁用吗?");
+        $("#confirm-deploy-message").html("确定要取消禁用？");
     else
-        $("#confirm-deploy-message").html("确定要禁用吗?");
+        $("#confirm-deploy-message").html("确定要禁用？");
     $("#item_id").val(id);
     $("#item_status").val(status); // status=0-disable, 1-available
     $("#confirm_deploy").show();

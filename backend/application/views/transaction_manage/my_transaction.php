@@ -24,28 +24,29 @@
                     <a href="#" onclick="deployConfirm('<?= $login_id;?>', '<?= $balance;?>')"
                        style="margin: 60px;vertical-align: super">申请提现</a>
                     <a href="<?= base_url() ?>bankinfo_show/<?= $bankinfo_id; ?>"
-                       style="margin: 30px;vertical-align: super; float: right">绑定银行卡</a>
+                       style="margin: 30px;vertical-align: super; float: right">查看银行卡</a>
                     <?php
                 }
                 ?>
             </div>
             <input name="bankinfo_id" value="<?= $bankinfo_id; ?>" type="hidden"/>
-            <div id="donate">
+            <div id="donate" class="row" style="margin-left: 20px;">
                 <label><input type="radio" id="1" name="toggleButton" checked><span>提现记录</span></label>
                 <label><input type="radio" id="2" name="toggleButton"><span>线上付款记录</span></label>
                 <label><input type="radio" id="3" name="toggleButton"><span>货到付款记录</span></label>
                 <input id="btnIndex" value="2" type="hidden">
-            </div>
+            </div><br>
             <div id="searchTool" class="row">
             </div>
-            <div class="row">
+            <div class="row" style="max-height: 700px; overflow-y: auto;">
                 <div class="box main-shadow">
                     <div class="box-body table-responsive no-padding">
-                        <table class="table table-hover">
+                        <table id="contentInfo_tbl" class="table table-hover">
                             <thead id="header_tbl"></thead>
                             <tbody id="content_tbl"></tbody>
                             <tfoot id="footer_tbl"></tfoot>
                         </table>
+                        <div id="contentpageNavPosition"></div>
                     </div>
                     <!-- /.box-body -->
                 </div>

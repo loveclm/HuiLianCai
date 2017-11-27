@@ -10,7 +10,7 @@
             <div>
                 <form role="form">
                     <div class="row form-inline">
-                        <label>供货商账号 : </label>
+                        <label>区域总代理账号 : </label>
                         <div class="input-group margin">
                             <span id="barcode"><?php echo isset($model->provider_userid) ? $model->provider_userid : ''; ?></span>
                             <?php
@@ -24,6 +24,9 @@
                                         break;
                                     case 3:
                                         $Status = '提现失败';
+                                        break;
+                                    case 4:
+                                        $Status = '提现关闭';
                                         break;
                                 }
                             } else {
@@ -87,7 +90,7 @@
                     <div class="row form-inline">
                         <div class="row" style="padding-left: 200px;">
                             <div class="col-xs-12 col-sm-12 form-inline">
-                                <a class="btn btn-default form-control" href="<?php echo base_url(); ?>single_activity">
+                                <a class="btn btn-default form-control" href="<?php echo base_url(); ?>withdraw">
                                     <span>返回</span>
                                 </a>
                             </div>

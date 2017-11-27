@@ -12,6 +12,8 @@ $(document).ready(function () {
             showLists(1);
             break;
         case 'carousel_add':
+        case 'carousel_edit':
+            loadSettings();
             break;
     }
 });
@@ -28,6 +30,7 @@ function showLists(id) {
                 $('#header_tbl').html(res.header);
                 $('#content_tbl').html(res.content);
                 $('#footer_tbl').html(res.footer);
+                executionPageNation();
             } else {
                 alert('search failed!');
                 console.log(res.data);
@@ -49,7 +52,7 @@ $('input[name="radio_caro_type"]').click(function () {
            loadActivities(2);
            $('#select_active_group').css({'display':'block'});
            break;
-       case "4":  //供货商
+       case "4":  //区域总代理
            loadProviders();
            $('#select_active_group').css({'display':'block'});
            break;
@@ -78,6 +81,16 @@ function loadActivities(type){
             }
 
             $('#select_active_list').html(content_html);
+
+            var id = sessionStorage.getItem('sel_id');
+            var name = sessionStorage.getItem('sel_name');
+            if( id == null || parseInt(id) == type) return;
+
+            $('#select_active_list').val(id);
+            $('#select2-select_active_list-container')[0].innerHTML = name;
+            $($('#select2-select_active_list-container')[0]).attr('title', name)
+            sessionStorage.removeItem('sel_id');
+            sessionStorage.removeItem('sel_name');
         }
     });
 }
@@ -103,8 +116,42 @@ function loadProviders(){
             }
 
             $('#select_active_list').html(content_html);
+
+            var id = sessionStorage.getItem('sel_id');
+            var name = sessionStorage.getItem('sel_name');
+            if( id == null) return;
+
+            $('#select_active_list').val(id);
+            $('#select2-select_active_list-container')[0].innerHTML = name;
+            $($('#select2-select_active_list-container')[0]).attr('title', name)
+            sessionStorage.removeItem('sel_id');
+            sessionStorage.removeItem('sel_name');
         }
     });
+}
+
+function saveSetting(){
+    sessionStorage.setItem('sel_type', $('input[name="radio_caro_type"]:checked').val());
+    sessionStorage.setItem('sel_id', $('#select_active_list').val());
+    sessionStorage.setItem('sel_name', $('#select2-select_active_list-container')[0].innerHTML);
+    sessionStorage.setItem('order_num', $('#sort_number').val());
+}
+
+function loadSettings() {
+    var type = sessionStorage.getItem('sel_type');
+    var order_num = sessionStorage.getItem('order_num');
+
+    if(type != null) {
+        $($('input[name="radio_caro_type"]')[0]).removeAttr('checked');
+        $($('input[name="radio_caro_type"]')[parseInt(type) - 1]).trigger('click');
+    }
+
+    if(order_num != null) {
+        $('#sort_number').val(order_num);
+    }
+
+    sessionStorage.removeItem('sel_type');
+    sessionStorage.removeItem('order_num');
 }
 
 $('#carousel_add_submit').on('click', function () {

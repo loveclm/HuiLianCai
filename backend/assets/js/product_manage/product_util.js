@@ -5,6 +5,7 @@ description: process Tourist Area
 
 // Code included inside $( document ).ready() will only run once the page Document Object Model (DOM) is ready for JavaScript code to execute
 var page_type = 0;
+var model_data = [];
 $(document).ready(function () {
     var pageName = $("#page_Name").val();
     switch (pageName) {
@@ -40,6 +41,9 @@ function showLists(id) {
                 $('#header_tbl').html(res.header);
                 $('#content_tbl').html(res.content);
                 $('#footer_tbl').html(res.footer);
+                model_data = res.data;
+
+                executionPageNation();
             } else {
                 alert('search failed!');
                 console.log(res.data);
@@ -121,22 +125,72 @@ function deployConfirm(id, type) {
     $('#confirm_title').html(actStr + propStr);
     $("#confirm-deploy-message").html(propStr);
 
+    var type_name = '';
+    for(var i =0; i < model_data.length; i++){
+        switch (type){
+            case 1:
+                if( id == parseInt(model_data[i]['id']) ) type_name = model_data[i]['type'];
+                break;
+            case 2:
+                if(id == parseInt(model_data[i]['id'])) type_name = model_data[i]['name'];
+                break;
+        }
+    }
+    $('#name').val(type_name);
+    $('#add_alert_message').html('');
     $("#item_id").val(id);
     $("#item_status").val(type); // status=0-disable, 1-available
     $("#confirm_deploy").show();
 }
+
+function alert_show(type){
+    switch (type){
+        case 1:
+            $('#alert_message').html('该分类已关联商品，不能删除。');
+            break;
+        case 3:
+            $('#alert_message').html('该品牌已关联商品，不能删除。');
+            break;
+        case 2:
+            $('#alert_message').html('该单位已关联商品，不能删除。');
+            break;
+    }
+
+    $('#alert_delete').show();
+}
+
 
 function deployItem() {
     var id = $("#item_id").val();
     var str = $('#name').val();
     if( str == "") return;
     if(str.length > 6){
-        alert('不超过6个字符.');
+        $('#add_alert_message').html('不超过6个字符.');
+        $('#alert_add').show();
         return;
     }
 
+    var type = $("#item_status").val() // status=0-product_type, 2-product_unit
+    for( var i = 0; i < model_data.length; i++) {
+        switch (type) {
+            case '1':
+                if(str == model_data[i]['type']) {
+                    $('#add_alert_message').html('名称不允许相同。');
+                    $('#alert_add').show();
+                    return;
+                }
+                break;
+            case '2':
+                if(str == model_data[i]['name']) {
+                    $('#add_alert_message').html('名称不允许相同。');
+                    $('#alert_add').show();
+                    return;
+                }
+                break;
+        }
+    }
+    $('#add_alert_message').html('');
     $("#confirm_deploy").hide();
-    var type = $("#item_status").val() // status=0-product_type, 1-product_unit
     var itemInfo = {
         'id': id,
         'type' : type,

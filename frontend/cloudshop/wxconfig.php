@@ -1,6 +1,6 @@
 <?php
 require_once "jssdk.php";
-$jssdk = new JSSDK("wxb042726847dca8d3", "70e43300732636e813e59f8b2199dfc9");
+$jssdk = new JSSDK("wx76b2bf6b8c1dae12", "a63708e282379414f0b05de8189632fd");
 $signPackage = $jssdk->GetSignPackage();
 ?>
 <script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
@@ -34,9 +34,9 @@ $signPackage = $jssdk->GetSignPackage();
 
   window.share_config = {
      "share": {
-        "imgUrl": "http://www.ayoubc.com/tour/plugin/Wxpay/resource/image/logo.png",//分享图，默认当相对路径处理，所以使用绝对路径的的话，“http://”协议前缀必须在。
+        "imgUrl": "http://www.huiliancai.com/frontend/assets/images/logo.png",//分享图，默认当相对路径处理，所以使用绝对路径的的话，“http://”协议前缀必须在。
         "desc" : document.title,//摘要,如果分享到朋友圈的话，不显示摘要。
-        "title" : 'A游不错',//分享卡片标题
+        "title" : '惠联彩',//分享卡片标题
         "link": window.location.href,//分享出去后的链接，这里可以将链接设置为另一个页面。
         "success":function(){//分享成功后的回调函数
         },

@@ -20,13 +20,13 @@
                                         $Status = '未开始';
                                         break;
                                     case 2:
-                                        $Status = '拼单中';
+                                        $Status = '拼团中';
                                         break;
                                     case 3:
-                                        $Status = '拼单成功';
+                                        $Status = '拼团成功';
                                         break;
                                     case 4:
-                                        $Status = '拼单失败';
+                                        $Status = '拼团失败';
                                         break;
                                 }
                             }else{
@@ -40,13 +40,13 @@
                     if($shop_manager_number == '') {
                         ?>
                         <div class="row form-inline">
-                            <label> 所属供货商 : </label>
+                            <label> 所属区域总代理 : </label>
                             <div class="input-group margin">
                                 <span><?php echo isset($model->provider_name) ? $model->provider_name : ''; ?></span>
                             </div>
                         </div>
                         <div class="row form-inline">
-                            <label> 供货商账号 : </label>
+                            <label> 区域总代理账号 : </label>
                             <div class="input-group margin">
                                 <span><?php echo isset($model->provider_userid) ? $model->provider_userid : ''; ?></span>
                             </div>
@@ -57,9 +57,7 @@
                     <div class="row form-inline">
                         <label> *活动名称 : </label>
                         <div class="input-group margin">
-                            <input name="activity_name" type="text" id="activity_name" class="form-control"
-                                   value="<?php echo isset($model->activity_name) ? $model->activity_name : ''; ?>"
-                                   style="margin: 0 ; padding: 0px 20px;" disabled/>
+                            <span><?php echo isset($model->activity_name) ? $model->activity_name : ''; ?></span>
                         </div>
                     </div>
                     <div class="row form-inline">
@@ -77,25 +75,19 @@
                     <div class="row form-inline">
                         <label> *拼单人数 : </label>
                         <div class="input-group margin">
-                            <input name="man_cnt" type="text" id="man_cnt" class="form-control"
-                                   value="<?php echo isset($model->man_cnt) ? $model->man_cnt : '2'; ?>"
-                                   style="margin: 0 ; padding: 0px 20px;" disabled/>
+                            <span><?php echo isset($model->man_cnt) ? $model->man_cnt : '2'; ?>人</span>
                         </div>
                     </div>
                     <div class="row form-inline">
                         <label> *起团数量 : </label>
                         <div class="input-group margin">
-                            <input name="group_cnt" type="text" id="group_cnt" class="form-control"
-                                   value="<?php echo isset($model->group_cnt) ? $model->group_cnt : '2'; ?>"
-                                   style="margin: 0 ; padding: 0px 20px;" disabled/>
+                            <span><?php echo isset($model->group_cnt) ? $model->group_cnt : '2'; ?></span>
                         </div>
                     </div>
                     <div class="row form-inline">
                         <label> *拼团价 : </label>
                         <div class="input-group margin">
-                            <input name="group_cost" type="text" id="group_cost" class="form-control"
-                                   value="<?php echo isset($model->group_cost) ? number_format((float)$model->group_cost, 2,'.','') : '0.00'; ?>"
-                                   style="margin: 0 ; padding: 0px 20px;" disabled/>
+                            <span><?php echo isset($model->group_cost) ? number_format((float)$model->group_cost, 2,'.','') : '0.00'; ?></span>
                         </div>
                     </div>
                     <div class="row form-inline">
@@ -217,7 +209,7 @@
                     <div class="row form-inline">
                         <label> 商品详情 : </label>
                         <div id="contents" class="form-group"
-                             style="vertical-align: text-top; background-color: white; padding: 20px; border: 1px solid lightgrey">
+                             style="vertical-align: text-top; background-color: white; padding: 10px; border: 1px solid lightgrey; width: 400px;">
                             <?= isset($model->contents) ? $model->contents : ''; ?>
                         </div>
                     </div>

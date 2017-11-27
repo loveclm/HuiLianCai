@@ -13,6 +13,7 @@ class feedback_model extends CI_Model
         $this->db->from('tbl_feedback');
         $this->db->where('tbl_feedback.userid', $id);
 
+        $this->db->order_by('add_time', 'desc');
         $query = $this->db->get();
         $result = $query->result();
         if (count($result) == 0) $result = NULL;

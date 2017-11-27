@@ -46,13 +46,13 @@
                     if ($shop_manager_number == '') {
                         ?>
                         <div class="row form-inline">
-                            <label> 所属供货商 : </label>
+                            <label> 所属区域总代理 : </label>
                             <div class="input-group margin">
                                 <span><?php echo isset($model->provider_name) ? $model->provider_name : ''; ?></span>
                             </div>
                         </div>
                         <div class="row form-inline">
-                            <label> 供货商账号 : </label>
+                            <label> 区域总代理账号 : </label>
                             <div class="input-group margin">
                                 <span><?php echo isset($model->provider_userid) ? $model->provider_userid : ''; ?></span>
                             </div>
@@ -98,50 +98,48 @@
                                         </thead>
                                         <tbody id="content_tbl">
                                         <?php
-                                        if (isset($model->activities)) {
+                                        if (isset($model->activity)) {
                                             $total_count = 0;
                                             $origin_cost = 0;
                                             $group_cost = 0;
-                                            $activity_cnts = explode(",", $model->activity_cnts);
-                                            for ($k = 0; $k < count($model->activities); $k++) {
-                                                $activity = $model->activities[$k];
-                                                $activity_cnt = floatval($activity_cnts[$k]);
 
-                                                $i = 0;
-                                                $buy_cnt = json_decode($activity->buy_cnt);
-                                                foreach ($activity->products as $product) {
-                                                    $cur_count = floatval($buy_cnt[$i]->count);
-                                                    $cur_origin_cost = $cur_count * floatval($product->cost);
-                                                    $cur_group_cost = $cur_count * floatval($buy_cnt[$i]->cost);
+                                            $activity = $model->activity;
+                                            $activity_cnt = $model->activity_cnts;
 
-                                                    $total_count += $cur_count * $activity_cnt;
-                                                    $origin_cost += $cur_origin_cost * $activity_cnt;
-                                                    $group_cost += $cur_group_cost * $activity_cnt;
+                                            $i = 0;
+                                            $buy_cnt = json_decode($activity->buy_cnt);
+                                            foreach ($activity->products as $product) {
+                                                $cur_count = floatval($buy_cnt[$i]->count);
+                                                $cur_origin_cost = $cur_count * floatval($product->cost);
+                                                $cur_group_cost = $cur_count * floatval($buy_cnt[$i]->cost);
 
-                                                    $i++;
-                                                    ?>
-                                                    <tr>
-                                                        <td><?= $activity->activity_id . '-' . $i; ?></td>
-                                                        <td><?= $product->barcode; ?></td>
-                                                        <td>
-                                                            <img src="<?= base_url() . json_decode($product->cover)[1] ?>"
-                                                                 style="width:100px;height:50px;">
-                                                        </td>
-                                                        <td><?= $product->name; ?></td>
-                                                        <?php
-                                                        if ($shop_manager_number != '') {
-                                                            ?>
-                                                            <th><?= ($activity->kind == 1) ? '单品活动' : '套餐活动'; ?></th>
-                                                            <?php
-                                                        }
-                                                        ?>
-                                                        <td><?= number_format((float)$cur_origin_cost, 2, '.',''); ?></td>
-                                                        <td><?= number_format((float)$buy_cnt[$i-1]->cost, 2,'.','') ; ?></td>
-                                                        <td><?= $cur_count * $activity_cnt; ?></td>
-                                                        <td><?= number_format((float)($cur_origin_cost * $activity_cnt),2,'.','' ); ?></td>
-                                                    </tr>
+                                                $total_count += $cur_count * $activity_cnt;
+                                                $origin_cost += $cur_origin_cost * $activity_cnt;
+                                                $group_cost += $cur_group_cost * $activity_cnt;
+
+                                                $i++;
+                                                ?>
+                                                <tr>
+                                                    <td><?= $activity->activity_id . '-' . $i; ?></td>
+                                                    <td><?= $product->barcode; ?></td>
+                                                    <td>
+                                                        <img src="<?= base_url() . json_decode($product->cover)[1] ?>"
+                                                             style="width:100px;height:50px;">
+                                                    </td>
+                                                    <td><?= $product->name; ?></td>
                                                     <?php
-                                                }
+                                                    if ($shop_manager_number != '') {
+                                                        ?>
+                                                        <td><?= ($activity->kind == 1) ? '单品活动' : '套餐活动'; ?></td>
+                                                        <?php
+                                                    }
+                                                    ?>
+                                                    <td><?= number_format((float)$cur_origin_cost, 2, '.',''); ?></td>
+                                                    <td><?= number_format((float)$buy_cnt[$i-1]->cost, 2,'.','') ; ?></td>
+                                                    <td><?= $cur_count * $activity_cnt; ?></td>
+                                                    <td><?= number_format((float)($cur_origin_cost * $activity_cnt),2,'.','' ); ?></td>
+                                                </tr>
+                                                <?php
                                             }
                                         }
                                         ?>
@@ -157,19 +155,19 @@
                     <div class="row form-inline">
                         <label> 合计数量 : </label>
                         <div class="input-group margin">
-                            <span id="total_count"><?= isset($model->activities) ? number_format((float)$total_count,2,'.','') : '0'; ?></span>
+                            <span id="total_count"><?= isset($model->activity) ? $total_count : '0'; ?></span>
                         </div>
                     </div>
                     <div class="row form-inline">
                         <label> 原价总价 : </label>
                         <div class="input-group margin">
-                            <span id="origin_cost"><?= isset($model->activities) ? number_format((float)$origin_cost,2,'.',''): '0.00'; ?></span>
+                            <span id="origin_cost"><?= isset($model->activity) ? number_format((float)$origin_cost,2,'.',''): '0.00'; ?></span>
                         </div>
                     </div>
                     <div class="row form-inline">
                         <label> 拼团价 : </label>
                         <div class="input-group margin">
-                            <span id="group_cost"><?= isset($model->activities) ? number_format((float)$group_cost, 2,'.','') : '0.00'; ?></span>
+                            <span id="group_cost"><?= isset($model->activity) ? number_format((float)$group_cost, 2,'.','') : '0.00'; ?></span>
                         </div>
                     </div>
                     <div class="row form-inline">
@@ -196,27 +194,27 @@
                     <div class="row form-inline">
                         <label> 扣除余额 : </label>
                         <div class="input-group margin">
-                            <span id="coupon"><?= number_format((float)$coupon, 2,'.','') ; ?></span>
+                            <span id="wallet"><?= isset($model->pay_wallet) ? number_format(floatval($model->pay_wallet), 2,'.',''): '0.00' ; ?></span>
                         </div>
                     </div>
                     <div class="row form-inline">
                         <label> <?= isset($model->pay_method) ? (($model->pay_method == 1) ? '实付金额' : '订单金额') : ''; ?>
                             : </label>
                         <div class="input-group margin">
-                            <span id="coupon"><?= isset($model->group_cost) ? intval(floatval($model->group_cost)) : '0.00'; ?></span>
+                            <span id="coupon"><?= isset($model->pay_cost) ? (($model->pay_method == 1) ? $model->pay_cost: $model->group_cost ) : '0.00'; ?></span>
                         </div>
                     </div>
                     <div class="row form-inline">
                         <label> 退款金额 : </label>
                         <div class="input-group margin">
-                            <span><?= number_format((float)(floatval($model->pay_cost) - floatval($model->group_cost)),2,'.',''); ?></span>
+                            <span><?= number_format((float)($model->refund_cost),2,'.',''); ?></span>
                         </div>
                     </div>
                     <div class="row"></div>
                     <div class="row form-inline">
                         <label> 买家留言 : </label>
                         <div class="input-group margin">
-                            <span>速度！</span>
+                            <span><?= isset($model->note) ? $model->note : ''; ?></span>
                         </div>
                     </div>
                     <div class="row"></div>

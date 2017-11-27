@@ -80,15 +80,17 @@
                         <div class="input-group margin">
                             <input name="activity_name" type="text" id="activity_name" class="form-control"
                                    value="<?php echo isset($model->activity_name) ? $model->activity_name : ''; ?>"
-                                   style="margin: 0 ; padding: 0px 20px;"/>
+                                   style="margin: 0 ; padding: 0px 20px; width: 400px;"/>
                         </div>
                     </div>
                     <div class="row form-inline">
                         <label> *拼团开始时间 : </label>
                         <div class="input-group date form_datetime margin"
-                             data-date="<?php echo isset($model->start_time) ? $model->start_time : ''; ?>"
+                             data-date="<?php echo isset($model->start_time) ? $model->start_time : $start_time; ?>"
                              data-date-format="yyyy-mm-dd hh:ii" data-link-field="dtp_input1">
-                            <input name="start_time" class="form-control" size="16" type="text" value="<?php echo isset($model->start_time) ? $model->start_time : ''; ?>" readonly="" style="padding: 0px 20px;margin: 0px;">
+                            <input name="start_time" class="form-control" size="16" type="text"
+                                   value="<?php echo isset($model->start_time) ? $model->start_time : $start_time; ?>" readonly=""
+                                   style="padding: 0px 20px;margin: 0px; width: 360px;"/>
                             <span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
                         </div>
 
@@ -97,9 +99,11 @@
                         <label> *拼团结束时间 : </label>
 
                         <div class="input-group date form_datetime margin"
-                             data-date="<?php echo isset($model->end_time) ? $model->end_time : ''; ?>"
+                             data-date="<?php echo isset($model->end_time) ? $model->end_time : $end_time; ?>"
                              data-date-format="yyyy-mm-dd hh:ii" data-link-field="dtp_input1">
-                            <input name="end_time" class="form-control" size="16" type="text" value="<?php echo isset($model->end_time) ? $model->end_time : ''; ?>" readonly=""  style="padding: 0px 20px;margin: 0px;">
+                            <input name="end_time" class="form-control" size="16" type="text"
+                                   value="<?php echo isset($model->end_time) ? $model->end_time : $end_time; ?>" readonly=""
+                                   style="padding: 0px 20px;margin: 0px; width: 360px;"/>
                             <span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
                         </div>
 
@@ -109,7 +113,7 @@
                         <div class="input-group margin">
                             <input name="man_cnt" type="text" id="man_cnt" class="form-control"
                                    value="<?php echo isset($model->man_cnt) ? $model->man_cnt : '2'; ?>"
-                                   style="margin: 0 ; padding: 0px 20px;"/>
+                                   style="margin: 0 ; padding: 0px 20px; width: 380px;"/><h5 style="margin-top: 10px;">人</h5>
                         </div>
                     </div>
                     <div class="row form-inline">
@@ -117,7 +121,7 @@
                         <div class="input-group margin">
                             <input name="group_cnt" type="text" id="group_cnt" class="form-control"
                                    value="<?php echo isset($model->group_cnt) ? $model->group_cnt : '2'; ?>"
-                                   style="margin: 0 ; padding: 0px 20px;"/>
+                                   style="margin: 0 ; padding: 0px 20px; width: 380px;"/>
                         </div>
                     </div>
                     <div class="row form-inline">
@@ -125,14 +129,14 @@
                         <div class="input-group margin">
                             <input name="group_cost" type="text" id="group_cost" class="form-control"
                                    value="<?php echo isset($model->group_cost) ? number_format((float)$model->group_cost, 2,'.','') : '0.00'; ?>"
-                                   style="margin: 0 ; padding: 0px 20px;"/>
+                                   style="margin: 0 ; padding: 0px 20px; width: 380px;"/>
                         </div>
                     </div>
                     <div class="row form-inline">
                         <label> 原价 : </label>
                         <div class="input-group margin">
                             <span id="cost"><?= isset($model->cost) ? number_format((float)$model->cost, 2,'.','') : ''; ?></span>
-                            <input name="origin_cost" value="<?= isset($model->cost) ? $model->cost : '0'; ?>" type="hidden">
+                            <input name="origin_cost" id="origin_cost" value="<?= isset($model->cost) ? $model->cost : '0'; ?>" type="hidden">
                         </div>
                     </div>
                     <div class="row form-inline">
@@ -185,7 +189,7 @@
                     <div class="row form-inline">
                         <label> 商品详情 : </label>
                         <div id="contents" class="form-group"
-                             style="vertical-align: text-top; background-color: white; padding: 20px; border: 1px solid lightgrey">
+                             style="vertical-align: text-top; background-color: white; padding: 10px; border: 1px solid lightgrey; width: 400px;">
                             <?= isset($model->contents) ? $model->contents : ''; ?>
                         </div>
                     </div>

@@ -20,6 +20,7 @@ class shop_controller extends BaseController
         $this->load->model('shop_model');
         $this->load->model('user_model');
         $this->load->model('news_model');
+        $this->load->model('coupon_model');
         $this->isLoggedIn();
     }
 
@@ -68,7 +69,6 @@ class shop_controller extends BaseController
                 $id = $_POST['id'];
                 $searchData = $_POST['searchData'];
                 $searchData['provider_id'] = $this->user_model->getProviderId($this->global['login_id']);
-
                 // get top list data in homepage
                 switch ($id) {
                     case 1:
@@ -77,7 +77,7 @@ class shop_controller extends BaseController
                                  "禁用状态", "配送员", "操作");
                             $cols = 8;
                         }else {                            // admin
-                            $header = array("终端便利店账号", "终端便利店", "类型", "地址", "推荐人手机号", "积分",
+                            $header = array("终端便利店账号", "终端便利店", "类型", "地址", "推荐人<br>手机号", "积分",
                                 "认证状态", "禁用状态", "操作");
                             $cols = 9;
                         }
@@ -103,6 +103,8 @@ class shop_controller extends BaseController
     function output_content($allLists, $id)
     {
         $output_html = '';
+        $provider_id = $this->user_model->getProviderId($this->global['login_id']);
+
         if (!isset($allLists) || count($allLists) == 0) return '';
         // ????? make list id: 1-main menu
         $i = 0;
@@ -110,9 +112,9 @@ class shop_controller extends BaseController
             case 1:
                 foreach ($allLists as $item) {
                     $output_html .= '<tr>';
-                    $output_html .= '<td>' . $item->userid . '</td>';
-                    $output_html .= '<td>' . $item->username . '</td>';
-                    $output_html .= '<td>';
+                    $output_html .= '<td style="width: 100px;">' . $item->userid . '</td>';
+                    $output_html .= '<td style="width: 100px;">' . $item->username . '</td>';
+                    $output_html .= '<td style="width: 80px;">';
                     switch ($item->shop_type){
                         case 1:
                             $output_html .= '便利店' . '</td>';
@@ -127,13 +129,15 @@ class shop_controller extends BaseController
                             $output_html .= '其他业态' . '</td>';
                             break;
                     }
-                    $output_html .= '<td>' . $item->address . '</td>';
+                    $output_html .= '<td style="text-align: left;">' . $this->user_model->convertAddress($item->address) . '</td>';
                     if($this->isTicketter() == TRUE) {
-                        $output_html .= '<td>' . $item->saleman_mobile . '</td>';
+                        $output_html .= '<td style="width: 80px;">' . $item->saleman_mobile . '</td>';
                     }
-                    $output_html .= '<td>' . (($item->coupon == 0) ? '' : $item->coupon) . '</td>';
+
+                    $output_html .= '<td>' . (($item->integral == 0) ? '' : $item->integral) . '</td>';
+
                     if($this->isTicketter() == TRUE) {  // admin
-                        $output_html .= '<td>';
+                        $output_html .= '<td style="width: 80px;">';
                         switch ($item->auth) {
                             case 1:
                                 $output_html .= '未认证' . '</td>';
@@ -149,9 +153,10 @@ class shop_controller extends BaseController
                                 break;
                         }
                     }
-                    $output_html .= '<td>' . (($item->status == 1) ? '未禁用' : '已禁用') . '</td>';
+                    $output_html .= '<td style="width: 80px;">' . (($item->status == 1) ? '未禁用' : '已禁用') . '</td>';
+                    $ship_man = $this->shop_model->getShipman($item->id, $provider_id);
                     if($this->isTicketter() == FALSE){      // provider
-                        $output_html .= '<td>' . $this->user_model->getUserName($item->ship_man) . '</td>';
+                        $output_html .= '<td>' . $this->user_model->getUserName($ship_man) . '</td>';
                     }
                     $output_html .= '</td>';
                     $output_html .= '<td>';
@@ -171,8 +176,8 @@ class shop_controller extends BaseController
                             $output_html .= '<a href="#" onclick="deployConfirm(\'' . $item->userid . '\',1)">解除禁用 &nbsp;&nbsp;</a>';
                         }
                     }else{                                  // provider
-                        if ($item->ship_man == 0 && $item->auth == 3) {
-                            $output_html .= '<a href="#" onclick="userConfirm(\'' . $item->ship_man . '\', \'' . $item->id . '\')">选择配送员 &nbsp;&nbsp;</a>';
+                        if ($ship_man == 0 && $item->auth == 3) {
+                            $output_html .= '<a href="#" onclick="userConfirm(\'' . $ship_man . '\', \'' . $item->id . '\')">选择配送员 &nbsp;&nbsp;</a>';
                         }
                     }
                     $output_html .= '</td>';
@@ -219,9 +224,9 @@ class shop_controller extends BaseController
     function shop_validate(){
         $this->load->library('form_validation');
 
-        $this->form_validation->set_rules('userid', '供货商账号', 'trim|required|exact_length[11]');
+        $this->form_validation->set_rules('userid', '区域总代理账号', 'trim|required|exact_length[11]');
         $this->form_validation->set_rules('password', '初始密码', 'required|min_length[8]|max_length[20]');
-        $this->form_validation->set_rules('shop_name', '供货商名称', 'trim|required|max_length[10]');
+        $this->form_validation->set_rules('shop_name', '区域总代理名称', 'trim|required|max_length[10]');
         $this->form_validation->set_rules('address_district', '所属县区', 'trim|required');
         $this->form_validation->set_rules('address_detail', '详细地址', 'trim|required|max_length[30]');
         $this->form_validation->set_rules('contact_name', '联系人', 'trim|required|min_length[2]|max_length[5]');
@@ -299,7 +304,13 @@ class shop_controller extends BaseController
             $this->loadThis();
         } else {
             $result = $_POST['itemInfo'];
-            echo $this->shop_model->add($result);
+            $provider_id = $this->user_model->getProviderId($this->global['login_id']);
+
+            if(isset($result['ship_man'])) {
+                echo $this->shop_model->setShipman($provider_id, $result['id'], $result['ship_man']);
+            }else
+                echo $this->shop_model->update($result, $result['userid']);
+
         }
     }
 
@@ -315,13 +326,22 @@ class shop_controller extends BaseController
             $result['update_time'] = date("Y-m-d");
             // add authorization message to message list
             $userinfo = $this->shop_model->getItemById($result['userid']);
-            if($result['auth'] == 3) {
+            if($result['auth'] == '3') {
                 $news_data = array(
                     'sender' => 0,
                     'receiver' => $this->user_model->getIdByUserId($result['userid']),
-                    'type' => '企业认证申请',
-                    'message' => '恭喜！' . $userinfo->username . '企业认证通过。'
+                    'type' => '便利店认证申请',
+                    'message' => '您的信息已经确认，欢迎多多下单，获取更多奖励。'
                 );
+                $this->news_model->add($news_data);
+
+                $news_data = array(
+                    'sender' => 0,
+                    'receiver' => $this->user_model->getIdByUserId($result['userid']),
+                    'type' => '优惠券',
+                    'message' => '欢迎使用惠联彩，赠送30元代金券，满300元使用。'
+                );
+                $this->news_model->add($news_data);
 
                 // modify coupon using status
                 $coupon_info = array(
@@ -339,11 +359,11 @@ class shop_controller extends BaseController
                 $news_data = array(
                     'sender' => 0,
                     'receiver' => $this->user_model->getIdByUserId($result['userid']),
-                    'type' => '企业认证申请',
-                    'message' => '企业认证失败。'. $result['reason']
+                    'type' => '便利店认证申请',
+                    'message' => '抱歉，您的信息有误，请返回认证页面重新提报真实、有效资料。原因是：' . $result['reason']
                 );
+                $this->news_model->add($news_data);
             }
-            $this->news_model->add($news_data);
 
             echo $this->shop_model->update($result, $result['userid']);
         }

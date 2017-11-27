@@ -15,10 +15,10 @@
                             <option value="0">推荐业务员</option>
                         </select>
                         <input type="text" id="searchName"
-                               value="" class="form-control">
+                               value="" class="form-control" style="width: 140px;">
                     </div>
                     <div class="form-group">
-                        <select name="start_month" class="form-control" id="start_month">
+                        <select name="start_month" class="form-control" id="start_month" style="margin-left: 10px;">
                             <option value="0" >选择月份</option>
                             <?php
                             for($i = 1; $i <=12; $i++){
@@ -51,9 +51,9 @@
                         </select>
                     </div>
                  </div>
-                <div class="col-xs-12 col-sm-2 form-inline">
+                <div class="col-xs-12 col-sm-2 form-inline" style="padding: 0px;">
                     <div class="form-group">
-                        <a href="#" class="btn btn-primary" onclick="exportTable2xls()">导出xcel</a>
+                        <a href="#" class="btn btn-primary" onclick="exportTable2xls()">导出Excel</a>
                     </div>
                     <div class="form-group">
                         <a href="#" class="btn btn-primary" onclick="recommend_man_list();">查询</a>
@@ -62,13 +62,14 @@
             </div>
 
             <div class="row">
-                <div class="box main-shadow">
+                <div class="box main-shadow" style="max-height: 700px; overflow-y: auto;">
                     <div class="box-body table-responsive no-padding">
-                        <table class="table table-hover">
+                        <table id="contentInfo_tbl" class="table table-hover">
                             <thead id="header_tbl"></thead>
                             <tbody id="content_tbl"></tbody>
                             <tfoot id="footer_tbl"></tfoot>
                         </table>
+                        <div id="contentpageNavPosition"></div>
                     </div>
                     <!-- /.box-body -->
                 </div>

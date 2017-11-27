@@ -18,6 +18,9 @@ class shipping_controller extends BaseController
     {
         parent::__construct();
         $this->load->model('user_model');
+        $this->load->model('order_model');
+        $this->load->model('activity_model');
+        $this->load->model('news_model');
         $this->load->model('shipping_model');
         $this->load->model('statistics_model');
         $this->isLoggedIn();
@@ -110,7 +113,7 @@ class shipping_controller extends BaseController
                 // get top list data in homepage
                 switch ($id) {
                     case 1:
-                        $header = array("配送员账号", "姓名", "所属供货商", "所属县区", "联系电话", "头像",
+                        $header = array("配送员账号", "姓名", "所属区域总代理", "所属县区", "联系电话", "头像",
                             "配送数量", "禁用状态", "新增时间");
                         $cols = 9;
 
@@ -137,7 +140,7 @@ class shipping_controller extends BaseController
                         $ret['status'] = 'success';
                         break;
                     case 4:
-                        $header = array("配送日期", "配送账号", "配送员", "配送数量", "订单金额", "配送状态", "操作");
+                        $header = array("配送编号", "配送日期", "配送员", "配送数量", "订单金额", "配送状态", "操作");
                         $cols = 7;
 
                         $contentList = $this->shipping_model->getShipItems($searchData);
@@ -180,7 +183,7 @@ class shipping_controller extends BaseController
 
                     $output_html .= '<td>' . $this->shipping_model->getShippingCount($this->user_model->getIdByUserId($item->userid)) . '</td>';
                     $output_html .= '<td>';
-                    $output_html .= ($item->status == 1) ? '未禁用' : '已禁用';
+                    $output_html .= '未禁用'; //($item->status == 1) ? '未禁用' : '已禁用';
                     $output_html .= '</td>';
                     $output_html .= '<td>' . $item->created_time . '</td>';
                     $output_html .= '</tr>';
@@ -199,7 +202,11 @@ class shipping_controller extends BaseController
                     $output_html .= '<td>';
                     $output_html .= '<a href="' . base_url() . 'shipman_show/' . $item->id . '">查看 &nbsp;&nbsp;</a>';
                     $output_html .= '<a href="' . base_url() . 'shipman_edit/' . $item->id . '">编辑 &nbsp;&nbsp;</a>';
-                    $output_html .= '<a href="#" onclick="deleteConfirm(\'' . $item->id . '\')">删除 &nbsp;&nbsp;</a>';
+                    if($this->shipping_model->isDeletable($item->id ) == true)
+                        $output_html .= '<a href="#" onclick="deleteConfirm(\'' . $item->id . '\')">删除 &nbsp;&nbsp;</a>';
+                    else
+                        $output_html .= '<a href="#" onclick="$(\'#alert_delete\').show();" style="color: grey;">删除 &nbsp;&nbsp;</a>';
+
                     $output_html .= '<a href="#" onclick="passwordConfirm(\'' . $item->id . '\')">重置密码 &nbsp;&nbsp;</a>';
                     $output_html .= '</td>';
                     $output_html .= '</tr>';
@@ -211,7 +218,7 @@ class shipping_controller extends BaseController
                     $output_html .= '<td>' . $item->id . '</td>';
                     $output_html .= '<td>' . $item->create_time . '</td>';
                     $output_html .= '<td>' . $item->username . '</td>';
-                    $output_html .= '<td>' . count(explode(',', $item->order_id)) . '</td>';
+                    $output_html .= '<td>' . $this->shipping_model->getShippingCountFromOrders($item->order_id) . '</td>';
                     $output_html .= '<td>' . number_format((float)$item->money, 2, '.', '') . '</td>';
                     $output_html .= '<td>';
                     $output_html .= ($item->state == 1) ? '未装车' : '已装车';
@@ -353,6 +360,7 @@ class shipping_controller extends BaseController
 
                 if ($item->password != $confirm_password) {
                     $this->form_validation->set_rules('userid', '密码和确认密码必须相同。', 'user_error');
+
                     $this->form_validation->run();
                     $this->global['model'] = $item;
                     // the user list that manages site
@@ -393,7 +401,7 @@ class shipping_controller extends BaseController
         if ($this->isAdmin() == TRUE) {
             $this->loadThis();
         } else {
-            $result = $_POST['itemInfo'];
+            $data = $_POST['itemInfo'];
             // if shipping setting then set ship_status and ship_time
             if(isset($data['state'])){
                 $shipping_info = $this->shipping_model->getShippingItemByid($data['id']);
@@ -403,18 +411,33 @@ class shipping_controller extends BaseController
                     'ship_time' => date('Y-m-d H:i:s')
                 );
 
-                $this->shipping_model->updateShippingStatus($order_info, $shipping_info->order_id);
+                $ids = explode(',',$shipping_info->order_id);
+                foreach ($ids as $id){
+                    // set shipping status in order record
+                    $this->shipping_model->updateShippingStatus($order_info, $id);
+
+                    $order = $this->order_model->getItemById($id);
+                    $activity = $this->activity_model->getItemByid($order->activity_ids);
+                    // send news
+                    $news_data = array(
+                        'sender' => 0,
+                        'receiver' => $order->shop,
+                        'type' => '拼团活动消息',
+                        'message' =>  $activity->activity_name .  '商品拼团结束，供货商将以拼团价/零批价尽快给您发货。'
+                    );
+                    $this->news_model->add($news_data);
+                }
                 // change shipping state
                 $shipping = array(
                     'state' => 2
                 );
-                $this->updateShippingData($shipping, $shipping_info->id);
+                echo $this->shipping_model->updateShippingData($shipping, $shipping_info->id);
             }
             if(isset($data['orderID'])){
                 $data['password'] = getHashedPassword($data['orderID']);
-            }
 
-            echo $this->shipping_model->add($result);
+                echo $this->shipping_model->add($data);
+            }
         }
     }
 

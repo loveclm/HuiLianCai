@@ -32,6 +32,8 @@ class product_format_model extends CI_Model
         if ($kind!= '0') $this->db->where('tbl_product_format.type', $kind);
         if ($brand!= '0') $this->db->where('tbl_product_format.brand', $brand);
 
+        $this->db->order_by('create_time', 'desc');
+
         $query = $this->db->get();
         $result = $query->result();
         if (count($result) == 0) $result = NULL;
@@ -47,6 +49,25 @@ class product_format_model extends CI_Model
         return count($result) == 0 ? true : false;
     }
 
+    function isValidBarcode($barcode, $id){
+        $result = $this->db->select('id')
+            ->from('tbl_product_format')
+            ->where('barcode', $barcode)
+            ->where('id <> ', $id)
+            ->get()->result();
+
+        return count($result) == 0 ? true : false;
+    }
+
+    function isValidProductName($name, $id){
+        $result = $this->db->select('id')
+            ->from('tbl_product_format')
+            ->where('name', $name)
+            ->where('id <> ', $id)
+            ->get()->result();
+
+        return count($result) == 0 ? true : false;
+    }
     /**
      * This function is used to get Tourist Area by id
      * @return array $result : This is result
@@ -70,12 +91,12 @@ class product_format_model extends CI_Model
     {
         $result = $this->getItemByBarcode($product['barcode']);
         if(count($result)>0){
-            $product['update_time'] = date("Y-m-d");
+            $product['update_time'] = date("Y-m-d H:i:s");
 
             $this->updateProduct($product);
             return 0;
         }
-        $product['create_time'] = date("Y-m-d");
+        $product['create_time'] = date("Y-m-d H:i:s");
         $this->db->trans_start();
         $this->db->insert('tbl_product_format', $product);
         $insert_id = $this->db->insert_id();

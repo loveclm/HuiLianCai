@@ -14,17 +14,24 @@
                         <select class="form-control" id="searchType">
                             <option value="0" <?php if ($searchType== 0) echo ' selected' ?>>活动编号</option>
                             <option value="1" <?php if ($searchType == 1) echo ' selected' ?>>活动名称</option>
+                            <?php
+                            if($shop_manager_number == '') {
+                                ?>
+                                <option value="2" <?php if ($searchType == 1) echo ' selected' ?>>所属区域总代理</option>
+                                <?php
+                            }
+                            ?>
                         </select>
-                        <input type="text" id="searchName"
+                        <input type="text" id="searchName" style="width: 140px;"
                                value="<?php echo $searchName == 'all' ? '' : $searchName; ?>" class="form-control">
                     </div>
                     <div class="form-group">
-                        <select name="searchStatus" class="form-control" id="searchStatus">
+                        <select name="searchStatus" class="form-control" id="searchStatus" style="margin-left: 40px;">
                             <option value="0" <?php if ($searchStatus == 0) echo ' selected' ?>>活动状态</option>
                             <option value="1" <?php if ($searchStatus == 1) echo ' selected' ?>>未开始</option>
-                            <option value="2" <?php if ($searchStatus == 2) echo ' selected' ?>>拼单中</option>
-                            <option value="3" <?php if ($searchStatus == 3) echo ' selected' ?>>拼单成功</option>
-                            <option value="4" <?php if ($searchStatus == 4) echo ' selected' ?>>拼单失败</option>
+                            <option value="2" <?php if ($searchStatus == 2) echo ' selected' ?>>拼团中</option>
+                            <option value="3" <?php if ($searchStatus == 3) echo ' selected' ?>>拼团成功</option>
+                            <option value="4" <?php if ($searchStatus == 4) echo ' selected' ?>>拼团失败</option>
 
                         </select>
                     </div>
@@ -70,14 +77,15 @@
                     <?php
                 }
             ?>
-            <div class="row">
+            <div class="row"  style="max-height: 670px; overflow-y: auto;">
                 <div class="box main-shadow">
                     <div class="box-body table-responsive no-padding">
-                        <table class="table table-hover">
+                        <table id="contentInfo_tbl"  class="table table-hover">
                             <thead id="header_tbl"></thead>
                             <tbody id="content_tbl"></tbody>
                             <tfoot id="footer_tbl"></tfoot>
                         </table>
+                        <div id="contentpageNavPosition"></div>
                     </div>
                     <!-- /.box-body -->
                 </div>

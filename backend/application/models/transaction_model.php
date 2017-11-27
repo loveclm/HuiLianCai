@@ -13,6 +13,7 @@ class transaction_model extends CI_Model
         $name = $data['searchName'];
         $start_time = $data['start_time'];
         $end_time = $data['end_time'];
+        $provider_id = $data['provider_id'];
 
         $this->db->select('tbl_transaction.*, tbl_userinfo.userid as shop_id, tbl_userinfo.username as shop_name');
         $this->db->from('tbl_transaction');
@@ -32,10 +33,13 @@ class transaction_model extends CI_Model
 
         if ($likeCriteria != '') $this->db->where($likeCriteria);
 
-        if ($start_time != '') $this->db->where('tbl_transaction.time >', $start_time);
-        if ($end_time != '') $this->db->where('tbl_transaction.time <', $end_time);
+        if ($start_time != '') $this->db->where('date(tbl_transaction.time) >= \'' . $start_time.'\'');
+        if ($end_time != '') $this->db->where('date(tbl_transaction.time) <=\''. $end_time.'\'');
         if($pay_type != 0)
             $this->db->where('tbl_transaction.pay_type', $pay_type);
+
+        if($provider_id != '0')
+            $this->db->where('tbl_transaction.provider_id', $provider_id);
 
         $this->db->order_by('tbl_transaction.time', "desc");
         $query = $this->db->get();
@@ -68,6 +72,7 @@ class transaction_model extends CI_Model
         $this->db->select('money as price, pay_type as type, time as trans_time, note as content');
         $this->db->from('tbl_transaction');
         $this->db->where('shop_id', $user_id);
+        $this->db->order_by('time', "desc");
         $query = $this->db->get();
 
         return $query->result();
@@ -77,6 +82,16 @@ class transaction_model extends CI_Model
         $result = $this->db->select('*')
             ->from('tbl_provider_bankinfo')
             ->where('provider_id', $id)
+            ->get()->result();
+        if(count($result) == 0) return NULL;
+
+        return $result[0];
+    }
+
+    function getBankinfoById($id){
+        $result = $this->db->select('*')
+            ->from('tbl_provider_bankinfo')
+            ->where('id', $id)
             ->get()->result();
         if(count($result) == 0) return NULL;
 
@@ -108,7 +123,7 @@ class transaction_model extends CI_Model
     function addBankinfo($item)
     {
         $this->db->trans_start();
-        $item['create_time'] = date("Y-m-d H:i:s");
+        $item->create_time = date("Y-m-d H:i:s");
         $this->db->insert('tbl_provider_bankinfo', $item);
         $insert_id = $this->db->insert_id();
         $this->db->trans_complete();

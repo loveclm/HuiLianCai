@@ -100,6 +100,10 @@ class login_controller extends CI_Controller
                     $this->session->set_flashdata('error', '该账号不存在。');
                     redirect('/loginMe');
                     break;
+                case 'user is disabled':
+                    $this->session->set_flashdata('error', '该账号已禁用。');
+                    redirect('/loginMe');
+                    break;
             }
         }
     }

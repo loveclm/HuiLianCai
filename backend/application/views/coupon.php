@@ -24,7 +24,7 @@
                     </div>
                 </div>
             </div>
-             <div class="row">
+             <div class="row" style="max-height: 700px; overflow-y: auto;">
                 <div class="box main-shadow">
                     <div class="box-body table-responsive no-padding">
                         <table class="table table-hover">

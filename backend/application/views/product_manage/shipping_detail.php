@@ -11,7 +11,7 @@
             <div class="row">
                 <div class="col-xs-12 col-sm-2 form-inline">
                     <div class="form-group">
-                        <a href="#" class="btn btn-primary" onclick="exportTable2xls()">导出xcel</a>
+                        <a href="#" class="btn btn-primary" onclick="exportTable2xls()">导出Excel</a>
                     </div>
                 </div>
             </div>

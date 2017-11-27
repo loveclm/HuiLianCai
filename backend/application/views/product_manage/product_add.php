@@ -134,7 +134,7 @@
                     </div>
                     <div class="row form-inline">
                         <label> 商品详情 : </label>
-                        <div id="contents" class="form-group" style="vertical-align: text-top; background-color: white; padding: 20px; border: 1px solid lightgrey">
+                        <div id="contents" class="form-group" style="vertical-align: text-top; background-color: white; padding: 10px; border: 1px solid lightgrey; width: 400px;">
                             <?= isset($product->contents) ? $product->contents : ''; ?>
                         </div>
                     </div>
@@ -180,6 +180,22 @@
                 </div>
             </div>
         </div>
+        <div id="alert_delete" class="modal-dialog text-center" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                            onclick="$('#confirm_delete').hide();">
+                        <span aria-hidden="true">×</span></button>
+                    <span class="modal-title">提示</span>
+                </div>
+                <div class="modal-body">
+                    <label>该商品已经存在，请在商品列表中点击编辑按钮对商品数据进行编辑。</label><br><br>
+                    <a href="#" class="btn btn-primary" onclick="$('#alert_delete').hide();">确定</a>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+
     </section>
 </div>
 

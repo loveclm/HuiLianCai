@@ -52,7 +52,7 @@
             <!-- mini logo for sidebar mini 50x50 pixels -->
             <span class="logo-mini"><b>HLC</b></span>
             <!-- logo for regular state and mobile devices -->
-            <span class="logo-lg"><b>惠联采运营</b></span>
+            <span class="logo-lg"><b>惠联彩运营</b></span>
         </a>
         <!-- Header Navbar: style can be found in header.less -->
         <nav class="navbar navbar-static-top" role="navigation">
@@ -112,7 +112,7 @@
                 <li class="treeview"
                     style="<?php echo(($role >2 && array_search('m_1',$menu_acc) == false) ? 'display:none' : ''); ?>">
                     <a href="<?php echo base_url(); ?>home">
-                        <i class="fa fa-dashboard"></i> <span>首页</span></i>
+                        <i class="fa fa-fw fa-home"></i> <span>首页</span></i>
                     </a>
                 </li>
                 <?php
@@ -121,14 +121,14 @@
                     <li class="treeview"
                         style="<?php echo(($role > 2 && array_search('m_2',$menu_acc) == false) ? 'display:none' : ''); ?>">
                         <a href="<?php echo base_url(); ?>carousel">
-                            <i class="fa fa-plane"></i>
+                            <i class="fa fa-laptop"></i>
                             <span>轮播图管理</span>
                         </a>
                     </li>
                     <li class="treeview"
                         style="<?php echo(($role > 2 && array_search('m_3',$menu_acc) == false) ? 'display:none' : ''); ?>">
                         <a href="<?php echo base_url(); ?>">
-                            <i class="fa fa-laptop"></i>
+                            <i class="fa fa-user"></i>
                             <span>用户管理</span>
                             <span class="pull-right-container">
                                 <i class="fa fa-angle-left pull-right"></i>
@@ -138,7 +138,7 @@
                             <li style="<?= (($role > 2 && array_search('m_3_1',$menu_acc) == false) ? 'display:none' : '');?>">
                                 <a href="<?php echo base_url(); ?>provider">
                                     <i class="fa fa-circle-o"></i>
-                                    供货商
+                                    区域总代理
                                 </a>
                             </li>
                             <li style="<?= (($role > 2 && array_search('m_3_2',$menu_acc) == false) ? 'display:none' : '');?>">
@@ -161,7 +161,7 @@
                     <li class="treeview"
                         style="<?= (($role > 2 && array_search('m_4',$menu_acc) == false) ? 'display:none' : '');?>">
                         <a href="<?php echo base_url(); ?>shop">
-                            <i class="fa fa-plane"></i>
+                            <i class="fa fa-user"></i>
                             <span>终端便利店</span>
                         </a>
                     </li>
@@ -173,7 +173,7 @@
                     <li class="treeview"
                         style="<?= (($role > 2 && array_search('m_5',$menu_acc) == false) ? 'display:none' : '');?>">
                         <a href="<?php echo base_url(); ?>">
-                            <i class="fa fa-laptop"></i>
+                            <i class="fa  fa-cloud"></i>
                             <span>商品模板</span>
                             <span class="pull-right-container">
                                 <i class="fa fa-angle-left pull-right"></i>
@@ -212,14 +212,14 @@
                 <li class="treeview"
                     style="<?= (($role > 2 && array_search('m_6',$menu_acc) == false) ? 'display:none' : '');?>">
                     <a href="<?php echo base_url(); ?>product">
-                        <i class="fa fa-upload"></i>
+                        <i class="fa  fa-cubes"></i>
                         <span>商品管理</span>
                     </a>
                 </li>
                 <li class="treeview"
                     style="<?= (($role > 2 && array_search('m_7',$menu_acc) == false) ? 'display:none' : '');?>">
                     <a href="<?php echo base_url(); ?>">
-                        <i class="fa fa-laptop"></i>
+                        <i class="fa fa-shopping-cart"></i>
                         <span>餐装活动</span>
                         <span class="pull-right-container">
                                 <i class="fa fa-angle-left pull-right"></i>
@@ -243,7 +243,7 @@
                 <li class="treeview"
                     style="<?= (($role > 2 && array_search('m_8',$menu_acc) == false) ? 'display:none' : '');?>">
                     <a href="<?php echo base_url(); ?>order">
-                        <i class="fa fa-upload"></i>
+                        <i class="fa fa-gift"></i>
                         <span>订单管理</span>
                     </a>
                 </li>
@@ -253,7 +253,7 @@
                     <li class="treeview"
                         style="<?= (($role > 2 && array_search('m_10',$menu_acc) == false) ? 'display:none' : '');?>">
                         <a href="<?php echo base_url(); ?>withdraw">
-                            <i class="fa fa-upload"></i>
+                            <i class="fa fa-money"></i>
                             <span>提现管理</span>
                         </a>
                     </li>
@@ -263,14 +263,14 @@
                     <li class="treeview"
                         style="<?= (($role > 2 && array_search('m_9',$menu_acc) == false) ? 'display:none' : '');?>">
                         <a href="<?php echo base_url(); ?>shipping">
-                            <i class="fa fa-upload"></i>
+                            <i class="fa  fa-truck"></i>
                             <span>配送管理</span>
                         </a>
                     </li>
                     <li class="treeview"
                         style="<?= (($role > 2 && array_search('m_12',$menu_acc) == false) ? 'display:none' : '');?>">
                         <a href="<?php echo base_url(); ?>showMyMoney">
-                            <i class="fa fa-upload"></i>
+                            <i class="fa  fa-briefcase"></i>
                             <span>我的钱包</span>
                         </a>
                     </li>
@@ -282,7 +282,7 @@
                     <li class="treeview"
                         style="<?= (($role > 2 && array_search('m_11',$menu_acc) == false) ? 'display:none' : '');?>">
                         <a href="<?php echo base_url(); ?>transaction">
-                            <i class="fa fa-upload"></i>
+                            <i class="fa fa-exchange"></i>
                             <span>交易明细</span>
                         </a>
                     </li>
@@ -299,7 +299,7 @@
                 <li class="treeview"
                     style="<?= (($role > 2 && array_search('m_14',$menu_acc) == false) ? 'display:none' : '');?>">
                     <a href="<?php echo base_url(); ?>">
-                        <i class="fa fa-laptop"></i>
+                        <i class="fa fa-fw fa-bar-chart"></i>
                         <span>销售统计</span>
                         <span class="pull-right-container">
                                 <i class="fa fa-angle-left pull-right"></i>
@@ -330,7 +330,7 @@
                             <li style="<?= (($role > 2 && array_search('m_14_4',$menu_acc) == false) ? 'display:none' : '');?>">
                                 <a href="<?php echo base_url(); ?>provider_statistics">
                                     <i class="fa fa-circle-o"></i>
-                                    供货商统计
+                                    区域总代理统计
                                 </a>
                             </li>
                             <?php
@@ -362,7 +362,7 @@
                     <li class="treeview"
                         style="<?= (($role > 2 && array_search('m_15',$menu_acc) == false) ? 'display:none' : '');?>">
                         <a href="<?php echo base_url(); ?>">
-                            <i class="fa fa-laptop"></i>
+                            <i class="fa fa-fw fa-bar-chart"></i>
                             <span>推荐人统计</span>
                             <span class="pull-right-container">
                                 <i class="fa fa-angle-left pull-right"></i>
@@ -372,7 +372,7 @@
                             <li  style="<?= (($role > 2 && array_search('m_15_1',$menu_acc) == false) ? 'display:none' : '');?>">
                                 <a href="<?php echo base_url(); ?>recommend_provider">
                                     <i class="fa fa-circle-o"></i>
-                                    供货商
+                                    区域总代理
                                 </a>
                             </li>
                             <li style="<?= (($role > 2 && array_search('m_15_2',$menu_acc) == false) ? 'display:none' : '');?>">
@@ -389,7 +389,7 @@
                 <li class="treeview"
                     style="<?= (($role > 2 && array_search('m_16',$menu_acc) == false) ? 'display:none' : '');?>">
                     <a href="<?php echo base_url(); ?>news">
-                        <i class="fa fa-upload"></i>
+                        <i class="fa fa-comments"></i>
                         <span>消息管理</span>
                         <span id="message_detail" data-toggle="tooltip" title="" style="display: none;"
                               class="badge bg-light-blue pull-right-container" data-original-title="">
@@ -404,7 +404,7 @@
                     <li class="treeview"
                         style="<?= (($role > 2 && array_search('m_17',$menu_acc) == false) ? 'display:none' : '');?>">
                         <a href="<?php echo base_url(); ?>shipman_manage">
-                            <i class="fa fa-upload"></i>
+                            <i class="fa fa-truck"></i>
                             <span>配送员管理</span>
                         </a>
                     </li>
@@ -413,7 +413,7 @@
                 ?>
                 <li class="treeview" style="<?= (($role > 2 && array_search('m_18',$menu_acc) == false) ? 'display:none' : '');?>">
                     <a href="<?php echo base_url(); ?>">
-                        <i class="fa fa-laptop"></i>
+                        <i class="fa fa-cog"></i>
                         <span>系统管理</span>
                         <span class="pull-right-container">
                                 <i class="fa fa-angle-left pull-right"></i>

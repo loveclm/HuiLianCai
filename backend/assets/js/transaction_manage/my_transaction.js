@@ -7,13 +7,15 @@ description: process Tourist Area
 
 $(document).ready(function () {
     var pageName = $("#page_Name").val();
+    $($('#donate').find('label')[0]).trigger('click');
     $('input:radio[name="toggleButton"]').change(
         function(){
             if (this.checked && this.value == 'on') {
                 var id = this.id;
+                sessionStorage.setItem('curItem', id);
                 var content_html = "";
                 if(id>1){
-                    content_html = "                <div class=\"col-xs-12 col-sm-4 form-inline\">\n" +
+                    content_html = "                <div class=\"col-xs-12 col-sm-4 form-inline\" style=\"padding-right: 0px;\">\n" +
                         "                    <div class=\"form-group\">\n" +
                         "                        <select class=\"form-control\" id=\"searchType\">\n" +
                         "                            <option value=\"0\" selected>终端便利店账号</option>\n" +
@@ -23,7 +25,7 @@ $(document).ready(function () {
                         "                               value=\"\" class=\"form-control\">\n" +
                         "                    </div>\n" +
                         "                </div>\n" +
-                        "                <div class=\"col-xs-12 col-sm-6 form-inline\" style=\"margin-top: 0px;\">\n" +
+                        "                <div class=\"col-xs-12 col-sm-6 form-inline\" style=\"margin-top: 0px;padding: 0px;\">\n" +
                         "                    <span> 交易时间 </span>\n" +
                         "                    <div class=\"input-group date form_datetime margin\"\n" +
                         "                         data-date=\"\"\n" +
@@ -50,6 +52,7 @@ $(document).ready(function () {
                         "                </div>";
                 }
                 $('#searchTool').html(content_html);
+                $(".form_datetime").datepicker();
                 $('#btnIndex').val(parseInt(id)+1);
                 showLists();
             }
@@ -59,6 +62,11 @@ $(document).ready(function () {
         case 'transaction':
             $(".form_datetime").datepicker({language: 'zh-CN'});
             showLists();
+            var id = sessionStorage.getItem('curItem');
+            if( id == null || id == undefined){
+                id = 1;
+            }
+            $($('#donate').find('label')[id-1]).trigger('click');
             break;
         case 'transaction_add':
             break;
@@ -94,6 +102,7 @@ function showLists() {
                 $('#header_tbl').html(res.header);
                 $('#content_tbl').html(res.content);
                 $('#footer_tbl').html(res.footer);
+                executionPageNation();
             } else {
                 alert('search failed!');
                 console.log(res.data);
@@ -125,7 +134,6 @@ function deployItem() {
     $("#confirm_deploy").hide();
 
     var itemInfo = {
-        'provider_id': id,
         'status' : 1,
         'money' : req_money
     };

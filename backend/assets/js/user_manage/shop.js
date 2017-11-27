@@ -44,6 +44,7 @@ function showLists(id) {
                 $('#header_tbl').html(res.header);
                 $('#content_tbl').html(res.content);
                 $('#footer_tbl').html(res.footer);
+                executionPageNation();
             } else {
                 alert('search failed!');
                 console.log(res.data);
@@ -110,9 +111,9 @@ function userItem(ship_id) {
 
 function deployConfirm(id, status) {
     if (status == 1)// status=0-disable, 1-available
-        $("#confirm-deploy-message").html("确定要解除禁用吗?");
+        $("#confirm-deploy-message").html("确定要取消禁用？");
     else
-        $("#confirm-deploy-message").html("确定要禁用吗?");
+        $("#confirm-deploy-message").html("确定要禁用？");
     $("#item_id").val(id);
     $("#item_status").val(status); // status=0-disable, 1-available
     $("#confirm_deploy").show();
@@ -160,7 +161,6 @@ $('input[name="radio_auth_type"]').click(function () {
 
 function authItem() {
     var id = $("#item_id").val();
-    $("#confirm_auth").hide();
     var type = $("input[name='radio_auth_type']:checked").val();
     var itemInfo = {
         'userid': id,
@@ -173,10 +173,15 @@ function authItem() {
             // add shop authorized message to message list
             break;
         case 2:
-            itemInfo['reason'] = $('#reason').val();
+            itemInfo['reason'] = '\'' + $('#reason').val() + '\'';
+            if(itemInfo['reason'] == ''){
+                //alert('请输入失败原因');
+                return;
+            }
             break;
     }
 
+    $("#confirm_auth").hide();
     $.ajax({
         url: baseURL + "user_manage/shop_controller/setAuthFromDB",
         type: "POST",

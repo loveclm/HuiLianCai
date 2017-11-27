@@ -44,7 +44,7 @@ class home_controller extends BaseController
             $this->global['pageTitle'] = '首页';
 
             $data['tab_headers'] = array(
-                "月供货商销售排行",
+                "月区域总代理销售排行",
                 "月终端商便利店消费排行",
                 "月分类销售排行",
                 "月品牌销售排行",
@@ -71,16 +71,17 @@ class home_controller extends BaseController
                     'provider_name' => $provider_info->username,
                     'contact_name' => $provider_info->contact_name,
                     'contact_phone' => $provider_info->contact_phone,
-                    'address' => $provider_info->address
+                    'address' => $this->user_model->convertAddress($provider_info->address)
                 );
             }
 
             // yesterday's the number and money of sales
+            $provider_id = $this->user_model->getProviderId($this->global['login_id']);
             $sale_data = array();
-            $yesterday_sale = $this->order_model->getYesterdayOrderStatus();
+            $yesterday_sale = $this->order_model->getYesterdayOrderStatus($provider_id);
             array_push($sale_data, $yesterday_sale);
             // current month's the number and money of sales
-            $month_sale = $this->order_model->getMonthOrderStatus();
+            $month_sale = $this->order_model->getMonthOrderStatus($provider_id);
             array_push($sale_data, $month_sale);
             $this->global['sale_data'] = $sale_data;
 
@@ -108,10 +109,10 @@ class home_controller extends BaseController
                 // ????? get top list data in homepage
                 switch ($id) {
                     case 1:
-                        $header = array("排名", "供货商账号", "供货商名称", "销量", "销售金额",);
+                        $header = array("排名", "区域总代理账号", "区域总代理名称", "销量", "销售金额",);
                         $cols = 5;
                         $contentList = $this->statistics_model->getTopProviderItems();
-                        $footer = (count($contentList) == 0) ? '没有数据' : "掌握30日内销售最多的供货商";
+                        $footer = (count($contentList) == 0) ? '没有数据' : "掌握30日内销售最多的区域总代理";
                         break; // get top1
                     case 2:
                         $header = array("排名", "终端便利店账号", "终端便利店", "销量", "销售金额",);
@@ -163,30 +164,22 @@ class home_controller extends BaseController
             if (count($item) == 0) continue;
             $output_html .= '<tr>';
             $j = 0;
+
+            $badge = '';
+            switch ($i){
+                case 0:
+                    $badge .= '<img src="assets/images/one.png">';
+                    break;
+                case 1:
+                    $badge .= '<img src="assets/images/two.png">';
+                    break;
+                case 2:
+                    $badge .= '<img src="assets/images/three.png">';
+                    break;
+            }
+
             foreach ($item as $subitem) {
-                $badge = ($i < 3 ? '<span style="color:darkgoldenrod;"><i class="fa fa-gift"></i></span>' : '');
-                $output_html .= '<td>' . ($j == 0 ? $badge."&nbsp;&nbsp;".($i + 1) : $subitem) . '</td>';
-//            $output_html .= '<td>' . ($item->type == '1' ? '旅行社' : ($item->type == '2' ? '渠道商' : '')) . '</td>';
-//            $output_html .= '<td>' . $this->activity_model->getAreaCountByShopId($item->id, 1) . '</td>';
-//            $output_html .= '<td>' . $this->activity_model->getAreaCountByShopId($item->id, 2) . '</td>';
-//            $output_html .= '<td>' . $this->auth_model->getAuthCountByShopId($item->id) . '</td>';
-//            $output_html .= '<td>' . $item->address_1 . '</td>';
-//            $output_html .= '<td>' . ($item->status == 1 ? '已禁用' : '未禁用') . '</td>';
-//            $output_html .= '<td>';
-//            $output_html .= '<a href="' . base_url() . 'showshop/' . $item->id . '">查看 &nbsp;&nbsp;</a>';
-//            $output_html .= '<a href="' . base_url() . 'editshop/' . $item->id . '">编辑 &nbsp;&nbsp;</a>';
-//            if ($item->status == '0') {
-//                $output_html .= '<a href="#" onclick="deleteShopConfirm(' . $item->id . ')">删除 &nbsp;&nbsp;</a>';
-//            }
-//            if ($item->status == '0') {
-//                $output_html .= '<a href="#" onclick="deployShopConfirm(' . $item->id . ')">禁用 &nbsp;&nbsp;</a>';
-//            } else {
-//                $output_html .= '<a href="#" onclick="undeployShopConfirm(' . $item->id . ')">取消禁用 &nbsp;&nbsp;</a>';
-//            }
-//            $output_html .= '<a href="#" onclick="showGenerateQR(' . $item->id . ')">生成二维码 &nbsp;&nbsp;</a>';
-//            $output_html .= '<a href="#" onclick="showGenerateAuth(' . $item->id . ')">发放授权码 &nbsp;&nbsp;</a>';
-//
-//            $output_html .= '</td>';
+                $output_html .= '<td>' . ($j == 0 ? $badge."&nbsp;".($i + 1) : $subitem) . '</td>';
                 $j++;
             }
             $output_html .= '</tr>';

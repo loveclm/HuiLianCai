@@ -14,9 +14,15 @@
                         <select class="form-control" id="searchType">
                             <option value="0" <?php if ($searchType== 0) echo ' selected' ?>>商品条码</option>
                             <option value="1" <?php if ($searchType == 1) echo ' selected' ?>>商品名称</option>
-                            <option value="1" <?php if ($searchType == 2) echo ' selected' ?>>所属供货商</option>
+                            <?php
+                            if( $shop_manager_number == '') {
+                                ?>
+                                <option value="1" <?php if ($searchType == 2) echo ' selected' ?>>所属区域总代理</option>
+                                <?php
+                            }
+                            ?>
                         </select>
-                        <input type="text" id="searchName"
+                        <input type="text" id="searchName" style="width: 140px;"
                                value="<?php echo $searchName == 'all' ? '' : $searchName; ?>" class="form-control">
                     </div>
                 </div>
@@ -71,7 +77,7 @@
                     <?php
                 }
             ?>
-            <div class="row">
+            <div class="row" style="max-height: 680px; overflow-y: auto;">
                 <div class="box main-shadow">
                     <div class="box-body table-responsive no-padding">
                         <table id="contentInfo_tbl" class="table table-hover">
@@ -84,6 +90,21 @@
                     <!-- /.box-body -->
                 </div>
                 <!-- /.box -->
+            </div>
+            <div id="alert_delete" class="modal-dialog text-center" style="display: none;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                                onclick="$('#alert_delete').hide();">
+                            <span aria-hidden="true">×</span></button>
+                        <span class="modal-title">提示</span>
+                    </div>
+                    <div class="modal-body">
+                        <label>该商品已关联商品，不能删除。</label><br><br>
+                        <a href="#" class="btn btn-primary" onclick="$('#alert_delete').hide();">确定</a>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
             </div>
             <div id="confirm_delete" class="modal-dialog text-center" style="display: none;">
                 <div class="modal-content">
@@ -126,5 +147,5 @@
 </div>
 
 <!-- Course Management JS-->
-<script type="text/javascript" src="<?php echo base_url(); ?>assets/js/tbl_pagination.js" charset="utf-8"></script>
+<!--<script type="text/javascript" src="--><?php //echo base_url(); ?><!--assets/js/tbl_pagination.js" charset="utf-8"></script>-->
 <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/product_manage/product.js" charset="utf-8"></script>

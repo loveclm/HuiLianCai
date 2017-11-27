@@ -976,11 +976,10 @@ class CI_Form_validation {
 
 		if (function_exists('mb_strlen'))
 		{
-			return (mb_strlen($str) < $val) ? FALSE : TRUE;
+			return (mb_strlen(utf8_decode($str)) < $val) ? FALSE : TRUE;
 		}
 
-		//return (strlen($str) < $val) ? FALSE : TRUE;
-		return (strlen($str) < $val) ? FALSE : TRUE;
+		return (strlen(utf8_decode($str)) < $val) ? FALSE : TRUE;
 	}
 
     public function user_error($str, $val)
@@ -1007,11 +1006,10 @@ class CI_Form_validation {
 
 		if (function_exists('mb_strlen'))
 		{
-			return (mb_strlen($str) > $val) ? FALSE : TRUE;
+			return (mb_strlen(utf8_decode($str)) > $val) ? FALSE : TRUE;
 		}
 
-		//return (strlen($str) > $val) ? FALSE : TRUE;
-		return (strlen($str) > $val) ? FALSE : TRUE;
+		return (strlen(utf8_decode($str)) > $val) ? FALSE : TRUE;
 	}
 
 	// --------------------------------------------------------------------
@@ -1033,10 +1031,10 @@ class CI_Form_validation {
 
 		if (function_exists('mb_strlen'))
 		{
-			return (mb_strlen($str) != $val) ? FALSE : TRUE;
+			return (mb_strlen(utf8_decode($str)) != $val) ? FALSE : TRUE;
 		}
 
-		return (strlen($str) != $val) ? FALSE : TRUE;
+		return (strlen(utf8_decode($str)) != $val) ? FALSE : TRUE;
 	}
 
 	// --------------------------------------------------------------------

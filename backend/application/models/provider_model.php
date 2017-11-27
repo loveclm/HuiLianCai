@@ -40,7 +40,7 @@ class provider_model extends CI_Model
 
         if ($status!= '0') $this->db->where('tbl_user.status', $status);
 
-        $this->db->where('tbl_user.role', '2'); // 2-providers
+        $this->db->where('tbl_userinfo.type', '2'); // 2-providers
         //$this->db->order_by('isDeleted', '0'); // 0-using, 1-deleted
         $this->db->order_by('tbl_user.create_time', 'desc');
         $query = $this->db->get();
@@ -50,13 +50,16 @@ class provider_model extends CI_Model
     }
 
     function getOrderCount($userid){
-        $this->db->select('tbl_order.id');
+        $this->db->select('sum(tbl_order.activity_cnts*tbl_activity.product_cnt) as cnt');
         $this->db->from('tbl_order');
+        $this->db->join('tbl_activity', 'tbl_order.activity_ids=tbl_activity.id');
         $this->db->join( 'tbl_userinfo', 'tbl_order.provider = tbl_userinfo.id');
         $this->db->where('tbl_userinfo.userid', $userid);
-        $query = $this->db->get();
+        $this->db->where('tbl_order.status', 4);
+        $result = $this->db->get()->result();
 
-        return count($query->result());
+        if($result[0]->cnt == NULL) return 0;
+        return $result[0]->cnt;
     }
 
     function getFullInfosById($provider_id){
@@ -72,16 +75,8 @@ class provider_model extends CI_Model
 
     function isDeletable($id)
     {
-        $query = $this->db->select('id')
-            ->from('tbl_userinfo')
-            ->where('provider', $id)
-            ->limit(1)
-            ->get();
-
-        if(count($query->result()) > 0) return false;
-
         $result = $this->db->select('id')
-            ->ftom('tbl_product')
+            ->from('tbl_product')
             ->where('provider_id', $id)
             ->limit(1)->get()->result();
 

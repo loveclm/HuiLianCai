@@ -38,23 +38,42 @@ class product_model extends CI_Model
         if ($kind!= '0') $this->db->where('tbl_product_format.type', $kind);
         if ($brand!= '0') $this->db->where('tbl_product_format.brand', $brand);
 
+        $this->db->order_by('products.create_time', 'desc');
+
         $query = $this->db->get();
         $result = $query->result();
         if (count($result) == 0) $result = NULL;
         return $result;
     }
+
     function getProductList($type, $brand){
         $this->db->select('id, name');
         $this->db->from('tbl_product_format');
         $this->db->where('type', $type);
         $this->db->where('brand', $brand);
 
+        $this->db->order_by('create_time', 'desc');
         $query = $this->db->get();
         $result = $query->result();
         if(count($result) == 0) $result = NULL;
         return $result;
     }
 
+    function isDeletable($id){
+        $activities = $this->db->select('product_id')
+            ->from('tbl_activity')
+            ->get()->result();
+
+        if(count($activities) == 0) return true;
+
+        foreach ($activities as $activity){
+            $ids = explode(',', $activity->product_id);
+            foreach ($ids as $cur_id){
+                if($cur_id == $id ) return false;
+            }
+        }
+        return true;
+    }
     /**
      * This function is used to get Tourist Area by id
      * @return array $result : This is result
@@ -81,12 +100,12 @@ class product_model extends CI_Model
     {
 
         if($product['id'] != '0'){
-            $product['update_time'] = date("Y-m-d");
+            $product['update_time'] = date("Y-m-d H:i:s");
 
             $this->updateProduct($product);
             return TRUE;
         }
-        $product['create_time'] = date("Y-m-d");
+        $product['create_time'] = date("Y-m-d H:i:s");
         $this->db->trans_start();
         $this->db->insert('tbl_product', $product);
         $insert_id = $this->db->insert_id();
@@ -161,13 +180,23 @@ class product_model extends CI_Model
             $item = $this->getItemByNumber($itemInfo['email']);
         }
         if (count($item) > 0) {
-            $this->db->where('id', $itemInfo['id']);
+            $this->db->where('id', $itemInfo['userId']);
             $result = $this->db->delete('tbl_product');
             return $result;
         }
         return 0;
     }
 
+    function isExist($id, $provider){
+        $result = $this->db->select('id')
+            ->from('tbl_product')
+            ->where('product_id', $id)
+            ->where('provider_id', $provider)
+            ->get()->result();
+
+        if(count($result) == 0) return false;
+        return true;
+    }
 }
 
 /* End of file shop_model.php */

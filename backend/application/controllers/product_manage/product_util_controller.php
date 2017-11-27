@@ -71,21 +71,27 @@ class product_util_controller extends BaseController
                 'content' => '',
                 'status' => 'fail'
             );
+
+            $data = array();
+
             if (!empty($_POST)) {
                 $id = $_POST['id'];
                 $searchData = $_POST['searchData'];
+
                 // get top list data in homepage
                 switch ($id) {
                     case 1:
                         $header = array("序号", "分类名称", "操作");
                         $cols = 3;
                         $contentList = $this->product_util_model->getProductTypeList();
+                        if($contentList != NULL) $data = $contentList;
                         $footer = (count($contentList) == 0 || !isset($contentList)) ? $footer = "暂无数据。" : '';
                         break; // get top1
                     case 2:
                         $header = array("序号", "单位名称", "操作");
                         $cols = 3;
                         $contentList = $this->product_util_model->getProductUnitList();
+                        if($contentList != NULL) $data = $contentList;
                         $footer = (count($contentList) == 0 || !isset($contentList)) ? $footer = "暂无数据。" : '';
                         break;
                     case 3:
@@ -100,6 +106,7 @@ class product_util_controller extends BaseController
                 $ret['header'] = $this->output_header($header);
                 $ret['content'] = $this->output_content($contentList, $id);
                 $ret['footer'] = $this->output_footer($footer, $cols);
+                $ret['data'] = $data;
                 $ret['status'] = 'success';
             }
             echo json_encode($ret);
@@ -125,8 +132,11 @@ class product_util_controller extends BaseController
                     $output_html .= '<td>' . $item->type . '</td>';
                     $output_html .= '<td>';
                     $output_html .= '<a href="#" onclick="deployConfirm(' . $item->id . ',' . $id . ')">编辑 &nbsp;&nbsp;</a>';
-                    if($this->product_util_model->isDeletable($item->id, 1))
+                    if($this->product_util_model->isDeletable($item->id, 1) == true)
                         $output_html .= '<a href="#" onclick="deleteConfirm(' . $item->id . ',' . $id . ')">删除 &nbsp;&nbsp;</a>';
+                    else
+                        $output_html .= '<a href="#" onclick="alert_show(1)" style="color: grey;">删除 &nbsp;&nbsp;</a>';
+
                     $output_html .= '</td>';
                     $output_html .= '</tr>';
                 }
@@ -139,8 +149,10 @@ class product_util_controller extends BaseController
                     $output_html .= '<td>' . $item->name . '</td>';
                     $output_html .= '<td>';
                     $output_html .= '<a href="#" onclick="deployConfirm(' . $item->id . ',' . $id . ')">编辑 &nbsp;&nbsp;</a>';
-                    if($this->product_util_model->isDeletable($item->id, 2))
+                    if($this->product_util_model->isDeletable($item->id, 2)== true)
                         $output_html .= '<a href="#" onclick="deleteConfirm(' . $item->id . ',' . $id . ')">删除 &nbsp;&nbsp;</a>';
+                    else
+                        $output_html .= '<a href="#" onclick="alert_show(2)" style="color: grey;">删除 &nbsp;&nbsp;</a>';
                     $output_html .= '</td>';
                     $output_html .= '</tr>';
                 }
@@ -155,8 +167,10 @@ class product_util_controller extends BaseController
                         '" style="width:150px;height:80px;"/></td>';
                     $output_html .= '<td>';
                     $output_html .= '<a href="' . base_url() . 'product_brand_edit/' . $item->id . '">编辑 &nbsp;&nbsp;</a>';
-                    if($this->product_util_model->isDeletable($item->id, 3))
+                    if($this->product_util_model->isDeletable($item->id, 3) == true)
                         $output_html .= '<a href="#" onclick="deleteConfirm(' . $item->id . ',' . $id . ')">删除 &nbsp;&nbsp;</a>';
+                    else
+                        $output_html .= '<a href="#" onclick="alert_show(3)" style="color: grey;">删除 &nbsp;&nbsp;</a>';
                     $output_html .= '</td>';
                     $output_html .= '</tr>';
                 }

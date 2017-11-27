@@ -8,7 +8,7 @@ require_once "WxPay.Exception.php";
 /**
  * 
  * 数据对象基础类，该类中定义数据类最基本的行为，包括：
- * 计算/设置/获取签名、输出xml格式的参数、从xml读取数据对象等
+ * 计算/设置/获取签名,输出xml格式的参数,从xml读取数据对象等
  * @author widyhu
  *
  */
@@ -462,7 +462,7 @@ class WxPayUnifiedOrder extends WxPayDataBase
 
 
 	/**
-	* 设置商户系统内部的订单号,32个字符内、可包含字母, 其他说明见商户订单号
+	* 设置商户系统内部的订单号,32个字符内,可包含字母, 其他说明见商户订单号
 	* @param string $value 
 	**/
 	public function SetOut_trade_no($value)
@@ -470,7 +470,7 @@ class WxPayUnifiedOrder extends WxPayDataBase
 		$this->values['out_trade_no'] = $value;
 	}
 	/**
-	* 获取商户系统内部的订单号,32个字符内、可包含字母, 其他说明见商户订单号的值
+	* 获取商户系统内部的订单号,32个字符内,可包含字母, 其他说明见商户订单号的值
 	* @return 值
 	**/
 	public function GetOut_trade_no()
@@ -478,7 +478,7 @@ class WxPayUnifiedOrder extends WxPayDataBase
 		return $this->values['out_trade_no'];
 	}
 	/**
-	* 判断商户系统内部的订单号,32个字符内、可包含字母, 其他说明见商户订单号是否存在
+	* 判断商户系统内部的订单号,32个字符内,可包含字母, 其他说明见商户订单号是否存在
 	* @return true 或 false
 	**/
 	public function IsOut_trade_noSet()
@@ -972,7 +972,7 @@ class WxPayCloseOrder extends WxPayDataBase
 
 
 	/**
-	* 设置商户系统内部的订单号,32个字符内、可包含字母, 其他说明见商户订单号
+	* 设置商户系统内部的订单号,32个字符内,可包含字母, 其他说明见商户订单号
 	* @param string $value 
 	**/
 	public function SetNonce_str($value)
@@ -980,7 +980,7 @@ class WxPayCloseOrder extends WxPayDataBase
 		$this->values['nonce_str'] = $value;
 	}
 	/**
-	* 获取商户系统内部的订单号,32个字符内、可包含字母, 其他说明见商户订单号的值
+	* 获取商户系统内部的订单号,32个字符内,可包含字母, 其他说明见商户订单号的值
 	* @return 值
 	**/
 	public function GetNonce_str()
@@ -988,7 +988,7 @@ class WxPayCloseOrder extends WxPayDataBase
 		return $this->values['nonce_str'];
 	}
 	/**
-	* 判断商户系统内部的订单号,32个字符内、可包含字母, 其他说明见商户订单号是否存在
+	* 判断商户系统内部的订单号,32个字符内,可包含字母, 其他说明见商户订单号是否存在
 	* @return true 或 false
 	**/
 	public function IsNonce_strSet()
@@ -1135,7 +1135,7 @@ class WxPayRefund extends WxPayDataBase
 
 
 	/**
-	* 设置商户系统内部的订单号,transaction_id、out_trade_no二选一，如果同时存在优先级：transaction_id> out_trade_no
+	* 设置商户系统内部的订单号,transaction_id,out_trade_no二选一，如果同时存在优先级：transaction_id> out_trade_no
 	* @param string $value 
 	**/
 	public function SetOut_trade_no($value)
@@ -1143,7 +1143,7 @@ class WxPayRefund extends WxPayDataBase
 		$this->values['out_trade_no'] = $value;
 	}
 	/**
-	* 获取商户系统内部的订单号,transaction_id、out_trade_no二选一，如果同时存在优先级：transaction_id> out_trade_no的值
+	* 获取商户系统内部的订单号,transaction_id,out_trade_no二选一，如果同时存在优先级：transaction_id> out_trade_no的值
 	* @return 值
 	**/
 	public function GetOut_trade_no()
@@ -1151,7 +1151,7 @@ class WxPayRefund extends WxPayDataBase
 		return $this->values['out_trade_no'];
 	}
 	/**
-	* 判断商户系统内部的订单号,transaction_id、out_trade_no二选一，如果同时存在优先级：transaction_id> out_trade_no是否存在
+	* 判断商户系统内部的订单号,transaction_id,out_trade_no二选一，如果同时存在优先级：transaction_id> out_trade_no是否存在
 	* @return true 或 false
 	**/
 	public function IsOut_trade_noSet()
@@ -1480,7 +1480,7 @@ class WxPayRefundQuery extends WxPayDataBase
 
 
 	/**
-	* 设置微信退款单号refund_id、out_refund_no、out_trade_no、transaction_id四个参数必填一个，如果同时存在优先级为：refund_id>out_refund_no>transaction_id>out_trade_no
+	* 设置微信退款单号refund_id,out_refund_no,out_trade_no,transaction_id四个参数必填一个，如果同时存在优先级为：refund_id>out_refund_no>transaction_id>out_trade_no
 	* @param string $value 
 	**/
 	public function SetRefund_id($value)
@@ -1488,7 +1488,7 @@ class WxPayRefundQuery extends WxPayDataBase
 		$this->values['refund_id'] = $value;
 	}
 	/**
-	* 获取微信退款单号refund_id、out_refund_no、out_trade_no、transaction_id四个参数必填一个，如果同时存在优先级为：refund_id>out_refund_no>transaction_id>out_trade_no的值
+	* 获取微信退款单号refund_id,out_refund_no,out_trade_no,transaction_id四个参数必填一个，如果同时存在优先级为：refund_id>out_refund_no>transaction_id>out_trade_no的值
 	* @return 值
 	**/
 	public function GetRefund_id()
@@ -1496,7 +1496,7 @@ class WxPayRefundQuery extends WxPayDataBase
 		return $this->values['refund_id'];
 	}
 	/**
-	* 判断微信退款单号refund_id、out_refund_no、out_trade_no、transaction_id四个参数必填一个，如果同时存在优先级为：refund_id>out_refund_no>transaction_id>out_trade_no是否存在
+	* 判断微信退款单号refund_id,out_refund_no,out_trade_no,transaction_id四个参数必填一个，如果同时存在优先级为：refund_id>out_refund_no>transaction_id>out_trade_no是否存在
 	* @return true 或 false
 	**/
 	public function IsRefund_idSet()
@@ -2342,7 +2342,7 @@ class WxPayMicroPay extends WxPayDataBase
 
 
 	/**
-	* 设置商户系统内部的订单号,32个字符内、可包含字母, 其他说明见商户订单号
+	* 设置商户系统内部的订单号,32个字符内,可包含字母, 其他说明见商户订单号
 	* @param string $value 
 	**/
 	public function SetOut_trade_no($value)
@@ -2350,7 +2350,7 @@ class WxPayMicroPay extends WxPayDataBase
 		$this->values['out_trade_no'] = $value;
 	}
 	/**
-	* 获取商户系统内部的订单号,32个字符内、可包含字母, 其他说明见商户订单号的值
+	* 获取商户系统内部的订单号,32个字符内,可包含字母, 其他说明见商户订单号的值
 	* @return 值
 	**/
 	public function GetOut_trade_no()
@@ -2358,7 +2358,7 @@ class WxPayMicroPay extends WxPayDataBase
 		return $this->values['out_trade_no'];
 	}
 	/**
-	* 判断商户系统内部的订单号,32个字符内、可包含字母, 其他说明见商户订单号是否存在
+	* 判断商户系统内部的订单号,32个字符内,可包含字母, 其他说明见商户订单号是否存在
 	* @return true 或 false
 	**/
 	public function IsOut_trade_noSet()
@@ -2636,7 +2636,7 @@ class WxPayReverse extends WxPayDataBase
 
 
 	/**
-	* 设置商户系统内部的订单号,transaction_id、out_trade_no二选一，如果同时存在优先级：transaction_id> out_trade_no
+	* 设置商户系统内部的订单号,transaction_id,out_trade_no二选一，如果同时存在优先级：transaction_id> out_trade_no
 	* @param string $value 
 	**/
 	public function SetOut_trade_no($value)
@@ -2644,7 +2644,7 @@ class WxPayReverse extends WxPayDataBase
 		$this->values['out_trade_no'] = $value;
 	}
 	/**
-	* 获取商户系统内部的订单号,transaction_id、out_trade_no二选一，如果同时存在优先级：transaction_id> out_trade_no的值
+	* 获取商户系统内部的订单号,transaction_id,out_trade_no二选一，如果同时存在优先级：transaction_id> out_trade_no的值
 	* @return 值
 	**/
 	public function GetOut_trade_no()
@@ -2652,7 +2652,7 @@ class WxPayReverse extends WxPayDataBase
 		return $this->values['out_trade_no'];
 	}
 	/**
-	* 判断商户系统内部的订单号,transaction_id、out_trade_no二选一，如果同时存在优先级：transaction_id> out_trade_no是否存在
+	* 判断商户系统内部的订单号,transaction_id,out_trade_no二选一，如果同时存在优先级：transaction_id> out_trade_no是否存在
 	* @return true 或 false
 	**/
 	public function IsOut_trade_noSet()

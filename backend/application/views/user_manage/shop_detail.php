@@ -64,7 +64,7 @@
                     <label> 地址 : </label>
 
                     <div class="input-group margin">
-                        <label style="text-align: left"><?php echo isset($shop) ? $shop->address : ''; ?></label>
+                        <label style="text-align: left; width: 100%;"><?php echo isset($shop) ? $shop->address : ''; ?></label>
                     </div>
                 </div>
                 <div class="row form-inline">
@@ -89,13 +89,20 @@
                     </div>
                 </div>
                 <div class="row form-inline">
+                    <label> 积分 : </label>
+
+                    <div class="input-group margin">
+                        <label style="text-align: left"><?php echo isset($shop) ? $shop->integral : '0'; ?></label>
+                    </div>
+                </div>
+                <div class="row form-inline">
                     <label> 营业执照相片 : </label>
                 </div>
                 <div class="row form-inline">
                     <div id="company_cert_content" class="input-group margin" style="left:100px;">
                         <div class="form-group text-center" style="padding: 0px 20px;">
-                            <img id="company_cert_image" src="<?= base_url() . $more_data->cert; ?>"
-                                 alt="user image" class="online" style="height: 200px; width:400px; padding: 20px; padding-bottom:2px;"><br>
+                            <img id="company_cert_image" src="<?= isset($more_data) ? base_url() . $more_data->cert :  base_url() .'assets/images/picture.png'; ?>"
+                                 alt="user image" class="online" style="height: 180px; width:300px; padding: 20px; padding-bottom:2px;"><br>
                         </div>
                    </div>
                 </div>

@@ -12,7 +12,7 @@ $(document).ready(function () {
             showLists(1);
             break;
         case 'order_detail':
-            display_product_table();
+            // display_product_table();
             break;
     }
 });
@@ -35,6 +35,7 @@ function showLists(id) {
                 $('#header_tbl').html(res.header);
                 $('#content_tbl').html(res.content);
                 $('#footer_tbl').html(res.footer);
+                executionPageNation();
             } else {
                 alert('search failed!');
                 console.log(res.data);

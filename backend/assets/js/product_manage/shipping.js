@@ -102,7 +102,7 @@ function showLists(id) {
                 searchType: $("#searchType :selected").val(), // 0-account, 1-name, 2-contact, 3-recommend
                 searchName: $("#searchName").val(),
                 address: address,
-                searchStatus: $("#searchStatus :selected").val() //0-all, 1-available, 2-disable
+                searchStatus: 0 //0-all, 1-available, 2-disable
             };
             break;
         case 2:
@@ -143,6 +143,7 @@ function showLists(id) {
                 $('#header_tbl').html(res.header);
                 $('#content_tbl').html(res.content);
                 $('#footer_tbl').html(res.footer);
+                executionPageNation();
             } else {
                 alert('search failed!');
                 console.log(res.data);
@@ -230,9 +231,9 @@ function deployItem() {
         type: "POST",
         data: {'itemInfo': itemInfo},
         success: function (result) {
-            console.log(result);
+            //console.log(result);
             if (result != 0)
-                showLists(1);
+                showLists(4);
         }
     });
 
@@ -253,9 +254,9 @@ function deleteItem() {
         success: function (result) {
             console.log(result);
             if (result != 0)
-                showLists(1);
-            else
-                window.alert("Item cannot be deleted.");
+                showLists(2);
+            // else
+            //     window.alert("Item cannot be deleted.");
         }
     });
 

@@ -15,13 +15,13 @@
                             <option value="0">商品条码</option>
                             <option value="1">商品名称</option>
                         </select>
-                        <input type="text" id="searchName"
+                        <input type="text" id="searchName" style="width: 140px;"
                                value="" class="form-control">
                     </div>
                  </div>
-                <div class="col-xs-12 col-sm-2 form-inline">
+                <div class="col-xs-12 col-sm-2 form-inline" style="padding: 0px;">
                     <div class="form-group">
-                        <a href="#" class="btn btn-primary" onclick="exportTable2xls()">导出xcel</a>
+                        <a href="#" class="btn btn-primary" onclick="exportTable2xls()">导出Excel</a>
                     </div>
                     <div class="form-group">
                         <a href="#" class="btn btn-primary" onclick="productsale_list();">查询</a>
@@ -29,14 +29,15 @@
                 </div>
             </div>
 
-            <div class="row">
+            <div class="row" style="max-height: 700px; overflow-y: auto;">
                 <div class="box main-shadow">
                     <div class="box-body table-responsive no-padding">
-                        <table class="table table-hover">
+                        <table id="contentInfo_tbl" class="table table-hover">
                             <thead id="header_tbl"></thead>
                             <tbody id="content_tbl"></tbody>
                             <tfoot id="footer_tbl"></tfoot>
                         </table>
+                        <div id="contentpageNavPosition"></div>
                     </div>
                     <!-- /.box-body -->
                 </div>

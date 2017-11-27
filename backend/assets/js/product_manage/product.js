@@ -9,18 +9,22 @@ $(document).ready(function () {
     var pageName = $("#page_Name").val();
     switch (pageName) {
         case 'product':
-            showLists(1);
-            break;
-        case 'product_add':
-            $('#searchKind').on('change', function(){
+            $('#searchKind').on('change', function () {
                 var type = $("#searchKind :selected").val()
                 typeSelected(type);
             });
-            $('#searchBrand').on('change', function(){
+            showLists(1);
+            break;
+        case 'product_add':
+            $('#searchKind').on('change', function () {
+                var type = $("#searchKind :selected").val()
+                typeSelected(type);
+            });
+            $('#searchBrand').on('change', function () {
                 var brand = $("#searchBrand :selected").val()
                 brandSelected(brand);
             });
-            $('#product_name').on('change', function(){
+            $('#product_name').on('change', function () {
                 var product_id = $("#product_name :selected").val()
                 productSelected(product_id);
             });
@@ -30,11 +34,11 @@ $(document).ready(function () {
 
 function productSelected(product_id) {
     $.ajax({
-        type : 'post',
-        url : baseURL + 'product_manage/product_controller/getProductDetailInfo',
-        dataType : 'json',
-        data :{id : product_id},
-        success : function (res) {
+        type: 'post',
+        url: baseURL + 'product_manage/product_controller/getProductDetailInfo',
+        dataType: 'json',
+        data: {id: product_id},
+        success: function (res) {
             if (res.status == 'success') {
                 $('#barcode').html(res.content.barcode);
                 $('#standard').html(res.content.standard);
@@ -44,20 +48,20 @@ function productSelected(product_id) {
 
                 var imgs_content = '<div class="form-group text-center" style="padding: 0px 20px;">';
                 var img_list = JSON.parse(res.content.images);
-                for( var i = 0; i < img_list.length; i++){
+                for (var i = 0; i < img_list.length; i++) {
                     imgs_content += '<div class="product_imgs" style="float: left;">' +
-                                    '    <img id="product_imgs'+ (i+1)+ '_image"' +
-                                    '        src="'+ baseURL + img_list[i][1] + '"' +
-                                    '        alt="user image" class="online"' +
-                                    '        style="height: 130px; width:180px; padding: 20px; padding-bottom:2px;"><br>' +
-                                    '</div>'
+                        '    <img id="product_imgs' + (i + 1) + '_image"' +
+                        '        src="' + baseURL + img_list[i][1] + '"' +
+                        '        alt="user image" class="online"' +
+                        '        style="height: 130px; width:180px; padding: 20px; padding-bottom:2px;"><br>' +
+                        '</div>'
                 }
                 imgs_content += '</div>';
                 $('#product_imgs_content').html(imgs_content);
 
                 $('#contents').html(res.content.contents);
 
-            }else{
+            } else {
                 $('#barcode').html('');
                 $('#standard').html('');
 
@@ -69,6 +73,10 @@ function productSelected(product_id) {
                 $('#product_imgs_content').html(imgs_content);
 
                 $('#contents').html('');
+
+                if(res.error == '1'){
+                    $('#alert_delete').show();
+                }
             }
         }
     });
@@ -76,17 +84,17 @@ function productSelected(product_id) {
 
 function typeSelected(type) {
     $.ajax({
-        type : 'post',
-        url : baseURL + 'product_manage/product_controller/getBrandListByTypeID',
-        dataType : 'json',
-        data :{type : type},
-        success : function (res) {
+        type: 'post',
+        url: baseURL + 'product_manage/product_controller/getBrandListByTypeID',
+        dataType: 'json',
+        data: {type: type},
+        success: function (res) {
             var content_html = '<option value="0">请选择</option>';
             if (res.status == 'success') {
-                for( var i = 0; i < res.content.length; i++){
-                    content_html += '<option value="'+ res.content[i].id + '">' + res.content[i].name + '</option>';
+                for (var i = 0; i < res.content.length; i++) {
+                    content_html += '<option value="' + res.content[i].id + '">' + res.content[i].name + '</option>';
                 }
-            }else{
+            } else {
 
             }
             $('#searchBrand').html(content_html);
@@ -94,26 +102,26 @@ function typeSelected(type) {
     })
 }
 
-function brandSelected(brand){
+function brandSelected(brand) {
     $.ajax({
-       type :'post',
-       url : baseURL + 'product_manage/product_controller/getPorductNamesByBrand',
-       dataType : 'json',
-       data : {
-           type : $("#searchKind :selected").val(),
-           brand : brand
-       } ,
-       success : function (res) {
-           var content_html = '<option value="0">请选择</option>';
-           if(res.status == 'success'){
-               for( var i = 0; i < res.content.length; i++){
-                   content_html += '<option value="'+ res.content[i].id + '">' + res.content[i].name + '</option>';
-               }
-           }else{
+        type: 'post',
+        url: baseURL + 'product_manage/product_controller/getPorductNamesByBrand',
+        dataType: 'json',
+        data: {
+            type: $("#searchKind :selected").val(),
+            brand: brand
+        },
+        success: function (res) {
+            var content_html = '<option value="0">请选择</option>';
+            if (res.status == 'success') {
+                for (var i = 0; i < res.content.length; i++) {
+                    content_html += '<option value="' + res.content[i].id + '">' + res.content[i].name + '</option>';
+                }
+            } else {
 
-           }
+            }
             $('#product_name').html(content_html);
-       }
+        }
     });
 }
 

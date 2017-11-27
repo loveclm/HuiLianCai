@@ -40,22 +40,6 @@
                         </div>
                     </div>
                     <div class="row form-inline">
-                        <label> *密码 : </label>
-
-                        <div class="input-group margin">
-                            <input name="password" type="text" id="password" class="form-control"
-                                   value="" style="margin: 0 ; padding: 0px 20px;" disabled/>
-                        </div>
-                    </div>
-                    <div class="row form-inline">
-                        <label> *确认密码 : </label>
-
-                        <div class="input-group margin">
-                            <input name="confirm_password" type="text" id="confirm_password" class="form-control"
-                                   value="" style="margin: 0 ; padding: 0px 20px;" disabled/>
-                        </div>
-                    </div>
-                    <div class="row form-inline">
                         <label> *头像 : </label>
 
                         <div class="form-group text-center" style="padding: 0px 20px;">

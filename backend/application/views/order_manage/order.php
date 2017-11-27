@@ -13,15 +13,25 @@
                     <div class="form-group">
                         <select class="form-control" id="searchType">
                             <option value="0" <?php if ($searchType== 0) echo ' selected' ?>>订单号</option>
-                            <option value="1" <?php if ($searchType == 1) echo ' selected' ?>>终端便利店名称</option>
+                            <option value="1" <?php if ($searchType == 1) echo ' selected' ?>>终端便利店</option>
                             <option value="2" <?php if ($searchType == 2) echo ' selected' ?>>收货人</option>
-                            <option value="3" <?php if ($searchType == 3) echo ' selected' ?>>所属供货商</option>
+                            <?php
+                            if($shop_manager_number == '') {
+                                ?>
+                                <option value="3" <?php if ($searchType == 3) echo ' selected' ?>>所属区域总代理</option>
+                                <?php
+                            }else {
+                                ?>
+                                <option value="3" <?php if ($searchType == 3) echo ' selected' ?>>配送员</option>
+                                <?php
+                            }
+                            ?>
                         </select>
-                        <input type="text" id="searchName"
+                        <input type="text" id="searchName" style="width: 140px;"
                                value="<?php echo $searchName == 'all' ? '' : $searchName; ?>" class="form-control">
                     </div>
                     <div class="form-group">
-                        <select name="searchMethod" class="form-control" id="searchMethod">
+                        <select name="searchMethod" class="form-control" id="searchMethod" style="margin-left: 40px;">
                             <option value="0" <?php if ($searchStatus == 0) echo ' selected' ?>>付款方式</option>
                             <option value="1" <?php if ($searchStatus == 1) echo ' selected' ?>>线上支付</option>
                             <option value="2" <?php if ($searchStatus == 2) echo ' selected' ?>>货到付款</option>
@@ -47,14 +57,15 @@
                 </div>
             </div>
 
-            <div class="row">
+            <div class="row" style="max-height: 700px; overflow-y: auto;">
                 <div class="box main-shadow">
                     <div class="box-body table-responsive no-padding">
-                        <table class="table table-hover">
+                        <table id="contentInfo_tbl" class="table table-hover">
                             <thead id="header_tbl"></thead>
                             <tbody id="content_tbl"></tbody>
                             <tfoot id="footer_tbl"></tfoot>
                         </table>
+                        <div id="contentpageNavPosition"></div>
                     </div>
                     <!-- /.box-body -->
                 </div>

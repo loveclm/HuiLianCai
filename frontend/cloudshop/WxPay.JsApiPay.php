@@ -3,8 +3,8 @@ require_once "lib/WxPay.Api.php";
 /**
  * 
  * JSAPI支付实现类
- * 该类实现了从微信公众平台获取code、通过code获取openid和access_token、
- * 生成jsapi支付js接口所需的参数、生成获取共享收货地址所需的参数
+ * 该类实现了从微信公众平台获取code,通过code获取openid和access_token,
+ * 生成jsapi支付js接口所需的参数,生成获取共享收货地址所需的参数
  * 
  * 该类是微信支付提供的样例程序，商户可根据自己的需求修改，或者使用lib中的api自行开发
  * 
@@ -33,8 +33,8 @@ class JsApiPay
 	/**
 	 * 
 	 * 通过跳转获取用户的openid，跳转流程如下：
-	 * 1、设置自己需要调回的url及其其他参数，跳转到微信服务器https://open.weixin.qq.com/connect/oauth2/authorize
-	 * 2、微信服务处理完成之后会跳转回用户redirect_uri地址，此时会带上一些参数，如：code
+	 * 1,设置自己需要调回的url及其其他参数，跳转到微信服务器https://open.weixin.qq.com/connect/oauth2/authorize
+	 * 2,微信服务处理完成之后会跳转回用户redirect_uri地址，此时会带上一些参数，如：code
 	 * 
 	 * @return 用户的openid
 	 */

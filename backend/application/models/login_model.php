@@ -10,7 +10,7 @@ class login_model extends CI_Model
      */
     function loginMe($username, $password)
     {
-        $this->db->select('tbl_user.id, tbl_user.parent_id, tbl_user.userid, tbl_user.username, tbl_user.password, tbl_user.role, tbl_user.level, tbl_user.role as role_text');
+        $this->db->select('tbl_user.id, tbl_user.parent_id, tbl_user.userid, tbl_user.username, tbl_user.password, tbl_user.status, tbl_user.role, tbl_user.level, tbl_user.role as role_text');
         $this->db->from('tbl_user');
         $this->db->join('tbl_role', 'tbl_role.id=tbl_user.role');
         $this->db->where('tbl_user.userid', $username);
@@ -22,7 +22,10 @@ class login_model extends CI_Model
 
         if(!empty($user)){
             if(verifyHashedPassword($password, $user->password)){
-                return array( status=> 'success', userinfo=>$user);
+                if($user->status == '2')
+                    return array( status=>'user is disabled');
+                else
+                    return array( status=> 'success', userinfo=>$user);
             } else {
                 return array( status=>'password is wrong');
             }

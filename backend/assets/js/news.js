@@ -38,6 +38,7 @@ function delete_messages(){
         data: {ids: ids},
         success: function (res) {
             showLists(1);
+            chkMessage();
         }
     });
 }
@@ -53,6 +54,7 @@ function showLists(id) {
                 $('#header_tbl').html(res.header);
                 $('#content_tbl').html(res.content);
                 $('#footer_tbl').html(res.footer);
+                executionPageNation();
             } else {
                 alert('search failed!');
                 console.log(res.data);
@@ -84,6 +86,7 @@ function deployItem() {
             console.log(result);
             if (result != 0)
                 showLists(1);
+            chkMessage();
         }
     });
 }

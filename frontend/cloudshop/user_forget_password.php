@@ -4,14 +4,17 @@
 <?php include('page_header.php'); ?>
 
 <body style="background: white;">
-    <img class="col-md-offset-5 col-md-2 col-xs-offset-3 col-xs-6" id="reg_logo" src="assets/images/logo.png">
-    <div class="col-md-offset-4 col-md-4 col-xs-offset-1 col-xs-10">
+<div class="col-md-12 col-sm-12" style="text-align: center;">
+    <img class="reg_logo" id="reg_logo" src="assets/images/logo.png">
+</div>
+<div id="main_body_panel" style="width:calc(100vw);height:calc(100vh);position:absolute;top:0;left:0;opacity:0;"></div>
+<div class="col-md-offset-4 col-md-4 col-xs-offset-1 col-xs-10">
         <div class="form-group form-md-line-input custom_row">
-            <input type="number" class="form-control" id="phone_number">
+            <input type="number" class="form-control" id="phone_number" title="请输入便利店手机号。">
             <label for="phone_number">手机号</label>
         </div>
         <div class="form-group form-md-line-input custom_row">
-            <input type="text" class="form-control" id="auth_code">
+            <input type="number" class="form-control" id="auth_code" title="请输入6位验证码。">
             <label for="auth_code">验证码</label>
             <span id="sms_button"  onclick="sendingSMS()">获取验证码</span>
         </div>
@@ -26,6 +29,9 @@
 <script src="assets/js/user_manage/login.js" type="text/javascript"></script>
 
 <script type="text/javascript">
+    $(document).ready(function () {
+        document.title='忘记密码';
+    })
     function OnNext() {
         if( !confirm_verifyPhone()) return;
         var phone_num = $('#phone_number').val();

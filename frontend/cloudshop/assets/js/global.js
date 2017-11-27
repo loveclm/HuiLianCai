@@ -2,6 +2,7 @@ var app_data = {
     //'timerID': NULL,           // timer indentifier
     'time_counter': 0,   // timer counter that is used when timer runs
     'sms_code': ""       // SMS authorization code
+
 }
 
 function getPhoneVerifiedStatus(genCode, inputCode) {
@@ -13,10 +14,35 @@ function getPhoneVerifiedStatus(genCode, inputCode) {
     return ret;
 }
 
+function disableBackButton() {
+    history.forward();
+}
+
+function is_weixin() {
+    var ua = navigator.userAgent.toLowerCase();
+    if (ua.match(/MicroMessenger/i) == "micromessenger") {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+function DetectIOSDevice() {
+    var uagent = navigator.userAgent.toLowerCase();
+    if (uagent.search("iphone") > -1)
+        return 'iphone';
+    else if (uagent.search("ipad") > -1)
+        return 'ipad';
+    else if (uagent.search("ipod") > -1)
+        return 'ipod';
+    else
+        return 'android';
+}
+
 function sendingSMS() {
     var phone_num = $('#phone_number').val();
     if (phone_num == "" || phone_num.length != 11) {
-        showMessage('手机号不正确。');
+        showNotifyAlert('手机号码不正确。');
         return;
     }
     // run timer
@@ -96,6 +122,48 @@ function setPhoneNumber(phone_number) {
         localStorage.setItem('phone_number', phone_number)
 }
 
+function getSessionMyInfo() {
+    if (localStorage.getItem('myUserInfo') == undefined)
+        return '';
+    else
+        return JSON.parse(localStorage.getItem('myUserInfo'));
+}
+
+function setSessionMyInfo(myInfo) {
+    if (myInfo == '')
+        localStorage.removeItem('myUserInfo');
+    else
+        localStorage.setItem('myUserInfo', JSON.stringify(myInfo))
+}
+
+function getSessionAroundInfo() {
+    if (sessionStorage.getItem('myAroundInfo') == undefined)
+        return '';
+    else
+        return JSON.parse(sessionStorage.getItem('myAroundInfo'));
+}
+
+function setSessionAroundInfo(myInfo) {
+    if (myInfo == '')
+        sessionStorage.removeItem('myAroundInfo');
+    else
+        sessionStorage.setItem('myAroundInfo', JSON.stringify(myInfo))
+}
+
+function getSessionPassword() {
+    if (localStorage.getItem('user_number') == undefined)
+        return '';
+    else
+        return localStorage.getItem('user_number');
+}
+
+function setSessionPassword(user_number) {
+    if (user_number == '')
+        localStorage.removeItem('user_number');
+    else
+        localStorage.setItem('user_number', user_number)
+}
+
 function getAuthorizationStatus() {
     return ((localStorage.getItem('isAuthorized') == undefined) ? false : true)
 }
@@ -107,19 +175,41 @@ function setAuthorizationStatus(status) {
         localStorage.setItem('isAuthorized', '1')
 }
 
+function getAuthRequestStatus() {
+    return ((localStorage.getItem('isAuthRequested') == undefined) ? false : true)
+}
+
+function setAuthRequestStatus(status) {
+    if (status == false)
+        localStorage.removeItem('isAuthRequested');
+    else
+        localStorage.setItem('isAuthRequested', '1')
+}
+
+function getGroupNotifyMsg() {
+    return parseInt((sessionStorage.getItem('groupNotifyMsg') == undefined) ? 0 : parseInt(sessionStorage.getItem('groupNotifyMsg')))
+}
+
+function setGroupNotifyMsg(data) {
+    if (data == '' || data == undefined)
+        sessionStorage.removeItem('groupNotifyMsg', 0);
+    else
+        sessionStorage.setItem('groupNotifyMsg', JSON.stringify(data));
+}
+
 function getCouponStatus() {
-    return parseInt((sessionStorage.getItem('coupons') == undefined) ? 0 : parseInt(sessionStorage.getItem('coupons')))
+    return parseInt((localStorage.getItem('coupons') == undefined) ? 0 : parseInt(localStorage.getItem('coupons')))
 }
 
 function setCouponStatus(num) {
     if (parseInt(num) == 0)
-        sessionStorage.setItem('coupons', 0);
+        localStorage.setItem('coupons', 0);
     else
-        sessionStorage.setItem('coupons', num)
+        localStorage.setItem('coupons', num)
 }
 
 function getMySessionWallet() {
-    return parseFloat((sessionStorage.getItem('walletData') == undefined) ? 0 : parseInt(sessionStorage.getItem('walletData')))
+    return parseFloat((sessionStorage.getItem('walletData') == undefined) ? 0 : parseFloat(sessionStorage.getItem('walletData')))
 }
 
 function setMySessionWallet(wallet) {
@@ -130,14 +220,14 @@ function setMySessionWallet(wallet) {
 }
 
 function getRegisterStatus() {
-    return ((sessionStorage.getItem('isRegistered') == undefined) ? false : true)
+    return ((localStorage.getItem('isRegistered') == undefined) ? false : true)
 }
 
 function setRegisterStatus(status) {
     if (status == false)
-        sessionStorage.removeItem('isRegistered')
+        localStorage.removeItem('isRegistered')
     else
-        sessionStorage.setItem('isRegistered', '1')
+        localStorage.setItem('isRegistered', '1')
 }
 
 function setFavouriteStatus(index, status, favouriteId) {
@@ -178,12 +268,42 @@ function getCurActivityDetailInfo() {
     return JSON.parse((sessionStorage.getItem('cur_Activity') == undefined) ? '[]' : (sessionStorage.getItem('cur_Activity')))
 }
 
-function addSessionPayOrderInfo(id, payInfo, amount, orderId) {
+function addSessionOnlinePayOrderInfo(id, payInfo, amount, orderId) {
     if (id == undefined) {
-        sessionStorage.removeItem('myPayOrderInfo')
+        sessionStorage.removeItem('myOnlinePayOrderInfo')
         return;
     }
-    var myPayOrderInfo = JSON.parse((sessionStorage.getItem('myPayOrderInfo') != undefined) ? (sessionStorage.getItem('myPayOrderInfo')) : '[]')
+    var myPayOrderInfo = JSON.parse((sessionStorage.getItem('myOnlinePayOrderInfo') != undefined) ? (sessionStorage.getItem('myOnlinePayOrderInfo')) : '[]')
+    if (id == 0) return myPayOrderInfo;
+    var isExist = false;
+    var isAllOrdered = true;
+    for (var i = 0; i < myPayOrderInfo.length; i++) {
+        var item = myPayOrderInfo[i]
+        if (id == item.id) {
+            if (orderId == '') {
+                isAllOrdered = false;
+                myPayOrderInfo[i].payInfo = payInfo
+                myPayOrderInfo[i].amount = amount
+            }
+            myPayOrderInfo[i].orderId = orderId;
+            isExist = true
+        }
+    }
+    if (!isExist) {
+        var orderItem = {id: id, payInfo: payInfo, amount: amount, orderId: ''}
+        myPayOrderInfo.push(orderItem)
+        isAllOrdered = false;
+    }
+    sessionStorage.setItem('myOnlinePayOrderInfo', JSON.stringify(myPayOrderInfo))
+    return isAllOrdered;
+}
+
+function addSessionWalletPayOrderInfo(id, payInfo, amount, orderId) {
+    if (id == undefined) {
+        sessionStorage.removeItem('myWalletPayOrderInfo')
+        return;
+    }
+    var myPayOrderInfo = JSON.parse((sessionStorage.getItem('myWalletPayOrderInfo') != undefined) ? (sessionStorage.getItem('myWalletPayOrderInfo')) : '[]')
     if (id == 0) return myPayOrderInfo;
     var isExist = false;
     var isAllOrdered = true;
@@ -204,13 +324,19 @@ function addSessionPayOrderInfo(id, payInfo, amount, orderId) {
         myPayOrderInfo.push(orderItem)
         isAllOrdered = false;
     }
-    sessionStorage.setItem('myPayOrderInfo', JSON.stringify(myPayOrderInfo))
+    sessionStorage.setItem('myWalletPayOrderInfo', JSON.stringify(myPayOrderInfo))
     return isAllOrdered;
 }
 
 function addToSessionCart(index, amount, max_amount) {
+    if (localStorage.getItem('myCart') == '') localStorage.removeItem('myCart');
     var myCart = JSON.parse((localStorage.getItem('myCart') == undefined) ? '[]' : localStorage.getItem('myCart'))
-    if (index == 0) return myCart
+    if (index == 0) {
+        return myCart;
+    } else if (index == undefined) {
+        localStorage.removeItem('myCart');
+        return [];
+    }
     max_amount = ((max_amount == undefined) ? amount : max_amount)
     //var productDatas = JSON.parse((sessionStorage.getItem('productDatas') == undefined) ? '[]' : sessionStorage.getItem('productDatas'))
     var activityData = JSON.parse((sessionStorage.getItem('cur_Activity') == undefined) ? '[]' : sessionStorage.getItem('cur_Activity'))
@@ -225,8 +351,8 @@ function addToSessionCart(index, amount, max_amount) {
         }
     }
     if (!isExist) {
-        activityData['amount'] = max_amount
-        activityData['cur_amount'] = amount
+        activityData['amount'] = max_amount;
+        activityData['cur_amount'] = amount;
         activityData['cart_include_status'] = 0;
         myCart.push(activityData)
 
@@ -251,7 +377,7 @@ function removeFromSessionCart(index) {
     for (var i = 0; i < myCart.length; i++) {
         if (parseInt(myCart[i].id) == index) {
             isExist = true;
-            continue
+            continue;
         }
         newCart.push(myCart[i])
     }
@@ -277,18 +403,49 @@ function setCartItemStatus(statusDatas) {
     localStorage.setItem('myCart', JSON.stringify(myCart))
 }
 
-function addToSessionOrder(index, amount) {
+function addToSessionOrder(index, amount, typeFrom) {
     var myCurOrder = JSON.parse((sessionStorage.getItem('myCurOrder') == undefined) ? '[]' : sessionStorage.getItem('myCurOrder'))
     if (index == 0) return myCurOrder
+    var productDatas = [];
+    if (typeFrom == 1)// from product detail
+        productDatas = [JSON.parse((sessionStorage.getItem('cur_Activity') == undefined) ? '[]' : sessionStorage.getItem('cur_Activity'))]
+    else // from order detail
+        productDatas = JSON.parse((sessionStorage.getItem('orderDatas') == undefined) ? '[]' : sessionStorage.getItem('orderDatas'))
 
-    var productDatas = JSON.parse((sessionStorage.getItem('productDatas') == undefined) ? '[]' : sessionStorage.getItem('productDatas'))
     myCurOrder = [];
     for (var j = 0; j < productDatas.length; j++) {
-        if (parseInt(productDatas[j].id) == index) {
+        if (productDatas[j].id == index) {
             productDatas[j].cur_amount = amount;
             myCurOrder.push(productDatas[j])
             break;
         }
+    }
+
+    if (typeFrom == 2) {
+        var orderData = myCurOrder[0];
+        var prods = orderData.products;
+        var new_price = 0;
+        var old_price = 0;
+        for (var i = 0; i < prods.length; i++) {
+            new_price += parseFloat(prods[i].new_price) * parseInt(prods[i].amount);
+            old_price += parseFloat(prods[i].old_price) * parseInt(prods[i].amount);
+        }
+        myCurOrder = [];
+        myCurOrder.push({
+            id: orderData.id,
+            product_image: orderData.logo,
+            product_name: orderData.name,
+            provider_name: orderData.provider_name,
+            provider_address: orderData.provider_address,
+            provider_contact_name: orderData.provider_contact_name,
+            provider_contact_phone: orderData.provider_contact_phone,
+            grouping_status: orderData.grouping_status,
+            amount: orderData.amount,
+            cur_amount: orderData.amount,
+            total_info: orderData.products,
+            old_price: old_price,
+            new_price: new_price,
+        });
     }
     sessionStorage.setItem('myCurOrder', JSON.stringify(myCurOrder));
     return JSON.parse(sessionStorage.getItem('myCurOrder'));
@@ -296,27 +453,47 @@ function addToSessionOrder(index, amount) {
 
 // display menu items on the horizontal menu bar
 function decreaseAmount(id) {
-    var curVal = parseInt($('#product_amount' + id).val());
-    var minVal = parseInt($('#min_amount' + id).val());
-    if ($('#min_amount' + id).val() == undefined) minVal = 1;
+    var curVal = 1;
+    var minVal = 1;
+    var maxVal = 100000;
+    if ($('#product_amount' + id).val() != '')
+        curVal = parseInt($('#product_amount' + id).val());
+    if ($('#min_amount' + id).val() != '')
+        minVal = parseInt($('#min_amount' + id).val());
+    if ($('#max_amount' + id).val() != '')
+        maxVal = parseInt($('#max_amount' + id).val());
+
     if (curVal > minVal) $('#product_amount' + id).val(curVal - 1);
     else $('#product_amount' + id).val(curVal);
 }
 
 // display menu items on the horizontal menu bar
 function increaseAmount(id) {
-    var curVal = parseInt($('#product_amount' + id).val());
-    var maxVal = parseInt($('#max_amount' + id).val());
-    if ($('#max_amount' + id).val() == undefined) maxVal = 100000;
+    var curVal = 1;
+    var minVal = 1;
+    var maxVal = 100000;
+    if ($('#product_amount' + id).val() != '')
+        curVal = parseInt($('#product_amount' + id).val());
+    if ($('#min_amount' + id).val() != '')
+        minVal = parseInt($('#min_amount' + id).val());
+    if ($('#max_amount' + id).val() != '')
+        maxVal = parseInt($('#max_amount' + id).val());
+
     if (curVal < maxVal) $('#product_amount' + id).val(curVal + 1);
     else $('#product_amount' + id).val(curVal);
 }
 
 // display menu items on the horizontal menu bar
 function validateAmount(id) {
-    var curVal = parseInt($('#product_amount' + id).val());
-    var minVal = parseInt($('#min_amount' + id).val());
-    var maxVal = parseInt($('#max_amount' + id).val());
+    var curVal = 1;
+    var minVal = 1;
+    var maxVal = 100000;
+    if ($('#product_amount' + id).val() != '')
+        curVal = parseInt($('#product_amount' + id).val());
+    if ($('#min_amount' + id).val() != '')
+        minVal = parseInt($('#min_amount' + id).val());
+    if ($('#max_amount' + id).val() != '')
+        maxVal = parseInt($('#max_amount' + id).val());
 
     if (curVal < minVal)
         $('#product_amount' + id).val(minVal);
@@ -339,26 +516,29 @@ function selectBottomItem(index, pageindex) {
                 $("#bottom_item_text" + i).attr('style', '');
             }
         }
-        if (data.cur_bottom_index == index) return;
         sessionStorage.setItem('cur_bottom_index', index);
         data.cur_bottom_index = index;
         switch (index) {
             case 1:
+                if (document.title == '惠联彩') break;
                 setTimeout(function () {
                     location.href = "home.php";
                 }, 5);
                 break;
             case 2:
+                if (document.title == '购物车') break;
                 setTimeout(function () {
                     location.href = "mycart_manage.php";
                 }, 5);
                 break;
             case 3:
+                if (document.title == '消息') break;
                 setTimeout(function () {
                     location.href = "main_news.php";
                 }, 5);
                 break;
             case 4:
+                if (document.title == '个人中心') break;
                 setTimeout(function () {
                     location.href = "myfunction_manage.php";
                 }, 5);
@@ -378,17 +558,26 @@ function showModalToCenter(id) {
     var margin_height = (parseInt(height) - parseInt(dialog_height)) / 2;
 
     $('.modal-scrollable').css({width: parseInt(width) * 0.7});
-    $('.modal-scrollable').css({margin: 'auto', 'margin-top': margin_height});
+    $('.modal-scrollable').css({margin: 'auto', 'margin-top': margin_height,});
 }
 
 function showMessage(message, isShowbtn) {
+
+    if (isShowbtn == 2) {
+        $('#msg_cancel').hide();
+        $('#msg_ok').attr('onclick', "$('#message_dialog').modal('hide');");
+    } else {
+        $('#msg_cancel').show();
+        $('#msg_ok').attr('onclick', "onOk();");
+    }
     isShowbtn = (isShowbtn == undefined) ? false : true;
     message = (isShowbtn == false) ? message = '<br>' + message : message;
     $('#message_dialog .modal-body').html('<br><b><center>' + message + '</center></b><br>');
     $('#message_dialog').modal();
     if (!isShowbtn) {
         $('#message_dialog .modal-footer').css({'display': 'none'});
-        setTimeout(function () {
+        clearTimeout(app_data.notifyTimer);
+        app_data.notifyTimer = setTimeout(function () {
             $('#message_dialog').modal('hide');
         }, 3000);
     } else {
@@ -399,23 +588,63 @@ function showMessage(message, isShowbtn) {
 }
 
 function showAuthRequire(message, btn_ok, btn_cancel, isShowbtn) {
+    if (!getRegisterStatus()) {
+        message = "您还未进行登录!";
+        btn_ok = "立即登录";
+        btn_cancel = '取消';
+        setAuthorizationStatus(false);
+    }
     if (getAuthorizationStatus()) {
         return;
+    } else if (getAuthRequestStatus()) {
+        if (getSessionMyInfo().status != '4') {
+            if (document.title == '个人中心' && sessionStorage.getItem('msgShowed') == undefined) {
+                message = '您已提交认证申请,<br>请等待审核通过。';
+                btn_ok = '确定';
+                sessionStorage.setItem('msgShowed', 1);
+            } else {
+                return;
+            }
+        } else {
+            if (document.title == '个人中心' && sessionStorage.getItem('msgShowed') == undefined) {
+                message = '您的便利店认证申请未能通过审核,<br>请返回认证页面重新提报真实、有效资料。';
+                btn_ok = '确定';
+                sessionStorage.setItem('msgShowed', 1);
+            } else {
+                if (document.title != '终端便利店认证')
+                    return;
+            }
+        }
     }
-    btn_ok = (btn_ok == undefined) ? '确认' : btn_ok;
+    message = (message == undefined) ? '您还未进行认证!' : message;
+    btn_ok = (btn_ok == undefined) ? '立即认证' : btn_ok;
     btn_cancel = (btn_cancel == undefined) ? '取消' : btn_cancel;
     isShowbtn = (isShowbtn == undefined) ? true : false;
-    $('#auth_question .modal-body').html('<br><center><b>' + message + '</b></center>');
+    var pref = '<br>';
+    if (message.indexOf('br') == -1) pref = '<br>';
+    $('#auth_question .modal-body').html(pref + '<center><b>' + message + '</b></center>');
     $('#auth_ok').html(btn_ok);
     $('#auth_cancel').html(btn_cancel);
     $('#auth_question').modal();
     if (!isShowbtn) {
-        $('#auth_question .modal-footer').css({'display': 'none'});
+        $('#auth_question .modal-footer').hide();
         setTimeout(function () {
             $('#auth_question').modal('hide');
         }, 3000);
     } else {
-        $('#auth_question .modal-footer').css({'display': 'block'});
+        $('#auth_question .modal-footer').show();
+        // if (getSessionMyInfo().status == '4') {
+        //     $('#auth_cancel').hide();
+        //     $('#auth_ok').attr('onclick', "OnOk()");
+        // } else
+        if (getAuthRequestStatus() && sessionStorage.getItem('msgShowed') != undefined) {
+            $('#auth_cancel').hide();
+            $('#auth_ok').attr('onclick', "$('#auth_question').modal('hide')");
+
+        } else {
+            $('#auth_cancel').show();
+            $('#auth_ok').attr('onclick', "OnOk();");
+        }
     }
     showModalToCenter('auth_question');
 }
@@ -430,12 +659,78 @@ function showLoading(status, message) {
     showModalToCenter('message_loading');
 }
 
-function showNotification(message) {
-    $('#notification_bar').html(message);
-
+function showNotification(message, id) {
+    $('#notification_bar').hide();
+    var msg = '';
+    // msg += '<h5 class="">';
+    msg += message;
+    msg += '&nbsp;&nbsp;&nbsp;<i class="fa fa-angle-right" style="float:right"></i>';
+    $('#notification_bar').html(msg);
+    $('#notification_bar').attr("onclick", "showProductDetailInfo('" + id + "')");
     $('#notification_bar').show();
-    setTimeout(function () {
+    clearTimeout(app_data.notifyTimer);
+    app_data.notifyTimer = setTimeout(function () {
         $('#notification_bar').hide();
+    }, 6900);
+}
+
+function showNotifyAlert(message, type, bottom_position) {
+    if (message == '') return;
+    if (type == undefined) type = 0;
+    // if ((DetectIOSDevice() == 'ipad' || DetectIOSDevice() == 'iphone')){
+    // var height = document.body.clientHeight
+    //        || document.documentElement.clientHeight
+    //             || window.innerHeight;
+    //      bottom_position = height - 290;
+    // }
+    $('#notification_bar').hide();
+    $('#notification_alert_bar').html(message);
+    if (type == 0) {
+        $('#notification_alert_bar').css({
+            'background-color': 'rgba(255, 255, 255, 0.7)',
+            'color': 'red',
+            'border-color': 'red',
+        })
+    } else {
+        $('#notification_alert_bar').css({
+            'background-color': 'rgba(30, 30, 255, 0.7)',
+            'color': '#38abff',
+            'border-color': '#38abff'
+        })
+    }
+    // alert(bottom_position);
+    // $('#notification_alert_bar').css({
+    //    'top': bottom_position,
+    //     'bottom': bottom_position
+    // });
+    $('#notification_alert_bar').show();
+    clearTimeout(app_data.notifyTimer);
+    app_data.notifyTimer = setTimeout(function () {
+        $('#notification_alert_bar').hide();
+    }, 6900);
+    console.log(app_data.notifyTimer);
+}
+
+function showNotifyDebug(message, type) {
+    if (HLC_DEBUG_MODE == HLC_REAL_MODE) return;
+    if (type == undefined) type = 0;
+    $('#notification_alert_bar').html(message);
+    if (type == 0) {
+        $('#notification_alert_bar').css({
+            'background-color': 'rgba(255, 255, 255, 0.7)',
+            'color': 'red',
+            'border-color': 'red'
+        })
+    } else {
+        $('#notification_alert_bar').css({
+            'background-color': 'rgba(30, 30, 30, 0.7)',
+            'color': 'white',
+            'border-color': 'white'
+        })
+    }
+    $('#notification_alert_bar').show();
+    setTimeout(function () {
+        $('#notification_alert_bar').hide();
     }, 6900);
 }
 
@@ -447,6 +742,15 @@ function validateText() {
         $('#textarea').val(txt);
     }
     $('#textLength').html(txt.length + '/' + txtLen);
+    if (txt.length < 10) {
+        $('.btn_confirm').css({'background': 'darkgrey'});
+        $('.btn_confirm').attr('onclick', '');
+    } else {
+        $('.btn_confirm').css({'background': '#38abff'});
+        $('.btn_confirm').attr('onclick', 'sendFeedback();')
+    }
+    $('#perform_order').css({'background': '#38abff'});
+    $('#perform_order').attr('onclick', 'orderFromDetail();')
 
 }
 
@@ -471,11 +775,12 @@ function simulate_advertise_images() {
 function showProductDetailInfo(index, showType) {
     // showType == 1-from fav activity, 2-from fav provider, 5-from main
     showType = ((showType == undefined) ? 5 : showType)
-    location.href = 'product_detail.php?iId=' + index + '&iType=' + showType;
+    location.href = 'product_detail.php?iId=\'' + index + '\'&iType=' + showType;
 }
 
 function showOrderDetailInfo(orderId) {
     data.cur_detail_index = orderId;
+    addSessionOnlinePayOrderInfo();
     //sessionStorage.setItem('cur_detail_index', orderId);
     location.href = "order_detail.php?iId='" + orderId + "'";
 }
@@ -483,7 +788,7 @@ function showOrderDetailInfo(orderId) {
 function showProviderDetailInfo(providerId) {
     data.cur_detail_index = providerId;
     //sessionStorage.setItem('cur_detail_index', providerId);
-    location.href = "provider_detail.php?iId=" + providerId;
+    location.href = "provider_detail.php?iId='" + providerId + "'";
 }
 
 function showGroupingDetailInfo(orderId) {
@@ -492,12 +797,325 @@ function showGroupingDetailInfo(orderId) {
     location.href = "grouping_detail.php?iId=" + orderId;
 }
 
+////////////////////--------- 线上支付 -------------------//////////////////////
+function preparePayment() {
+
+    var walletIDlist = [];
+    var cntList = [];
+    var noteList = [];
+
+    var walletPayList = addSessionWalletPayOrderInfo(0);
+
+    for (var i = 0; i < walletPayList.length; i++) {
+        walletIDlist.push(walletPayList[i].id);
+        cntList.push(walletPayList[i].amount);
+        noteList.push(walletPayList[i].payInfo.order_note);
+    }
+
+    walletPayment(walletIDlist, cntList, noteList);
+}
+
+function walletPayment(walletIDList, cntList, noteList) {
+
+    if (walletIDList.length == 0) {
+        onlinePayment(0);               // wallet paid status ( 0: unpaid, 1 : paid)
+        return;
+    }
+
+    $.ajax({
+        type: 'POST',
+        url: REMOTE_API_URL + 'api/orderRequests', //rest API url
+        dataType: 'json',
+        data: { // set function name and parameters
+            'phone': getPhoneNumber(),
+            'activity': JSON.stringify(walletIDList),
+            'count': JSON.stringify(cntList),
+            'note': noteList[0],
+            'pay_method': 1
+        },
+        success: function (data) {
+
+            var walletPayList = addSessionWalletPayOrderInfo(0);
+            if (walletPayList.length != 0) {
+                for (var i = 0; i < walletPayList.length; i++) {
+                    sendRemoveMyCartItemRequest(walletPayList[i].id);
+                }
+            }
+
+            if (data.status == true) {
+                walletPayOrder(data.data);
+            } else {
+                showNotifyAlert('订单失败。')
+            }
+        },
+        error: function (data) {
+            showNotifyAlert(LANG_DATA.server_error);
+        }
+    });
+}
+
+function walletPayOrder(orderIDlist) {
+    var orderList = [];
+    var couponList = [];
+    var walletList = [];
+    var moneyList = [];
+    var noteList = [];
+
+    var walletOrderList = addSessionWalletPayOrderInfo(0);
+    for (var i = 0; i < orderIDlist.length; i++) {
+
+        if (orderIDlist[i] == '') continue;
+
+        orderList.push(orderIDlist[i]);
+        couponList.push(walletOrderList[i].payInfo.coupon);
+        walletList.push(walletOrderList[i].payInfo.wallet);
+        moneyList.push(walletOrderList[i].payInfo.price);
+        noteList.push(walletOrderList[i].payInfo.order_note);
+    }
+
+    if (orderList.length == 0) { // if successed listcount is 0 - wallet payment is invalid
+        onlinePayment(0);
+        return;
+    }
+
+
+    $.ajax({
+        type: 'POST',
+        url: REMOTE_API_URL + 'api/payOrderRequests', //rest API url
+        dataType: 'json',
+        data: { // set function name and parameters
+            'phone': getPhoneNumber(),
+            'order': JSON.stringify(orderList),
+            'coupon': JSON.stringify(couponList),
+            'wallet': JSON.stringify(walletList),
+            'money': JSON.stringify(moneyList),
+            'note': noteList[0]
+        },
+        success: function (data) {
+            if (data.status == true) {
+
+                var site_pay = {
+                    'cost': 0,
+                    'product_name': orderList[0],
+                    'transaction_time': moment(new Date).format('YYYY-MM-DD HH:mm:ss'),
+                    'pay_method': '零钱',
+                    'transaction_id': data.data
+                };
+
+                for (var i = 0; i < orderList.length; i++) {
+                    site_pay['cost'] += parseFloat(walletList[i]);// + parseFloat(couponList[i]);
+                }
+
+                sessionStorage.setObject('site_pay', site_pay);
+                // delete wallet information
+
+                // -------------------------
+                onlinePayment(10);
+            }
+        },
+        error: function (data) {
+            showNotifyAlert(LANG_DATA.server_error);
+        }
+    });
+}
+
+function onlinePayment(status) {
+    // 0-wallet payment is invalid, 10-wallet payment successed
+    // 15-weixin payment is invalid, 20-weixin payment successed
+    switch (parseInt(status)) {
+        case 0: // wallet payment is failed
+            onlineOrderRequest();
+            break;
+        case 10: // wallet payment success.
+            var walletPayList = addSessionWalletPayOrderInfo(0);
+            if (walletPayList.length == 0) break;
+            for (var i = 0; i < walletPayList.length; i++) {
+                removeFromSessionCart(walletPayList[i].id);
+            }
+            addSessionWalletPayOrderInfo();
+
+            window.location.href = 'my_success.php?iType=10';
+            break;
+        case 15: // weixin payment failed
+            showNotifyAlert('微信付款失败。');
+            break;
+        case 20: // weixin payment success
+            var onlinePayList = addSessionOnlinePayOrderInfo(0);
+            if (onlinePayList.length == 0) break;
+            for (var i = 0; i < onlinePayList.length; i++) {
+                removeFromSessionCart(onlinePayList[i].id);
+            }
+            addSessionOnlinePayOrderInfo();
+
+            sessionStorage.removeItem('cur_detail_index');
+            sessionStorage.removeItem('cur_menu_index');
+            location.href = "order_manage.php";
+            //window.location.href = 'my_success.php?iType=20';
+            break;
+        case 25: // after payment success
+            var onlinePayList = addSessionOnlinePayOrderInfo(0);
+
+            addSessionOnlinePayOrderInfo();
+            window.location.href = 'my_success.php?iType=25';
+            break;
+        case 30: // after payment success
+            var walletPayList = addSessionWalletPayOrderInfo(0);
+            if (walletPayList.length != 0) {
+                for (var i = 0; i < walletPayList.length; i++) {
+                    removeFromSessionCart(walletPayList[i].id);
+                }
+                addSessionWalletPayOrderInfo();
+            }
+            var onlinePayList = addSessionOnlinePayOrderInfo(0);
+            if (onlinePayList.length != 0) {
+                for (var i = 0; i < onlinePayList.length; i++) {
+                    removeFromSessionCart(onlinePayList[i].id);
+                }
+                addSessionOnlinePayOrderInfo();
+            }
+            sessionStorage.removeItem('cartPayIds');
+            window.location.href = 'my_success.php?iType=25';
+            break;
+        default:
+            break;
+
+    }
+}
+
+function onlineOrderRequest() {
+    var onlineIDList = [];
+    var cntList = [];
+    var noteList = [];
+    var onlinePayData = addSessionOnlinePayOrderInfo(0);
+
+    for (var i = 0; i < onlinePayData.length; i++) {
+        onlineIDList.push(onlinePayData[i].id);
+        cntList.push(onlinePayData[i].amount);
+        noteList.push(onlinePayData[i].payInfo.order_note);
+    }
+
+    $.ajax({
+        type: 'POST',
+        url: REMOTE_API_URL + 'api/orderRequests', //rest API url
+        dataType: 'json',
+        data: { // set function name and parameters
+            'phone': getPhoneNumber(),
+            'activity': JSON.stringify(onlineIDList),
+            'count': JSON.stringify(cntList),
+            'note': noteList[0],
+            'pay_method': 1
+        },
+        success: function (data) {
+            var onlinePayList = addSessionOnlinePayOrderInfo(0);
+            if (onlinePayList.length != 0) {
+                for (var i = 0; i < onlinePayList.length; i++) {
+                    sendRemoveMyCartItemRequest(onlinePayList[i].id);
+                }
+            }
+            if (data.status == true) {
+                app_data['orderIDList'] = data.data;
+                weixin_payment(data.data);
+            }
+        },
+        error: function (data) {
+            showNotifyAlert(LANG_DATA.server_error);
+        }
+    });
+}
+
+function onlinePayOrderRequest() {   //// return from weixin payment.php
+    var orderIDlist = sessionStorage.getObject('orderIDList');
+
+    var orderList = [];
+    var couponList = [];
+    var walletList = [];
+    var moneyList = [];
+    var noteList = [];
+
+    var onlineOrderList = addSessionOnlinePayOrderInfo(0);
+    for (var i = 0; i < orderIDlist.length; i++) {
+
+        if (orderIDlist[i] == '') continue;
+
+        orderList.push(orderIDlist[i]);
+        couponList.push(onlineOrderList[i].payInfo.coupon);
+        walletList.push(onlineOrderList[i].payInfo.wallet);
+        moneyList.push(onlineOrderList[i].payInfo.price);
+        noteList.push(onlineOrderList[i].payInfo.order_note);
+    }
+
+    if (orderList.length == 0) { // if (listcount successed) is 0 - online payment is rejected
+        onlinePayment(15);
+        return;
+    }
+    $.ajax({
+        type: 'POST',
+        url: REMOTE_API_URL + 'api/payOrderRequests', //rest API url
+        dataType: 'json',
+        data: { // set function name and parameters
+            'phone': getPhoneNumber(),
+            'order': JSON.stringify(orderList),
+            'coupon': JSON.stringify(couponList),
+            'wallet': JSON.stringify(walletList),
+            'money': JSON.stringify(moneyList),
+            'note': noteList[0]
+        },
+        success: function (data) {
+            if (data.status == true) {
+
+                var site_pay = {
+                    'cost': 0,
+                    'product_name': orderList[0],
+                    'transaction_time': moment(new Date).format('YYYY-MM-DD HH:mm:ss'),
+                    'pay_method': '线上',
+                    'transaction_id': data.data
+                };
+
+                for (var i = 0; i < orderList.length; i++) {
+                    site_pay['cost'] += parseFloat(moneyList[i]);
+                }
+                sessionStorage.setObject('site_pay', site_pay);
+                onlinePayment(20);
+            }
+        },
+        error: function (data) {
+            showNotifyAlert(LANG_DATA.server_error);
+        }
+    });
+}
+
+function weixin_payment(orderIDList) {
+    var cost = 0;
+    var onlinePayList = addSessionOnlinePayOrderInfo(0);
+    for (var i = 0; i < onlinePayList.length; i++) {
+        if (orderIDList[i] == '') continue;
+
+        cost += parseFloat(onlinePayList[i].payInfo.price);
+    }
+
+    if (cost == 0) {
+        showNotifyAlert('订单失败。');
+        return;
+    }
+    sessionStorage.setObject('orderIDList', orderIDList);
+    if (HLC_PAY_MODE == HLC_SIMUL_MODE) {
+        onlinePayOrderRequest();
+    } else {
+        setTimeout(function () {
+            window.location.href = MY_API_URL + 'payment.php?cost=' + cost;
+        }, 2000);
+    }
+}
+
+
 // This is the part that store and load the object in localStorage
 Storage.prototype.setObject = function (key, value) {
     this.setItem(key, JSON.stringify(value));
 }
 Storage.prototype.getObject = function (key) {
     var val = this.getItem(key);
-    if (val == "" || val == null) return null;
+    if (val == "" || val == undefined) return [];
     return JSON.parse(val);
 }
+
+

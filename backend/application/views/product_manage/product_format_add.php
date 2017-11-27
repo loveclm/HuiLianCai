@@ -1,4 +1,3 @@
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
 <link rel="stylesheet" href="<?php echo base_url(); ?>assets/editor/css/froala_editor.css">
 <link rel="stylesheet" href="<?php echo base_url(); ?>assets/editor/css/froala_style.css">
 <link rel="stylesheet" href="<?php echo base_url(); ?>assets/editor/css/plugins/code_view.css">
@@ -14,9 +13,9 @@
 <link rel="stylesheet" href="<?php echo base_url(); ?>assets/editor/css/plugins/file.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.3.0/codemirror.min.css">
 <style type="text/css">
-    .fr-box{
-        width: 600px;
-        left:180px;
+    .fr-box {
+        width: 400px;
+        left: 180px;
     }
 </style>
 <div class="content-wrapper" style="min-height: 100%">
@@ -31,6 +30,7 @@
             <div>
                 <form role="form" id="addproduct_format" action="<?php echo base_url() ?>product_format_add"
                       method="post">
+                    <input type="hidden" name="id" value="<?= isset($product_format->id) ? $product_format->id : '';?>">
                     <div class="row form-inline">
                         <label> *商品条码 : </label>
                         <div class="input-group margin">
@@ -49,7 +49,7 @@
                     </div>
                     <div class="row form-inline">
                         <label> *分类 : </label>
-                        <select name="type" class="form-control" id="searchKind">
+                        <select name="type" class="form-control" id="searchKind" style="margin-left: 10px;">
                             <option value="0">请选择</option>
                             <?php
                             foreach ($typelist as $item) {
@@ -76,7 +76,7 @@
                     </div>
                     <div class="row form-inline">
                         <label> *品牌 : </label>
-                        <select name="brand" class="form-control" id="searchBrand">
+                        <select name="brand" class="form-control" id="searchBrand" style="margin-left: 10px;">
                             <option value="0">请选择</option>
                             <?php
                             foreach ($brandlist as $item) {
@@ -94,7 +94,7 @@
                     <div class="row form-inline">
                         <label> *单位 : </label>
 
-                        <select name="unit" class="form-control" id="searchUnit">
+                        <select name="unit" class="form-control" id="searchUnit" style="margin-left: 10px;">
                             <option value="0">请选择</option>
                             <?php
                             foreach ($unitlist as $item) {
@@ -112,21 +112,26 @@
                     <div class="row form-inline">
                         <label> *商品封面 : </label>
 
-                            <div class="form-group text-center" style="padding: 0px 20px;">
-                                <?php
-                                $product_logo = isset($product_format) ? json_decode($product_format->cover) : ['', 'assets/images/picture.png'];
-                                ?>
-                                <img id="product_logo_image" src="<?= base_url() . $product_logo[1]; ?>"
-                                     alt="user image" class="online"
-                                     style="height: 200px; width:300px; padding: 20px; padding-bottom:2px;""><br>
-                                <input id="upload_product_logo" type="file" style="display: none"/>
-                                <input name="cover" id="product_logo_src" type="text" style="display: none"
-                                       value='<?= json_encode($product_logo); ?>'>
-                                <span id="product_logo_filename"><?= $product_logo[0] ?></span>
-                            </div>
-                            <a class="btn btn-primary" href="#" onclick="$('#upload_product_logo').click();">
-                                <span>*上传</span>
-                            </a>
+                        <div class="form-group text-center" style="padding: 0px 20px;">
+                            <?php
+                            $product_logo = isset($product_format) ? json_decode($product_format->cover) : ['', 'assets/images/picture.png'];
+                            ?>
+                            <img id="product_logo_image" src="<?= base_url() . $product_logo[1]; ?>"
+                                 alt="user image" class="online"
+                                 style="height: 200px; width:300px; padding: 20px; padding-bottom:2px;""><br>
+                            <input id="upload_product_logo" type="file" style="display: none"/>
+                            <input name="cover" id="product_logo_src" type="text" style="display: none"
+                                   value='<?= json_encode($product_logo); ?>'>
+                            <span id="product_logo_filename" style="display: none;"><?= $product_logo[0] ?></span>
+                        </div>
+                        <a class="btn btn-primary" href="#" onclick="$('#upload_product_logo').click();">
+                            <?php
+                            if (isset($id))
+                                echo '<span>修改</span>';
+                            else
+                                echo '<span>*上传</span>';
+                            ?>
+                        </a>
                     </div>
                     <div class="row form-inline">
                         <label> *商品图片 : </label>
@@ -139,7 +144,7 @@
                                 foreach ($product_img_list as $product_img) {
                                     $i++;
                                     ?>
-                                    <div class="product_imgs" style="float: left;">
+                                    <div class="product_imgs" id="product_imgs<?= $i; ?>" style="float: left; position: relative">
                                         <img id="<?= 'product_imgs' . $i . '_image' ?>"
                                              src="<?= base_url() . $product_img[1]; ?>"
                                              onclick="<?= '$(\'#upload_product_imgs' . $i . '\').click();'; ?>"
@@ -150,7 +155,12 @@
                                         <input name="<?= 'brand' . $i; ?>" id="<?= 'product_imgs' . $i . '_src' ?>"
                                                type="text" style="display: none"
                                                value='<?= json_encode($product_img); ?>'>
-                                        <span id="<?= 'product_imgs' . $i . '_filename' ?>"><?= $product_img[0] ?></span>
+                                        <span id="<?= 'product_imgs' . $i . '_filename' ?>" style="display: none;"><?= $product_img[0] ?></span>
+                                        <div class="item_group">
+                                            <div class="close_item"  onclick="delete_image(<?= $i; ?>)">
+                                                <i class="fa fa-fw fa-close"></i></div>
+                                            <span class="modify_item" onclick="ModifyImage(<?= $i; ?>)">修改</span>
+                                        </div>
                                     </div>
                                     <?php
                                 }
@@ -161,13 +171,19 @@
                             <input id="upload_product_imgs" type="file" style="display: none"/>
                             <a class="btn btn-primary" href="#" onclick="$('#upload_product_imgs').click();"
                                style="margin-left: 80px;">
-                                <span>*上传</span>
+                                <?php
+                                if (isset($id))
+                                    echo '<span>上传</span>';
+                                else
+                                    echo '<span>*上传</span>';
+                                ?>
                             </a>
                         </div>
                     </div>
                     <div class="row form-inline">
                         <label> *商品详情 : </label>
-                        <textarea name="contents"><?= isset($product_format) ? $product_format->contents : ''; ?></textarea>
+                        <textarea
+                                name="contents"><?= isset($product_format) ? $product_format->contents : ''; ?></textarea>
                     </div>
 
                     <div class="row form-inline">
@@ -218,8 +234,9 @@
 <!-- Course Management JS-->
 
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.3.0/codemirror.min.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.3.0/mode/xml/xml.min.js"></script>
-<script type="text/javascript" src="<?php echo base_url(); ?>assets/editor/js/froala_editor.min.js" ></script>
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.3.0/mode/xml/xml.min.js"></script>
+<script type="text/javascript" src="<?php echo base_url(); ?>assets/editor/js/froala_editor.min.js"></script>
 <script type="text/javascript" src="<?php echo base_url(); ?>assets/editor/js/plugins/align.min.js"></script>
 <script type="text/javascript" src="<?php echo base_url(); ?>assets/editor/js/plugins/code_beautifier.min.js"></script>
 <script type="text/javascript" src="<?php echo base_url(); ?>assets/editor/js/plugins/code_view.min.js"></script>
@@ -246,11 +263,11 @@
 <script type="text/javascript" src="<?php echo base_url(); ?>assets/editor/js/plugins/fullscreen.min.js"></script>
 <script type="text/javascript" src="<?php echo base_url(); ?>assets/editor/js/languages/zh_cn.js"></script>
 <script>
-    $(function(){
+    $(function () {
         $('textarea').froalaEditor({
             tabSpaces: 4,
-            language:'zh_cn',
-            imageUploadURL: 'upload_image.php'
+            language: 'zh_cn',
+            imageUploadURL: '<?php echo base_url();?>upload_image.php'
         })
     });
 </script>

@@ -12,6 +12,7 @@ class news_model extends CI_Model
         $this->db->select('*');
         $this->db->from('tbl_news');
         $this->db->where('tbl_news.receiver', $id);
+        $this->db->order_by('create_time', 'desc');
 
         $query = $this->db->get();
         $result = $query->result();
@@ -24,9 +25,25 @@ class news_model extends CI_Model
         $this->db->from('tbl_news');
         $this->db->where('receiver', $id);
         $this->db->where('status', 0);
+        $this->db->order_by('create_time', 'desc');
 
         $query = $this->db->get();
         $result = $query->result();
+
+        return $result;
+    }
+
+    function getNotifyMsg($userid){
+        $result = $this->db->select('id, message, note as activity')
+            ->from('tbl_news')
+            ->where('receiver', $userid)
+            ->where('note != ""')
+            ->order_by('create_time', 'desc')
+            ->get()->result();
+
+        foreach ($result as $record){
+            $this->delete($record->id);
+        }
 
         return $result;
     }

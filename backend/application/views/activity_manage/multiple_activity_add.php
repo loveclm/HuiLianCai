@@ -1,4 +1,3 @@
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
 <link rel="stylesheet" href="<?php echo base_url(); ?>assets/editor/css/froala_editor.css">
 <link rel="stylesheet" href="<?php echo base_url(); ?>assets/editor/css/froala_style.css">
 <link rel="stylesheet" href="<?php echo base_url(); ?>assets/editor/css/plugins/code_view.css">
@@ -15,7 +14,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.3.0/codemirror.min.css">
 <style type="text/css">
     .fr-box {
-        width: 600px;
+        width: 400px;
         left: 180px;
     }
 </style>
@@ -38,17 +37,17 @@
                         <div class="input-group margin">
                             <input name="activity_name" type="text" id="activity_name" class="form-control"
                                    value="<?php echo isset($model->activity_name) ? $model->activity_name : ''; ?>"
-                                   style="margin: 0 ; padding: 0px 20px;"/>
+                                   style="margin: 0 ; padding: 0px 20px; width: 400px;"/>
                         </div>
                     </div>
                     <div class="row form-inline">
                         <label> *拼团开始时间 : </label>
                         <div class="input-group date form_datetime margin"
-                             data-date="<?php echo isset($model->start_time) ? $model->start_time : ''; ?>"
+                             data-date="<?php echo isset($model->start_time) ? $model->start_time : $start_time; ?>"
                              data-date-format="yyyy-mm-dd hh:ii" data-link-field="dtp_input1">
                             <input name="start_time" class="form-control" size="16" type="text"
-                                   value="<?php echo isset($model->start_time) ? $model->start_time : ''; ?>"
-                                   readonly="" style="padding: 0px 20px;margin: 0px;">
+                                   value="<?php echo isset($model->start_time) ? $model->start_time : $start_time; ?>"
+                                   readonly="" style="padding: 0px 20px;margin: 0px; width: 360px;"/>
                             <span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
                         </div>
 
@@ -57,11 +56,11 @@
                         <label> *拼团结束时间 : </label>
 
                         <div class="input-group date form_datetime margin"
-                             data-date="<?php echo isset($model->end_time) ? $model->end_time : ''; ?>"
+                             data-date="<?php echo isset($model->end_time) ? $model->end_time : $end_time; ?>"
                              data-date-format="yyyy-mm-dd hh:ii" data-link-field="dtp_input1">
                             <input name="end_time" class="form-control" size="16" type="text"
-                                   value="<?php echo isset($model->end_time) ? $model->end_time : ''; ?>" readonly=""
-                                   style="padding: 0px 20px;margin: 0px;">
+                                   value="<?php echo isset($model->end_time) ? $model->end_time : $end_time; ?>" readonly=""
+                                   style="padding: 0px 20px;margin: 0px; width: 360px;"/>
                             <span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
                         </div>
 
@@ -71,7 +70,7 @@
                         <div class="input-group margin">
                             <input name="man_cnt" type="text" id="man_cnt" class="form-control"
                                    value="<?php echo isset($model->man_cnt) ? $model->man_cnt : '2'; ?>"
-                                   style="margin: 0 ; padding: 0px 20px;"/>
+                                   style="margin: 0 ; padding: 0px 20px; width: 380px;"/><h5 style="margin-top: 10px;">人</h5>
                         </div>
                     </div>
                     <div class="row form-inline">
@@ -79,7 +78,7 @@
                         <div class="input-group margin">
                             <input name="group_cnt" type="text" id="group_cnt" class="form-control"
                                    value="<?php echo isset($model->group_cnt) ? $model->group_cnt : '2'; ?>"
-                                   style="margin: 0 ; padding: 0px 20px;"/>
+                                   style="margin: 0 ; padding: 0px 20px; width: 380px;"/>
                         </div>
                     </div>
                     <div class="row form-inline" style="padding-left: 75px;">
@@ -131,8 +130,8 @@
                                  style="height: 200px; width:300px; padding: 20px; padding-bottom:2px;""><br>
                             <input id="upload_product_logo" type="file" style="display: none"/>
                             <input name="cover" id="product_logo_src" type="text" style="display: none"
-                                   value='<?= json_encode($product_logo); ?>'>
-                            <span id="product_logo_filename"><?= $product_logo[0] ?></span>
+                                   value='<?=  json_encode($product_logo); ?>'>
+                            <span id="product_logo_filename" style="display: none;"><?= $product_logo[0] ?></span>
                         </div>
                         <a class="btn btn-primary" href="#" onclick="$('#upload_product_logo').click();">
                             <span>*上传</span>
@@ -149,7 +148,7 @@
                                 foreach ($product_img_list as $product_img) {
                                     $i++;
                                     ?>
-                                    <div class="product_imgs" style="float: left;">
+                                    <div class="product_imgs" id="product_imgs<?= $i; ?>" style="float: left;position: relative;">
                                         <img id="<?= 'product_imgs' . $i . '_image' ?>"
                                              src="<?= base_url() . $product_img[1]; ?>"
                                              onclick="<?= '$(\'#upload_product_imgs' . $i . '\').click();'; ?>"
@@ -160,7 +159,12 @@
                                         <input name="<?= 'brand' . $i; ?>" id="<?= 'product_imgs' . $i . '_src' ?>"
                                                type="text" style="display: none"
                                                value='<?= json_encode($product_img); ?>'>
-                                        <span id="<?= 'product_imgs' . $i . '_filename' ?>"><?= $product_img[0] ?></span>
+                                        <span id="<?= 'product_imgs' . $i . '_filename' ?>" style="display: none;"><?= $product_img[0] ?></span>
+                                        <div class="item_group">
+                                            <div class="close_item"  onclick="delete_image(<?= $i; ?>)">
+                                                <i class="fa fa-fw fa-close"></i></div>
+                                            <span class="modify_item" onclick="ModifyImage(<?= $i; ?>)">修改</span>
+                                        </div>
                                     </div>
                                     <?php
                                 }
@@ -287,7 +291,7 @@
         $('textarea').froalaEditor({
             tabSpaces: 4,
             language: 'zh_cn',
-            imageUploadURL: 'upload_image.php'
+            imageUploadURL: '<?php echo base_url()?>upload_image.php'
         })
     });
 </script>

@@ -80,10 +80,40 @@ function search(obj) {
     var keyword = option.text; //关键字
     var adcode = option.adcode;
     console.log(JSON.stringify(option.value));
+
+    if(keyword == '--请选择--'){
+        if (obj.id == 'province'){
+            $("#provinceName").val('');
+            $("#cityName").val('');
+            $("#districtName").val('');
+            $('#city').html('');
+            $('#district').html('')
+        }
+        else if (obj.id == 'city'){
+            $("#cityName").val('');
+            $("#districtName").val('');
+            $('#district').html('')
+        }
+        else if (obj.id == 'district') {
+            $("#districtName").val('');
+        }
+
+        $('#address_district').val($('#provinceName').val() + $('#cityName').val() + $('#districtName').val());
+        return;
+    }
     district.setLevel(option.value); //行政区级别
-    if (option.value == 'province') $("#provinceName").val(keyword);
-    else if (option.value == 'city') $("#cityName").val(keyword);
-    else if (option.value == 'district') $("#districtName").val(keyword);
+    if (option.value == 'province') {
+        $("#provinceName").val(keyword);
+        $("#cityName").val('');
+        $("#districtName").val('');
+    }
+    else if (option.value == 'city') {
+        $("#cityName").val(keyword);
+        $("#districtName").val('');
+    }
+    else if (option.value == 'district') {
+        $("#districtName").val(keyword);
+    }
     district.setExtensions('all');
 
     $('#address_district').val($('#provinceName').val() + $('#cityName').val() + $('#districtName').val());

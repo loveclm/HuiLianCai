@@ -40,6 +40,7 @@ function productSelected(product_id) {
                 $('#barcode').html(res.content.barcode);
                 $('#standard').html(res.content.standard);
                 $('#cost').html(res.content.cost);
+                $('#origin_cost').val(res.content.cost);
                 $('#store').html(res.content.store);
 
                 $('#unit').html(res.content.unit_name);
@@ -144,6 +145,7 @@ function showLists(id) {
                 $('#header_tbl').html(res.header);
                 $('#content_tbl').html(res.content);
                 $('#footer_tbl').html(res.footer);
+                executionPageNation();
             } else {
                 alert('search failed!');
                 console.log(res.data);
@@ -162,13 +164,13 @@ function deployConfirm(id, type, status) {
                 $("#confirm-deploy-message").html("确定取消推荐？");
             break;
         case 2:     //置顶
-            if (status == 4)// status=0-disable, unequal to 0-available
+            if (status == 3)// status=0-disable, unequal to 0-available
                 $("#confirm-deploy-message").html("确定一键成团？");
             else
                 $("#confirm-deploy-message").html("确定再拼团？");
             break;
         case 3:
-            $("#confirm-deploy-message").html("确定一键成团？");
+            $("#confirm-deploy-message").html("确定取消置顶吗？");
             break;
     }
     $("#item_id").val(id);
@@ -194,7 +196,7 @@ function deployItem() {
         case '2':
             itemInfo = {
                 'id': id,
-                'status': $("#item_status").val() // status=0-disable, 1-available
+                'status': $("#item_status").val()
             };
             break;
         case  '3':

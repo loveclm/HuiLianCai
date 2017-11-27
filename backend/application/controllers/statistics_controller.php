@@ -82,7 +82,7 @@ class statistics_controller extends BaseController
         if ($this->isAdmin() == TRUE) {
             $this->loadThis();
         } else {
-            $this->global['pageTitle'] = '供货商统计';
+            $this->global['pageTitle'] = '区域总代理统计';
             $this->global['pageName'] = 'provider_statistics';
             $data['searchName'] = '';
 
@@ -139,7 +139,7 @@ class statistics_controller extends BaseController
         if ($this->isAdmin() == TRUE) {
             $this->loadThis();
         } else {
-            $this->global['pageTitle'] = '供货商推荐人列表';
+            $this->global['pageTitle'] = '区域总代理推荐人列表';
             $this->global['pageName'] = 'recommend_provider';
             $data['searchName'] = '';
 
@@ -180,7 +180,7 @@ class statistics_controller extends BaseController
                 // get top list data in homepage
                 switch ($id) {
                     case 1:
-                        $header = array("日期", "账号", "配送员", "所属供货商", "供货商账号", "配送数量", "订单金额");
+                        $header = array("日期", "账号", "配送员", "所属区域总代理", "区域总代理账号", "配送数量", "订单金额");
                         $cols = 7;
                         $pay_type = $_POST['pay_type'];
                         $contentList = $this->statistics_model->getShipItems($searchData, $pay_type);
@@ -217,8 +217,8 @@ class statistics_controller extends BaseController
 
                         break;
                     case 3:
-                        $header = array("日期", "终端便利店账号", "终端便利店", "订单数量", "订单金额");
-                        $cols = 5;
+                        $header = array("日期", "终端便利店账号", "终端便利店", "付款方式", "订单数量", "订单金额");
+                        $cols = 6;
                         $contentList = $this->statistics_model->getShopItems($searchData);
 
                         if(count($contentList) == 0){
@@ -227,15 +227,15 @@ class statistics_controller extends BaseController
                             $count = 0;
                             $money = 0;
                             foreach ($contentList as $item){
-                                $count += intval($item[3]);
-                                $money += floatval($item[4]);
+                                $count += intval($item[4]);
+                                $money += floatval($item[5]);
                             }
-                            $footer = array("", "", "", $count, number_format($money, 2,'.',''));
+                            $footer = array("", "", "", "", $count, number_format($money, 2,'.',''));
                         }
 
                         break;
                     case 4:
-                        $header = array("月份", "供货商账号", "供货商名称", "销量", "销售金额", "平台佣金", "供货商实际收入");
+                        $header = array("月份", "区域总代理账号", "区域总代理名称", "销量", "销售金额", "平台佣金", "区域总代理实际收入");
                         $cols = 7;
                         $contentList = $this->statistics_model->getProviderItems($searchData);
 
@@ -411,7 +411,7 @@ class statistics_controller extends BaseController
     }
 
     function showProviders($id){
-        $this->global['pageTitle'] = '供货商列表';
+        $this->global['pageTitle'] = '区域总代理列表';
         $this->global['pageName'] = 'provider';
         $userinfo = $this->user_model->getUserInfo($id);
 

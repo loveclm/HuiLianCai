@@ -28,6 +28,9 @@ class activity_model extends CI_Model
             case '1': // name
                 $likeCriteria = $name != '' ? ("(tbl_activity.name  LIKE '%" . $name . "%')") : '';
                 break;
+            case '2': // provider
+                $likeCriteria = $name != '' ? ("(tbl_userinfo.username  LIKE '%" . $name . "%')") : '';
+                break;
         }
         if ($likeCriteria != '') $this->db->where($likeCriteria);
 
@@ -51,7 +54,9 @@ class activity_model extends CI_Model
                     break;
             }
         }
+        $this->db->order_by('tbl_activity.recommend_status', "desc");
         $this->db->order_by('tbl_activity.order', 'asc');
+        $this->db->order_by('tbl_activity.start_time', 'desc');
         $query = $this->db->get();
         $result = $query->result();
         if (count($result) == 0) $result = NULL;
@@ -83,13 +88,15 @@ class activity_model extends CI_Model
         $this->db->from('tbl_activity');
         $this->db->join('tbl_product', 'tbl_activity.product_id = tbl_product.id');
         $this->db->join('tbl_product_format', 'tbl_product.product_id = tbl_product_format.id');
-        $this->db->where('tbl_activity.status', 2);
-        $this->db->where('tbl_product_format.brand', $brand);
+        $this->db->where('tbl_activity.end_time > \''. date('Y-m-d H:i:s') . '\'');
+        $this->db->where('tbl_activity.status >', 1);
 
-        if ($type == 0)
+        if ($type == 0) {
             $this->db->where('tbl_activity.recommend_status', 1);
-        else
+        }else {
             $this->db->where('tbl_product_format.type', $type);
+            $this->db->where('tbl_product_format.brand', $brand);
+        }
 
         $this->db->order_by('tbl_activity.recommend_status', "desc");
         $this->db->order_by('tbl_activity.order', 'asc');
@@ -116,7 +123,7 @@ class activity_model extends CI_Model
     // this function is used to get activities for ending
     function getActivitiesForEnding()
     {
-        $query = $this->db->select('id, end_time, man_cnt, group_cnt, users, nums, provider_id, name')
+        $query = $this->db->select('id, end_time, man_cnt, group_cnt, users, nums, provider_id, name as activity_name')
             ->from('tbl_activity')
             ->where('status', 2)
             ->where('end_time < \'' . date('Y-m-d H:i:s') . '\'')
@@ -173,18 +180,26 @@ class activity_model extends CI_Model
     function getProductsFromIds($ids, $provider_id)
     {
         if ($ids == '') return NULL;
-        $this->db->select('tbl_product.id, tbl_product_format.barcode, tbl_product_format.name, tbl_product_format.cover, tbl_product.cost, tbl_product.store');
-        $this->db->from('tbl_product');
-        $this->db->join('tbl_product_format', 'tbl_product.product_id = tbl_product_format.id');
-        $this->db->where('tbl_product.id in(' . $ids . ')');
-        if ($provider_id != '0')
-            $this->db->where('tbl_product.provider_id', $provider_id);
 
-        $query = $this->db->get();
-        $result = $query->result();
-        if (count($result) == 0) $result = NULL;
+        $records = array();
 
-        return $result;
+        $ids = explode(',', $ids);
+        foreach ($ids as $id) {
+            $this->db->select('tbl_product.id, tbl_product_format.barcode, tbl_product_format.standard, tbl_product_format.unit, tbl_product_format.name, tbl_product_format.cover, tbl_product.cost, tbl_product.store');
+            $this->db->from('tbl_product');
+            $this->db->join('tbl_product_format', 'tbl_product.product_id = tbl_product_format.id');
+            $this->db->where('tbl_product.id', $id);
+            if ($provider_id != '0')
+                $this->db->where('tbl_product.provider_id', $provider_id);
+
+            $query = $this->db->get();
+            $result = $query->result();
+
+            if(count($result) != 0) array_push($records, $result[0]);
+        }
+        if (count($records) == 0) $records = NULL;
+
+        return $records;
     }
 
     function getProducts($provider_id)
@@ -195,6 +210,7 @@ class activity_model extends CI_Model
         if ($provider_id != '0')
             $this->db->where('tbl_product.provider_id', $provider_id);
 
+        $this->db->order_by('tbl_product.create_time', 'desc');
         $query = $this->db->get();
         $result = $query->result();
         if (count($result) == 0) $result = NULL;

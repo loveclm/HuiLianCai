@@ -19,7 +19,7 @@
 
                                 <div class="info-box-content text-center">
                                     <h1><span class="head-selected info-box-more"><?= isset($basic_data['provider_cnt'])? $basic_data['provider_cnt'] : ''; ?></span></h1>
-                                    <span class="info-box-text">供货商数量</span>
+                                    <span class="info-box-text">区域总代理数量</span>
                                 </div>
                                 <!-- /.info-box-content -->
                             </div>
@@ -43,16 +43,16 @@
                                 <img id="" src="<?= isset($basic_data['logo'])?  base_url().$basic_data['logo'] : base_url().'uploads/provider_logo.png'?>" style="max-width: 100px"/>
                             </span>
                             <div style="margin-left: 120px;">
-                                <div class="row" style="padding: 20px;">
-                                    <div class="col-xs-5">
+                                <div class="row" style="padding: 5px;">
+                                    <div class="col-xs-7">
                                         <h4 class="home_item" style="color:#0090bf;"><?= isset($basic_data['provider_name'])? $basic_data['provider_name'] : ''; ?></h4>
                                         <h4 class="home_item">联系人：<?= isset($basic_data['contact_name'])? $basic_data['contact_name'] : ''; ?></h4>
                                     </div>
-                                    <div class="col-xs-7">
+                                    <div class="col-xs-5">
                                         <h4 class="home_item">账号：<?= isset($basic_data['provider_id'])? $basic_data['provider_id'] : ''; ?></h4>
                                         <h4 class="home_item">联系电话：<?= isset($basic_data['contact_phone'])? $basic_data['contact_phone'] : ''; ?></h4>
                                     </div>
-                                    <div class="col-xs-11">
+                                    <div class="col-xs-11" style="padding-right: 0px;">
                                         <h4 class="home_item">公司地址：<?= isset($basic_data['address'])? $basic_data['address'] : ''; ?></h4>
                                     </div>
                                     <div class="col-xs-1">

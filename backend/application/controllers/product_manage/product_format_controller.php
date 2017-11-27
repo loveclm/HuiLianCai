@@ -118,6 +118,8 @@ class product_format_controller extends BaseController
 
                     if($this->product_format_model->isDeletable($item->id))
                         $output_html .= '<a href="#" onclick="deleteConfirm(\'' . $item->id . '\')">删除 &nbsp;&nbsp;</a>';
+                    else
+                        $output_html .= '<a href="#" onclick="$(\'#alert_delete\').show();" style="color: grey;">删除 &nbsp;&nbsp;</a>';
 
                     $output_html .= '</td>';
                     $output_html .= '</tr>';
@@ -194,6 +196,7 @@ class product_format_controller extends BaseController
         $this->form_validation->set_rules('unit', '单位', 'trim|required|is_natural_no_zero');
         $this->form_validation->set_rules('contents', '商品详情', 'trim|required');
 
+        $id = $this->input->post('id');
         $product_format = new stdClass();
         $product_format->barcode = $this->input->post('barcode');
         $product_format->name = $this->input->post('product_name');
@@ -217,6 +220,53 @@ class product_format_controller extends BaseController
 
             $this->loadViews("product_manage/product_format_add", $this->global, $data, NULL);
         } else {
+
+            $tmp = json_decode($product_format->cover);
+            if( $tmp[0] == '' || $brand_count == 0){
+                $this->form_validation->set_rules('image_count', '请上传图片', 'user_error');
+                $this->form_validation->run();
+
+                $this->global['product_format'] = $product_format;
+                // the user list that manages site
+                $data['empty'] = NULL;
+
+                $this->loadViews("product_manage/product_format_add", $this->global, $data, NULL);
+                return;
+            }
+            if($this->product_format_model->isValidBarcode($product_format->barcode, $id) == false){
+                $this->form_validation->set_rules('barcode', '该商品条码已存在', 'user_error');
+                $this->form_validation->run();
+
+                $this->global['product_format'] = $product_format;
+                // the user list that manages site
+                $data['empty'] = NULL;
+
+                $this->loadViews("product_manage/product_format_add", $this->global, $data, NULL);
+                return;
+            }
+            if($this->product_format_model->isValidProductName($product_format->name, $id) == false){
+                $this->form_validation->set_rules('barcode', '该商品名称已存在', 'user_error');
+                $this->form_validation->run();
+
+                $this->global['product_format'] = $product_format;
+                // the user list that manages site
+                $data['empty'] = NULL;
+
+                $this->loadViews("product_manage/product_format_add", $this->global, $data, NULL);
+                return;
+            }
+
+            if(strpos($product_format->cover, 'hlc') === false || $brand_count == 0) {
+                $this->form_validation->set_rules('barcode', '请上传图片', 'user_error');
+                $this->form_validation->run();
+
+                $this->global['product_format'] = $product_format;
+                // the user list that manages site
+                $data['empty'] = NULL;
+
+                $this->loadViews("product_manage/product_format_add", $this->global, $data, NULL);
+                return;
+            }
 
             $product = array(
                 'barcode' => $product_format->barcode,
@@ -270,12 +320,11 @@ class product_format_controller extends BaseController
             $this->global['pageTitle'] = '编辑商品';
             $this->global['pageName'] = 'product_format_add';
             $this->global['typelist'] = $this->product_util_model->getProductTypeList();
-            $this->global['brandlist'] = $this->product_util_model->getProductBrandList();
             $this->global['unitlist'] = $this->product_util_model->getProductUnitList();
             $data['empty'] = NULL;
 
             $this->global['product_format'] = $this->product_format_model->getItemById($Id);
-
+            $this->global['brandlist'] =$this->product_util_model->getProductBrandList($this->global['product_format']->type);
             $this->loadViews("product_manage/product_format_add", $this->global, $data, NULL);
         }
     }
@@ -291,11 +340,11 @@ class product_format_controller extends BaseController
             $this->global['pageTitle'] = '编辑商品';
             $this->global['pageName'] = 'product_format_detail';
             $this->global['typelist'] = $this->product_util_model->getProductTypeList();
-            $this->global['brandlist'] = $this->product_util_model->getProductBrandList();
             $this->global['unitlist'] = $this->product_util_model->getProductUnitList();
             $data['empty'] = NULL;
 
             $this->global['product_format'] = $this->product_format_model->getItemById($Id);
+            $this->global['brandlist'] =$this->product_util_model->getProductBrandList($this->global['product_format']->type);
 
             $this->loadViews("product_manage/product_format_detail", $this->global, $data, NULL);
         }

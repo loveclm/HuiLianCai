@@ -14,6 +14,12 @@ $(document).ready(function () {
         case 'multiple_activity_add':
             $(".form_datetime").datetimepicker({language: 'zh-CN'});
             display_product_table();
+
+            $('.product_imgs').hover(function () {
+                $('.item_group').show();
+            }, function () {
+                $('.item_group').hide();
+            });
             $('#upload_product_logo').on('change', uploadSingleImage);
             $('#upload_product_imgs').on('change', uploadImageAndInsertTag);
             break;
@@ -24,7 +30,7 @@ $(document).ready(function () {
 
 });
 
-function display_product_table(){
+function display_product_table() {
     $.ajax({
         type: 'post',
         url: baseURL + 'activity_manage/multiple_activity_controller/product_list',
@@ -46,7 +52,7 @@ function display_product_table(){
                 var origin_cost = 0;
                 var total_cost = 0;
 
-                if( product_list != null) {
+                if (product_list != null) {
                     for (var i = 0; i < product_list.length; i++) {
                         if (buy_cnt.length > i) {
                             cur_cost = buy_cnt[i]['cost'];
@@ -65,10 +71,10 @@ function display_product_table(){
                         content_html += '</td>';
                         content_html += '<td>' + product_list[i]['name'] + '</td>';
                         content_html += '<td id="origin_' + product_list[i]['id'] + '">' + (parseFloat(product_list[i]['cost'])).toFixed(2) + '</td>';
-                        if($("#page_Name").val() == 'multiple_activity_detail'){
+                        if ($("#page_Name").val() == 'multiple_activity_detail') {
                             content_html += '<td>' + (parseFloat(cur_cost)).toFixed(2) + '</td>';
                             content_html += '<td>' + cur_cnt + '</td>';
-                        }else {
+                        } else {
                             content_html += '<td><input onchange="calculate_group_cost()" id="cost_' + product_list[i]['id'] + '" value="' + (parseFloat(cur_cost)).toFixed(2) + '"/></td>';
                             content_html += '<td><input onchange="calculate_group_cost()" id="cnt_' + product_list[i]['id'] + '" value="' + cur_cnt + '"/></td>';
                         }
@@ -89,17 +95,22 @@ function display_product_table(){
     });
 }
 
-function calculate_group_cost(){
-    var ids = JSON.parse('['+ $('#product_list').val() +']');
+function calculate_group_cost() {
+    var ids = JSON.parse('[' + $('#product_list').val() + ']');
     var total_cost = 0;
     var origin_cost = 0;
     var buy_cnt = '[';
-    for( var i = 0; i < ids.length; i++){
+    for (var i = 0; i < ids.length; i++) {
+        var cnt = $('#cnt_' + ids[i]).val();
+        if (cnt.length > 2) {
+            alert('彩购数量不超过2位数');
+            $('#cnt_' + ids[i]).val(cnt.substring(0, 2));
+        }
         total_cost += parseFloat($('#cost_' + ids[i]).val()) * parseFloat($('#cnt_' + ids[i]).val());
         origin_cost += parseFloat($('#origin_' + ids[i]).html()) * parseFloat($('#cnt_' + ids[i]).val());
 
-        if(i > 0) buy_cnt += ',';
-        buy_cnt += '{ "cost":"' + $('#cost_' + ids[i]).val() +'", "count":"' + $('#cnt_' + ids[i]).val() + '"}';
+        if (i > 0) buy_cnt += ',';
+        buy_cnt += '{ "cost":"' + $('#cost_' + ids[i]).val() + '", "count":"' + $('#cnt_' + ids[i]).val() + '"}';
     }
     buy_cnt += ']';
     $('#origin_cost').html(origin_cost.toFixed(2));
@@ -109,7 +120,7 @@ function calculate_group_cost(){
     $('#buy_cnt').val(buy_cnt);
 }
 
-function selectProduct(){
+function selectProduct() {
     selectedProducts = JSON.parse('[' + $('#product_list').val() + ']');
 
     $.ajax({
@@ -127,7 +138,7 @@ function selectProduct(){
                 var content_html = '';
                 var cur_cost = 0.00;
                 var cur_cnt = 1;
-                if( product_list != null) {
+                if (product_list != null) {
                     for (var i = 0; i < product_list.length; i++) {
                         if (buy_cnt.length > i) {
                             cur_cost = buy_cnt[i]['cost'];
@@ -147,15 +158,16 @@ function selectProduct(){
                         content_html += '<td>' + (parseFloat(product_list[i]['cost'])).toFixed(2) + '</td>';
 
                         var flag = 0;
-                        for( var j = 0; j < selectedProducts.length; j++){
-                            if( product_list[i]['id'] == selectedProducts[i]){
-                                flag = 1; break;
+                        for (var j = 0; j < selectedProducts.length; j++) {
+                            if (product_list[i]['id'] == selectedProducts[j]) {
+                                flag = 1;
+                                break;
                             }
                         }
-                        if( flag == 0){
-                            content_html += '<td><a href="#" id="a_'+ product_list[i]['id'] +'" onclick="changeState('+ product_list[i]['id'] + ')">加入</a></td>';
-                        }else{
-                            content_html += '<td><a href="#"  id="a_'+ product_list[i]['id'] +'"  onclick="changeState('+ product_list[i]['id'] + ')">移出</a></td>';
+                        if (flag == 0) {
+                            content_html += '<td><a href="#" id="a_' + product_list[i]['id'] + '" onclick="changeState(' + product_list[i]['id'] + ')">加入</a></td>';
+                        } else {
+                            content_html += '<td><a href="#"  id="a_' + product_list[i]['id'] + '"  onclick="changeState(' + product_list[i]['id'] + ')">移出</a></td>';
                         }
                         content_html += '</tr>';
                     }
@@ -174,25 +186,25 @@ function selectProduct(){
 
 function changeState(id) {
     var state = $('#a_' + id).html();
-    if( state == "加入"){
+    if (state == "加入") {
         $('#a_' + id).html("移出");
         selectedProducts.push(id);
-    }else if( state == "移出"){
+    } else if (state == "移出") {
         $('#a_' + id).html("加入");
-        selectedProducts = jQuery.grep(selectedProducts, function(value){
+        selectedProducts = jQuery.grep(selectedProducts, function (value) {
             return value != id;
         });
     }
 }
 
-function setProduts(){
-    if(selectedProducts.length < 2){
+function setProduts() {
+    if (selectedProducts.length < 2) {
         alert('您需要选择2种以上的产品。');
         return;
     }
     var str = "";
-    for( var i = 0; i < selectedProducts.length; i++){
-        if( i > 0) str += ",";
+    for (var i = 0; i < selectedProducts.length; i++) {
+        if (i > 0) str += ",";
         str += selectedProducts[i];
     }
     $('#product_list').val(str);
@@ -202,6 +214,82 @@ function setProduts(){
 
 function ModifyImage(index) {
     $('#upload_company_brand' + index).trigger('click');
+    $('#upload_product_imgs' + index).on('change', change_image);
+}
+
+function change_image() {
+    event.stopPropagation(); // Stop stuff happening
+    event.preventDefault(); // Totally stop stuff happening
+
+    files = event.target.files;
+    if (this.files[0].type != "image/jpeg" && this.files[0].type != "image/png") {
+        window.alert("图片格式错误，要求是jpg、jpeg、png格式。");
+        return;
+    }
+    if (this.files[0].size > 10000000) {
+        window.alert("图片不超过10M。");
+        return;
+    }
+    var data = new FormData();
+    $.each(files, function (key, value) {
+        data.append(key, value);
+    });
+
+    $("#" + str + "_filename").html('图片上传中...');
+    $("#" + str + "_filename").show();
+
+    var str = event.target.id;
+    str = str.substr(7, str.length - 7);
+
+    $.ajax({
+        url: baseURL + "api/ImgProcessor/uploadAnyData",
+        type: 'POST',
+        data: data,
+        cache: false,
+        dataType: 'json',
+        processData: false, // Don't process the files
+        contentType: false, // Set content type to false as jQuery will tell the server its a query string request
+        success: function (data, textStatus, jqXHR) {
+            if (typeof data.error === 'undefined') {
+                if (data['status'] == true) {
+                    var url = baseURL + 'uploads/' + data['file'];
+                    $("#" + str + "_image").attr("src", url);
+                    $("#" + str + "_image").show();
+                    $("#" + str + "_filename").html(data['originfile']);
+                    $("#" + str + "_src").val(JSON.stringify([data['originfile'], 'uploads/' + data['file']]));
+                }
+            }
+            else {
+                // Handle errors here
+                console.log('ERRORS: ' + data.error);
+            }
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            // Handle errors here
+            console.log('ERRORS: ' + textStatus);
+            // STOP LOADING SPINNER
+        }
+    });
+
+}
+
+function delete_image(index) {
+    $('#product_imgs' + index).remove();
+    var n = parseInt($('#image_count').val());
+    for (var i = index + 1; i <= n; i++) {
+        $('#product_imgs' + i + ' .close_item').attr('onclick', 'delete_item(' + (i - 1) + ')');
+        $('#product_imgs' + i + ' .modify_item').attr('onclick', 'ModifyImage(' + (i - 1) + ')');
+
+        $('#product_imgs' + i + '_image').attr('id', '#product_imgs' + (i - 1) + '_image');
+        $('#upload_product_imgs' + i).attr('id', '#upload_product_imgs' + (i - 1));
+        $('#upload_product_imgs' + i).attr('id', '#upload_product_imgs' + (i - 1));
+        $('#product_imgs' + i + '_src').attr('name', '#brand' + (i - 1));
+        $('#product_imgs' + i + '_src').attr('id', '#product_imgs' + (i - 1) + '_src');
+        $('#product_imgs' + i + '_filename').attr('id', '#product_imgs' + (i - 1) + '_filename');
+
+        $('#product_imgs' + i).attr('id', '#product_imgs' + (i - 1));
+    }
+    $('#image_count').attr('value', n - 1);
 }
 
 function uploadSingleImage(event) {
@@ -301,15 +389,19 @@ function uploadImageAndInsertTag(event) {
                     console.log($('#image_count').val());
                     // insert tag
                     var content_html = $('#product_imgs_content div').html();
-                    content_html += '<div class="company_brand" style="float: left;">' +
+                    content_html += '<div class="company_brand"  id="company_brand' + index + '"style="float: left; position: relative;">' +
                         '    <img id="company_brand' + index + '_image" src="' + url + '"' +
                         '         onclick="ModifyImage(' + index + ');"' +
                         '         alt="user image" class="online" style="height: 130px; width:180px; padding: 20px; padding-bottom:2px;"><br>' +
                         '    <input id="upload_company_brand' + index + '" class="upload_company_brand" type="file" style="display: none"/>' +
                         '    <input name="brand' + index + '" id="company_brand' + index + '_src" type="text" style="display: none"' +
                         '           value=\'' + JSON.stringify([data['originfile'], 'uploads/' + data['file']]) + '\'>' +
-                        '    <span id="company_brand' + index + '_filename">' + data['originfile'] + '</span>' +
-                        '</div>'
+                        '    <span id="company_brand' + index + '_filename" style="display: none;">' + data['originfile'] + '</span>' +
+                        '<div class="item_group">' +
+                        '    <div class="close_item" onclick="delete_image(' + index + ')">' +
+                        '        <i class="fa fa-fw fa-close"></i></div>' +
+                        '    <span class="modify_item" onclick="ModifyImage(' + index + ')">修改</span>' +
+                        '</div></div>'
                     $('#product_imgs_content div').html(content_html);
                 }
             }
@@ -351,6 +443,7 @@ function showLists(id) {
                 $('#header_tbl').html(res.header);
                 $('#content_tbl').html(res.content);
                 $('#footer_tbl').html(res.footer);
+                executionPageNation();
             } else {
                 alert('search failed!');
                 console.log(res.data);
@@ -369,13 +462,13 @@ function deployConfirm(id, type, status) {
                 $("#confirm-deploy-message").html("确定取消推荐？");
             break;
         case 2:     //置顶
-            if (status == 4)// status=0-disable, unequal to 0-available
+            if (status == 3)// status=0-disable, unequal to 0-available
                 $("#confirm-deploy-message").html("确定一键成团？");
             else
                 $("#confirm-deploy-message").html("确定再拼团？");
             break;
         case 3:
-            $("#confirm-deploy-message").html("确定一键成团？");
+            $("#confirm-deploy-message").html("确定取消置顶吗？");
             break;
     }
     $("#item_id").val(id);
@@ -401,7 +494,7 @@ function deployItem() {
         case '2':
             itemInfo = {
                 'id': id,
-                'status': $("#item_status").val() // status=0-disable, 1-available
+                'status': $("#item_status").val()
             };
             break;
         case  '3':
@@ -413,7 +506,7 @@ function deployItem() {
     }
 
     $.ajax({
-        url: baseURL + "activity_manage/multiple_activity_controller/addItem2DB",
+        url: baseURL + "activity_manage/single_activity_controller/addItem2DB",
         type: "POST",
         data: {'itemInfo': itemInfo},
         success: function (result) {

@@ -14,7 +14,28 @@ $(document).ready(function () {
             $('#treeview-container').treeview('selectedValues')
         );
     });
+    showList();
 });
+
+function showList() {
+    $.ajax({
+        type: 'POST',
+        url: baseURL + 'systemmanage/item_listing',
+        dataType: 'json',
+        data:{ id : 1 },
+        success: function(res){
+            if (res.status == 'success') {
+                $('#header_tbl').html(res.header);
+                $('#content_tbl').html(res.content);
+                $('#footer_tbl').html(res.footer);
+                //executionPageNation();
+            } else {
+                // alert('search failed!');
+                console.log(res.data);
+            }
+        }
+    });
+}
 
 function loadingRoleData(){
     $.ajax({

@@ -18,9 +18,9 @@
                                 <option value="0" <?php if ($searchStatus == 0) echo ' selected' ?>>配送员账号</option>
                                 <option value="1" <?php if ($searchStatus == 1) echo ' selected' ?>>姓名</option>
                                 <option value="2" <?php if ($searchStatus == 2) echo ' selected' ?>>联系电话</option>
-                                <option value="3" <?php if ($searchStatus == 3) echo ' selected' ?>>所属供货商</option>
+                                <option value="3" <?php if ($searchStatus == 3) echo ' selected' ?>>所属区域总代理</option>
                             </select>
-                            <input type="text" id="searchName"
+                            <input type="text" id="searchName" style="width: 140px;"
                                    value="<?php echo $searchName == 'all' ? '' : $searchName; ?>" class="form-control">
                         </div>
                     </div>
@@ -47,13 +47,13 @@
                                    value="<?php echo $address != '' ? ($addrs[2]) : ''; ?>">
                         </div>
 
-                        <div class="form-group">
+                        <!--<div class="form-group">
                             <select class="form-control" id="searchStatus">
-                                <option value="0" <?php if ($searchStatus == 0) echo ' selected' ?>>禁用状态</option>
-                                <option value="1" <?php if ($searchStatus == 1) echo ' selected' ?>>未禁用</option>
-                                <option value="2" <?php if ($searchStatus == 2) echo ' selected' ?>>已禁用</option>
+                                <option value="0" <?php //if ($searchStatus == 0) echo ' selected' ?>>禁用状态</option>
+                                <option value="1" <?php //if ($searchStatus == 1) echo ' selected' ?>>未禁用</option>
+                                <option value="2" <?php //if ($searchStatus == 2) echo ' selected' ?>>已禁用</option>
                             </select>
-                        </div>
+                        </div>-->
                     </div>
 
                     <div class="col-xs-12 col-sm-1 form-inline">
@@ -77,19 +77,36 @@
                 <?php
             }
             ?>
-            <div class="row">
+            <div class="row"  style="max-height: 700px; overflow-y: auto;">
                 <div class="box main-shadow">
                     <div class="box-body table-responsive no-padding">
-                        <table class="table table-hover">
+                        <table id="contentInfo_tbl" class="table table-hover">
                             <thead id="header_tbl"></thead>
                             <tbody id="content_tbl"></tbody>
                             <tfoot id="footer_tbl"></tfoot>
                         </table>
+                        <div id="contentpageNavPosition"></div>
                     </div>
                     <!-- /.box-body -->
                 </div>
                 <!-- /.box -->
             </div>
+            <div id="alert_delete" class="modal-dialog text-center" style="display: none;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                                onclick="$('#alert_delete').hide();">
+                            <span aria-hidden="true">×</span></button>
+                        <span class="modal-title">提示</span>
+                    </div>
+                    <div class="modal-body">
+                        <label>该配送员已关联了终端便利店，先去更换终端便利店负责的配送员吧。</label><br><br>
+                        <a href="#" class="btn btn-primary" onclick="$('#alert_delete').hide();">确定</a>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+
             <div id="confirm_delete" class="modal-dialog text-center" style="display: none;">
                 <div class="modal-content">
                     <div class="modal-header">

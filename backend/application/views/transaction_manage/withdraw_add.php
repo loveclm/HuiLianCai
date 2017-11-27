@@ -12,9 +12,31 @@
                       method="post">
                     <input name="withdraw_id" value="<?= isset($model->withdraw_id) ? $model->withdraw_id : '0'; ?>" type="hidden"/>
                     <div class="row form-inline">
-                        <label>供货商账号 : </label>
+                        <label>区域总代理账号 : </label>
                         <div class="input-group margin">
                             <span id="barcode"><?php echo isset($model->provider_userid) ? $model->provider_userid : ''; ?></span>
+                            <?php
+                            if (isset($model->status)) {
+                                switch ($model->status) {
+                                    case 1:
+                                        $Status = '提现中';
+                                        break;
+                                    case 2:
+                                        $Status = '提现成功';
+                                        break;
+                                    case 3:
+                                        $Status = '提现失败';
+                                        break;
+                                    case 4:
+                                        $Status = '提现关闭';
+                                        break;
+                                }
+                            } else {
+                                $Status = '';
+                            }
+                            ?>
+                            <span style="color: white; background-color: red; margin-left: 50px; padding: 5px;"><?= $Status; ?></span>
+
                         </div>
                     </div>
 
@@ -77,7 +99,7 @@
                                 </label>
                             </div>
                         </div>
-                        <input name="status" id="option_status" value="<?= isset($model->status) ? $model->status : 0; ?>" type="hidden">
+                        <input name="status" id="option_status" value="2" type="hidden">
                     </div>
                     <div class="row form-inline">
                         <label> *备注 : </label>
@@ -93,7 +115,7 @@
                                 <a class="btn btn-default form-control" href="<?php echo base_url(); ?>withdraw">
                                     <span>返回</span>
                                 </a>
-                                <input class="btn btn-primary form-control" type="submit" value="保存">
+                                <input class="btn btn-primary form-control" type="button" value="保存" onclick="OnShowMessage()">
                             </div>
                         </div>
                     </div>
@@ -128,6 +150,23 @@
                 </div>
             </div>
         </div>
+        <div id="confirm_delete" class="modal-dialog text-center" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                            onclick="$('#confirm_delete').hide();">
+                        <span aria-hidden="true">×</span></button>
+                    <span class="modal-title">提示</span>
+                </div>
+                <div class="modal-body">
+                    <label id="alert_message">是否确认打款成功/打款失败？</label><br><br>
+                    <a href="#" class="btn btn-default" onclick="$('#confirm_delete').hide();">取消</a>
+                    <a href="#" class="btn btn-primary" onclick="onConfirm();">确定</a>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+
     </section>
 </div>
 

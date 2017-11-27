@@ -42,7 +42,7 @@ class transaction_controller extends BaseController
             $bankinfo = $this->transaction_model->getBankinfo($provider_info->id);
             $data['bankinfo_id'] = ($bankinfo == NULL) ? '' : $bankinfo->id;
             $data['card_info'] = ($bankinfo == NULL) ? '' : $bankinfo->bank_name . '储蓄卡(' . substr($bankinfo->card_no, -4) . ')';
-            $data['balance'] = 200; //$provider_info->balance;
+            $data['balance'] = $provider_info->balance;
             $data['searchType'] = '0';
             $data['searchName'] = '';
             $data['searchStatus'] = '0';
@@ -83,7 +83,7 @@ class transaction_controller extends BaseController
             if (!empty($_POST)) {
                 $id = $_POST['id'];
                 $searchData = $_POST['searchData'];
-
+                $searchData['provider_id'] = $this->user_model->getProviderId($this->global['login_id']);
                 // get top list data in homepage
                 switch ($id) {
                     case 1:
@@ -145,7 +145,7 @@ class transaction_controller extends BaseController
                     $output_html .= '<td>' . $item->shop_id . '</td>';
                     $output_html .= '<td>' . $item->shop_name . '</td>';
                     $output_html .= '<td>' . number_format((float)$item->money,2,'.','') . '</td>';
-                    $output_html .= '<td>' . $item->note . '</td>';
+                    $output_html .= '<td>' . $this->convertNote($item->note) . '</td>';
                     $output_html .= '<td>' . $item->order_id . '</td>';
                     $output_html .= '</tr>';
                 }
@@ -155,31 +155,37 @@ class transaction_controller extends BaseController
                     $output_html .= '<tr>';
                     $output_html .= '<td>' . $item->time . '</td>';
                     switch ($item->status){
-                        case 1: //提现成功
+                        case 1: //提现中
                             $output_html .= '<td>- ' . number_format((float)$item->money,2,'.','') . '</td>';
+                            $output_html .= '<td>提现中</td>';
                             break;
-                        case 2: //提现失败
+                        case 2: //提现成功
+                            $output_html .= '<td>- ' . number_format((float)$item->money,2,'.','') . '</td>';
+                            $output_html .= '<td>提现成功</td>';
+                            break;
+                        case 3:  //提现失败
                             $output_html .= '<td>+ ' . number_format((float)$item->money,2,'.','') . '</td>';
+                            $output_html .= '<td>提现失败</td>';
                             break;
-                        case 3:  //提现中
+                        case 4:  //提现关闭
                             $output_html .= '<td>- ' . number_format((float)$item->money,2,'.','') . '</td>';
+                            $output_html .= '<td>提现关闭</td>';
                             break;
                     }
-                    $output_html .= '<td>' . $item->note . '</td>';
                     $output_html .= '</tr>';
                 }
                 break;
             case 3:
                 foreach ($allLists as $item) {
                     $output_html .= '<tr>';
-                    $output_html .= '<td>' . $item->time . '</td>';
+                    $output_html .= '<td style="width: 85px;">' . $item->time . '</td>';
                     $output_html .= '<td>' . $item->id . '</td>';
-                    $output_html .= '<td>' . $item->shop_id . '</td>';
+                    $output_html .= '<td style="width: 100px;">' . $item->shop_id . '</td>';
                     $output_html .= '<td>' . $item->shop_name . '</td>';
                     $output_html .= '<td>' . number_format((float)$item->money,2,'.','') . '</td>';
-                    $output_html .= '<td>' . $item->note . '</td>';
+                    $output_html .= '<td>' . $this->convertNote($item->note) . '</td>';
                     $output_html .= '<td>' . $item->order_id . '</td>';
-                    $output_html .= '<td><a href="'. base_url().'showitem/' . $item->id . '">查看</a></td>';
+                    $output_html .= '<td><a href="'. base_url().'order_show/' . $item->order_id . '">查看</a></td>';
                     $output_html .= '</tr>';
                 }
                 break;
@@ -191,7 +197,7 @@ class transaction_controller extends BaseController
                     $output_html .= '<td>' . $item->shop_name . '</td>';
                     $output_html .= '<td>' . number_format((float)$item->money,2,'.','') . '</td>';
                     $output_html .= '<td>' . $item->order_id . '</td>';
-                    $output_html .= '<td><a href="'. base_url().'showitem/' . $item->id . '">查看</a></td>';
+                    $output_html .= '<td><a href="'. base_url().'order_show/' . $item->order_id . '">查看</a></td>';
                     $output_html .= '</tr>';
                 }
                 break;
@@ -200,6 +206,13 @@ class transaction_controller extends BaseController
         return $output_html;
     }
 
+    function convertNote($note){
+        if(substr($note, 0,2) == '拼单') return '订单付款';
+        if(substr($note, -6) == '拼单成功返现') return '退还差额（拼团成功）';
+        if( $note == '退款到账') return '全额退款（取消订单）';
+
+        return $note;
+    }
     /**
      * This function used to make list view
      */
@@ -274,10 +287,92 @@ class transaction_controller extends BaseController
 
             $this->loadViews("transaction_manage/bankinfo_add", $this->global, $data, NULL);
         } else {
+            //配置您申请的appkey
+//            $appkey = "1111";
+//            //************1.银行卡归属地查询************
+//            $url = "http://v.juhe.cn/verifybankcard4/query";
+//            $params = array(
+//                "key" => $appkey,//应用APPKEY(应用详细页查询)
+//                "dtype" => "json",//返回数据的格式,xml或json，默认json
+//                "bankcard" => $item->card_no,//银行卡号
+//                "realname" => $item->provider_name, //持卡人
+//                "idcard" => $item->cert_no, //身份证号
+//                "mobile" => $item->reserve_mobile, //手机号
+//            );
+//
+//            $paramstring = http_build_query($params);
+//            $content = $this->juhecurl($url,$paramstring);
+//            $result = json_decode($content,true);
+//            if($result){
+//                if($result['error_code']!='0'){
+//                    $this->form_validation->set_rules('card_no', "【银行卡确认】 ". $result['error_code'] . " : " . $result['reason'], 'user_error');
+//                    $this->form_validation->run();
+//
+//                    $this->global['model'] = $item;
+//                    // the user list that manages site
+//                    $data['bankinfo_id'] = '';
+//                    $this->loadViews("transaction_manage/bankinfo_add", $this->global, $data, NULL);
+//                    return;
+//                }
+//            }else{
+//                $this->form_validation->set_rules('card_no', "【银行卡确认】 请求失败", 'user_error');
+//                $this->form_validation->run();
+//
+//                $this->global['model'] = $item;
+//                // the user list that manages site
+//                $data['bankinfo_id'] = '';
+//                $this->loadViews("transaction_manage/bankinfo_add", $this->global, $data, NULL);
+//                return;
+//            }
+
+            $item->provider_id = $this->user_model->getProviderId($this->global['login_id']);
             $this->transaction_model->addBankinfo($item);
 
             redirect('showMyMoney');
         }
+    }
+
+    /**
+     * 请求接口返回内容
+     * @param  string $url [请求的URL地址]
+     * @param  string $params [请求的参数]
+     * @param  int $ipost [是否采用POST形式]
+     * @return  string
+     */
+    function juhecurl($url,$params=false,$ispost=0){
+        $httpInfo = array();
+        $ch = curl_init();
+        curl_setopt( $ch, CURLOPT_HTTP_VERSION , CURL_HTTP_VERSION_1_1 );
+        curl_setopt( $ch, CURLOPT_USERAGENT , 'JuheData' );
+        curl_setopt( $ch, CURLOPT_CONNECTTIMEOUT , 60 );
+        curl_setopt( $ch, CURLOPT_TIMEOUT , 60);
+        curl_setopt( $ch, CURLOPT_RETURNTRANSFER , true );
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        if( $ispost )
+        {
+            curl_setopt( $ch , CURLOPT_POST , true );
+            curl_setopt( $ch , CURLOPT_POSTFIELDS , $params );
+            curl_setopt( $ch , CURLOPT_URL , $url );
+        }
+        else
+        {
+            if($params){
+                curl_setopt( $ch , CURLOPT_URL , $url.'?'.$params );
+            }else{
+                curl_setopt( $ch , CURLOPT_URL , $url);
+            }
+        }
+        $response = curl_exec( $ch );
+
+        if ($response === FALSE) {
+            //echo "cURL Error: " . curl_error($ch);
+            return false;
+        }
+        $httpCode = curl_getinfo( $ch , CURLINFO_HTTP_CODE );
+        $httpInfo = array_merge( $httpInfo , curl_getinfo( $ch ) );
+        curl_close( $ch );
+
+        return $response;
     }
 
     /**
@@ -292,7 +387,7 @@ class transaction_controller extends BaseController
             $this->global['pageName'] = 'transaction_detail';
 
             $data['empty'] = NULL;
-            $this->global['model'] = $this->transaction_model->getBankinfo($Id);
+            $this->global['model'] = $this->transaction_model->getBankinfoById($Id);
 
             $this->loadViews("transaction_manage/bankinfo_detail", $this->global, $data, NULL);
         }

@@ -53,6 +53,8 @@ class order_model extends CI_Model
                 $likeCriteria = $name != '' ? ("(tbl_userinfo.contact_name  LIKE '%" . $name . "%')") : '';
                 break;
             case '3': // provider or ship man name
+                if($userids == '') break;
+
                 if($provider_id == '0'){
                     $likeCriteria = $name != '' ? ("tbl_order.provider in (" . $userids . ")") : '';
                 }else{
@@ -65,6 +67,8 @@ class order_model extends CI_Model
 
         if ($status != '0') $this->db->where('tbl_order.status', $status);
         if ($method != '0') $this->db->where('tbl_order.pay_method', $method);
+
+        $this->db->order_by('create_time', 'desc');
         $query = $this->db->get();
         $result = $query->result();
 
@@ -74,12 +78,24 @@ class order_model extends CI_Model
 
     // this function is used to get shop's order list
     function getOrdersByShop($user_id){
-        $this->db->select('*');
-        $this->db->from('tbl_order');
-        $this->db->where('shop', $user_id);
-        $query = $this->db->get();
+        $result = $this->db->select('*')
+            ->from('tbl_order')
+            ->where('shop', $user_id)
+            ->order_by('create_time', 'desc')
+            ->get()->result();
+        return $result;
+    }
 
-        return $query->result();
+    function getPrevOrder($user_id, $activity_id, $pay_method){
+        $result = $this->db->select('*')
+            ->from('tbl_order')
+            ->where('shop', $user_id)
+            ->where('activity_ids', $activity_id)
+            ->where('pay_method', $pay_method)
+            ->get()->result();
+
+        if(count($result) == 0) return NULL;
+        return $result[0];
     }
 
     // this function is used to get orders for canceling
@@ -113,12 +129,14 @@ class order_model extends CI_Model
         $query = $this->db->select('*')
             ->from('tbl_order')
             ->where('activity_ids', $activity_id)
+            ->where('status <', 3)
             ->get();
         $result = $query->result();
         if(count($result) == 0) return NULL;
 
-        return $result[0];
+        return $result;
     }
+
     function getOrderTimeByShop_ActivityId($shop_id, $activity_id){
         $this->db->select('create_time');
         $this->db->from('tbl_order');
@@ -131,6 +149,21 @@ class order_model extends CI_Model
         if(count($result) == 0) return NULL;
         return $result[0]->create_time;
     }
+
+    function getOrderIDByShop_ActivityId($shop_id, $activity_id){
+        $this->db->select('id');
+        $this->db->from('tbl_order');
+        $this->db->where('shop', $shop_id);
+        $this->db->where('activity_ids', $activity_id);
+
+        $query = $this->db->get();
+        $result = $query->result();
+
+        if(count($result) == 0) return NULL;
+        return $result[0]->id;
+    }
+
+
     /**
      * This function is used to get Tourist Area by id
      * @return array $result : This is result
@@ -149,15 +182,19 @@ class order_model extends CI_Model
         return $result[0];
     }
 
-    function getYesterdayOrderStatus(){
+    function getYesterdayOrderStatus($provider_id){
         $cnt = '--';
         $cost = '--';
         $yesterday = date('Y-m-d',strtotime("-1 days"));
 
-        $this->db->select('count(id) as cnt, sum(pay_cost-refund_cost) as cost');
+        $this->db->select('sum(tbl_activity.product_cnt * tbl_order.activity_cnts) as cnt, sum(tbl_order.pay_cost-tbl_order.refund_cost) as cost');
         $this->db->from('tbl_order');
-        $this->db->where('status in(2,3,4)');
-        $this->db->where('date(pay_time)', $yesterday);
+        $this->db->join('tbl_activity', 'tbl_activity.id=tbl_order.activity_ids');
+        $this->db->where('tbl_order.status', 4);
+        $this->db->where('date(tbl_order.pay_time)=\''. $yesterday.'\'');
+        if($provider_id != '0')
+            $this->db->where('tbl_order.provider', $provider_id);
+
         $query = $this->db->get();
         $result = $query->result();
 
@@ -168,15 +205,19 @@ class order_model extends CI_Model
         return array('cnt' => $cnt, 'cost' => $cost);
     }
 
-    function getMonthOrderStatus(){
+    function getMonthOrderStatus($provider_id){
         $cnt = '--';
         $cost = '--';
         $cur_month = date("Y-m");
 
-        $this->db->select('count(id) as cnt, sum(pay_cost-refund_cost) as cost');
+        $this->db->select('sum(tbl_activity.product_cnt * tbl_order.activity_cnts) as cnt, sum(tbl_order.pay_cost-tbl_order.refund_cost) as cost');
         $this->db->from('tbl_order');
-        $this->db->where('status in(2,3,4)');
-        $this->db->where('left(pay_time, 7)='. $cur_month);
+        $this->db->join('tbl_activity', 'tbl_activity.id=tbl_order.activity_ids');
+        $this->db->where('tbl_order.status', 4);
+        $this->db->where('left(tbl_order.pay_time, 7)=\''. $cur_month. '\'');
+        if($provider_id != '0')
+            $this->db->where('tbl_order.provider', $provider_id);
+
         $query = $this->db->get();
         $result = $query->result();
 
@@ -187,51 +228,14 @@ class order_model extends CI_Model
         return array('cnt' => $cnt, 'cost' => $cost);
     }
 
-//    function getProductList($type, $brand, $provider_id){
-//        $this->db->select('tbl_product.id, tbl_product_format.name');
-//        $this->db->from('tbl_product');
-//        $this->db->join('tbl_product_format', 'tbl_product.product_id = tbl_product_format.id');
-//        if ($provider_id != '0')
-//            $this->db->where('tbl_product.provider_id', $provider_id);
-//        $this->db->where('tbl_product_format.type', $type);
-//        $this->db->where('tbl_product_format.brand', $brand);
-//
-//        $query = $this->db->get();
-//        $result = $query->result();
-//        if(count($result) == 0) $result = NULL;
-//
-//        return $result;
-//    }
-//
-//    function getProductsFromIds($ids, $provider_id){
-//        if($ids == '') return NULL;
-//        $this->db->select('tbl_product.id, tbl_product_format.barcode, tbl_product_format.name, tbl_product_format.cover, tbl_product.cost, tbl_product.store');
-//        $this->db->from('tbl_product');
-//        $this->db->join('tbl_product_format', 'tbl_product.product_id = tbl_product_format.id');
-//        $this->db->where('tbl_product.id in('. $ids . ')');
-//        if ($provider_id != '0')
-//            $this->db->where('tbl_product.provider_id', $provider_id);
-//
-//        $query = $this->db->get();
-//        $result = $query->result();
-//        if(count($result) == 0) $result = NULL;
-//
-//        return $result;
-//    }
-//
-//    function getProducts($provider_id){
-//        $this->db->select('tbl_product.id, tbl_product_format.barcode, tbl_product_format.name, tbl_product_format.cover, tbl_product.cost, tbl_product.store');
-//        $this->db->from('tbl_product');
-//        $this->db->join('tbl_product_format', 'tbl_product.product_id = tbl_product_format.id');
-//        if ($provider_id != '0')
-//            $this->db->where('tbl_product.provider_id', $provider_id);
-//
-//        $query = $this->db->get();
-//        $result = $query->result();
-//        if(count($result) == 0) $result = NULL;
-//
-//        return $result;
-//    }
+    function getShippingStatusOfOrderID($id){
+        $result = $this->db->select('ship_status')
+            ->from('tbl_order')
+            ->where('id', $id)
+            ->get()->result();
+
+        return count($result) == 0 ? 0 : intval($result[0]->ship_status);
+    }
 
     /**
      * This function is used to add new item to system

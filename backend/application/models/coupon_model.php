@@ -14,7 +14,11 @@ class coupon_model extends CI_Model
         $this->db->from('tbl_coupon');
         $this->db->join('tbl_userinfo', 'tbl_coupon.user_id = tbl_userinfo.id');
 
-        if ($status != '0') $this->db->where('tbl_coupon.status', $status);
+        if ($status != '0')
+            $this->db->where('tbl_coupon.using', $status);
+        else
+            $this->db->where('tbl_coupon.using <> 0');
+
         $this->db->order_by('tbl_coupon.pass_time', 'desc');
 
         $query = $this->db->get();

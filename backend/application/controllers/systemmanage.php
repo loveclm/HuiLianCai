@@ -170,6 +170,97 @@ class systemmanage extends BaseController
 
         echo  json_encode($data);
     }
+
+    function item_listing()
+    {
+        if ($this->isAdmin() == TRUE) {
+            $this->loadThis();
+        } else {
+            $ret = array(
+                'content' => '',
+                'status' => 'fail'
+            );
+            if (!empty($_POST)) {
+                $id = $_POST['id'];
+
+                $type = $this->login_id;
+
+                switch ($id) {
+                    case 1:
+                        $header = array("序号", "用户角色", "功能设置", "操作");
+                        $cols = 4;
+
+                        $contentList = $this->user_model->roleListing($type);
+                        $footer = (count($contentList) == 0 || !isset($contentList)) ? $footer = "没有数据." : '';
+                        break;
+                }
+                // end get
+                $ret['header'] = $this->output_header($header);
+                $ret['content'] = $this->output_content($contentList, $id);
+                $ret['footer'] = $this->output_footer($footer, $cols);
+                $ret['status'] = 'success';
+            }
+            echo json_encode($ret);
+        }
+    }
+
+    function output_content($allLists, $id)
+    {
+        $output_html = '';
+        if (!isset($allLists) || count($allLists) == 0) return '';
+        // make list id: 1-main menu
+        $i = 0;
+        switch ($id) {
+            case 1:
+                foreach ($allLists as $item) {
+                    $i++;
+                    $output_html .= '<tr>';
+                    $output_html .= '<td>' . $i . '</td>';
+                    $output_html .= '<td>' . $item->role . '</td>';
+                    $output_html .= '<td><a href="#" onclick="showRoleEdit(' . $item->id .');">操作设置</a>';
+                    $output_html .= '<div id="permission'.$item->id.'" style="display: none">'. $item->permission .'</div></td>';
+
+                    $output_html .= '<td><a href="#" data-userid="'. $item->id.'"';
+                    if($this->user_model->isRoleDeletable($item->id) == true)
+                         $output_html .= 'onclick="confirmDelete('. $item->id .')"> 删除';
+                    else
+                        $output_html .= 'onclick="$(\'#alert_delete\').show()" style="color:grey;"> 删除';
+
+                    $output_html .= '</a></td>';
+
+                    $output_html .= '</tr>';
+                }
+                break;
+        }
+        return $output_html;
+    }
+
+    /**
+     * This function used to make list view
+     */
+    function output_header($allLists)
+    {
+        $output_html = '';
+        if (count($allLists) == 0) return '';
+        $output_html .= '<tr>';
+        foreach ($allLists as $item) {
+            $output_html .= '<th>' . $item . '</th>';
+        }
+        $output_html .= '</tr>';
+        return $output_html;
+    }
+
+    /**
+     * This function used to make list view
+     */
+    function output_footer($footer, $cols)
+    {
+        $output_html = '';
+        $output_html .= '<tr>';
+        $output_html .= '<td colspan="' . $cols . '">' . $footer . '</td>';
+        $output_html .= '</tr>';
+        return $output_html;
+    }
     /**
      * This function is used to add new user to the system
      */

@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<?php include('page_header.php'); ?>
+<?php include('page_header.php');?>
 
 <body>
-
 
 <div class="page-wrapper">
     <div class="page-content-wrapper">
@@ -21,6 +20,7 @@
             </div>
         </div>
     </div>
+    <input id="cur_location" value="<?php echo json_encode($_SERVER['REMOTE_ADDR'].$location)?>" style="display: none">
 </div>
 
 <div id="addToCart_dialog" class="modal fade" tabindex="-1" data-backdrop="basic" data-keyboard="false">
@@ -34,12 +34,13 @@
         </div>
     </div>
     <div class="modal-footer" style="border: none;">
-        <button type="button" class="btn_custom btn-default"
+        <button type="button" class="btn_custom btn-default" style="width:35%;"
                 onclick="$('#addToCart_dialog').modal('hide');">取消
         </button>
         <button type="button" class="btn_custom"
-                onclick="onAddCart()">加入购物车
+                onclick="onAddCart()" style="width:35%; padding-left:0;padding-right:0;">加入购物车
         </button>
+        <br><br>
     </div>
 </div>
 
@@ -67,6 +68,5 @@
 
 <?php include('page_footer.php'); ?>
 <script type="text/javascript" src="assets/js/main.js"></script>
-<script type="text/javascript" src="assets/js/item_templates.js"></script>
 
 </html>

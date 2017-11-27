@@ -9,7 +9,7 @@
     <section class="content" style="min-height: 800px;">
         <div class="container">
             <div class="row">
-                <div class="col-xs-12 col-sm-4 form-inline">
+                <div class="col-xs-12 col-sm-4 form-inline" style="min-width: 300px;">
                     <div class="form-group">
                         <select class="form-control" id="searchType">
                             <option value="0" <?php if ($searchType == 0) echo ' selected' ?>>终端便利店账号</option>
@@ -25,7 +25,7 @@
                         </select>
                         <input type="text" id="searchName"
                                value="<?php echo $searchName == 'all' ? '' : $searchName; ?>" class="form-control"
-                               style="width: 170px;">
+                               style="width: 140px;">
                     </div>
                 </div>
                 <?php
@@ -54,7 +54,7 @@
                         </div>
 
                         <div class="form-group">
-                            <select class="form-control" id="searchStatus">
+                            <select class="form-control" id="searchStatus" style="margin-left: 10px;">
                                 <option value="0" <?php if ($searchStatus == 0) echo ' selected' ?>>禁用状态</option>
                                 <option value="1" <?php if ($searchStatus == 1) echo ' selected' ?>>未禁用</option>
                                 <option value="2" <?php if ($searchStatus == 2) echo ' selected' ?>>已禁用</option>
@@ -66,12 +66,12 @@
                     ?>
                     <div class=" col-xs-12 col-sm-6 form-inline">
                         <div class="form-group">
-                            <select class="form-control" id="searchShoptype">
+                            <select class="form-control" id="searchShoptype" style="padding: 5px;">
                                 <option value="0" <?php if ($searchShoptype == 0) echo ' selected' ?>>类型</option>
                                 <option value="1" <?php if ($searchShoptype == 1) echo ' selected' ?>>便利店</option>
                                 <option value="2" <?php if ($searchShoptype == 2) echo ' selected' ?>>中型超市</option>
-                                <option value="2" <?php if ($searchShoptype == 3) echo ' selected' ?>>餐饮店</option>
-                                <option value="2" <?php if ($searchShoptype == 4) echo ' selected' ?>>其他业态</option>
+                                <option value="3" <?php if ($searchShoptype == 3) echo ' selected' ?>>餐饮店</option>
+                                <option value="4" <?php if ($searchShoptype == 4) echo ' selected' ?>>其他业态</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -101,8 +101,8 @@
                                 <option value="0" <?php if ($searchShoptype == 0) echo ' selected' ?>>类型</option>
                                 <option value="1" <?php if ($searchShoptype == 1) echo ' selected' ?>>便利店</option>
                                 <option value="2" <?php if ($searchShoptype == 2) echo ' selected' ?>>中型超市</option>
-                                <option value="2" <?php if ($searchShoptype == 3) echo ' selected' ?>>餐饮店</option>
-                                <option value="2" <?php if ($searchShoptype == 4) echo ' selected' ?>>其他业态</option>
+                                <option value="3" <?php if ($searchShoptype == 3) echo ' selected' ?>>餐饮店</option>
+                                <option value="4" <?php if ($searchShoptype == 4) echo ' selected' ?>>其他业态</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -110,8 +110,8 @@
                                 <option value="0" <?php if ($searchAuth == 0) echo ' selected' ?>>认证状态</option>
                                 <option value="1" <?php if ($searchAuth == 1) echo ' selected' ?>>未认证</option>
                                 <option value="2" <?php if ($searchAuth == 2) echo ' selected' ?>>待认证</option>
-                                <option value="2" <?php if ($searchAuth == 3) echo ' selected' ?>>认证通过</option>
-                                <option value="2" <?php if ($searchAuth == 4) echo ' selected' ?>>认证失败</option>
+                                <option value="3" <?php if ($searchAuth == 3) echo ' selected' ?>>认证通过</option>
+                                <option value="4" <?php if ($searchAuth == 4) echo ' selected' ?>>认证失败</option>
                             </select>
                         </div>
                     </div>
@@ -119,14 +119,15 @@
                 <?php
             }
             ?>
-            <div class="row">
+            <div class="row"  style="max-height: 630px; overflow-y: auto;">
                 <div class="box main-shadow">
                     <div class="box-body table-responsive no-padding">
-                        <table class="table table-hover">
+                        <table id="contentInfo_tbl" class="table table-hover">
                             <thead id="header_tbl"></thead>
                             <tbody id="content_tbl"></tbody>
                             <tfoot id="footer_tbl"></tfoot>
                         </table>
+                        <div id="contentpageNavPosition"></div>
                     </div>
                     <!-- /.box-body -->
                 </div>

@@ -15,14 +15,14 @@
 include_once("./CCPRestSmsSDK.php");
 
 //主帐号,对应开官网发者主账号下的 ACCOUNT SID
-$accountSid = '8a216da85df4d436015e02d26bea01a4';
+$accountSid = '8aaf07085df473bd015e02d1e23b033a';
 
 //主帐号令牌,对应官网开发者主账号下的 AUTH TOKEN
-$accountToken = 'f58b6202a94e4464afbf1e3e6170cf8c';
+$accountToken = '5ffb76facf5f405b8013c294de9945af';
 
 //应用Id，在官网应用列表中点击应用，对应应用详情中的APP ID
 //在开发调试的时候，可以使用官网自动为您分配的测试Demo的APP ID // app token = 324e315f686eb507c9235c8ff39be0bc
-$appId = '8a216da85df4d436015e02d26c4201a8';
+$appId = '8aaf07085df473bd015e02d49e230340';
 
 //请求地址
 //沙盒环境（用于应用开发调试）：sandboxapp.cloopen.com
@@ -38,9 +38,9 @@ $softVersion = '2013-12-26';
 
 $phoneNumber = $_POST['phoneNumber'];
 $sms_code = mt_rand(100000, 999999);
-$message = [$sms_code];
+$message = array($sms_code, '验证码部分');
 //手机号码，替换内容数组，模板ID
-sendTemplateSMS($phoneNumber, $message, 200171);
+sendTemplateSMS($phoneNumber, $message, '199724');
 
 /**
  * 发送模板短信
@@ -60,12 +60,11 @@ function sendTemplateSMS($to, $datas, $tempId)
     // 发送模板短信
     $data = array();
     $result = NULL;
-//         $result = $rest->sendTemplateSMS($to,$datas,$tempId);
     $result->statusCode = 0;
+    //$result = $rest->sendTemplateSMS($to, $datas, $tempId);
     if ($result == NULL) {
-        echo "result error!";
-    }
-    if ($result->statusCode != 0) {
+        $data = array(result => "error!", error => "Server no response!");
+    } else if ($result->statusCode != 0) {
         //TODO 添加错误处理逻辑
         $data['result'] = 'fail';
         $data['error'] = $result->statusMsg;
@@ -76,7 +75,6 @@ function sendTemplateSMS($to, $datas, $tempId)
         $data['result'] = 'success';
         $data['code'] = $sms_code;
     }
-
     echo json_encode($data);
 }
 

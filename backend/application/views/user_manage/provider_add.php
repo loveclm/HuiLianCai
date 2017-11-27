@@ -11,7 +11,7 @@
                 <form role="form" id="addProvider" action="<?php echo base_url() ?>provider_add" method="post">
                     <input name="provider_id" value="<?= isset($id) ? $id : '' ?>" type="hidden">
                     <div class="row form-inline">
-                        <label> *供货商账号 : </label>
+                        <label> *区域总代理账号 : </label>
                         <div class="input-group margin">
                             <input name="userid" type="text" id="userid" class="form-control"
                                    value="<?php echo isset($provider) ? $provider->userid : ''; ?>"
@@ -28,7 +28,7 @@
                         </div>
                     </div>
                     <div class="row form-inline">
-                        <label> *供货商名称 : </label>
+                        <label> *区域总代理名称 : </label>
 
                         <div class="input-group margin">
                             <input name="provider_name" type="text" id="provider_name" class="form-control"
@@ -111,14 +111,20 @@
                                 $company_logo = isset($more_data) ? json_decode($more_data->logo) : ['', 'assets/images/picture.png'];
                                 ?>
                                 <img id="company_logo_image" src="<?= base_url() . $company_logo[1]; ?>"
-                                     alt="user image" class="online" style="height: 130px; width:180px; padding: 20px; padding-bottom:2px;"><br>
+                                     alt="user image" class="online"
+                                     style="height: 130px; width:180px; padding: 20px; padding-bottom:2px;"><br>
                                 <input id="upload_company_logo" type="file" style="display: none"/>
                                 <input name="logo" id="company_logo_src" type="text" style="display: none"
                                        value='<?= json_encode($company_logo); ?>'>
-                                <span id="company_logo_filename"><?= $company_logo[0] ?></span>
+                                <span id="company_logo_filename" style="display: none;"><?= $company_logo[0] ?></span>
                             </div>
                             <a class="btn btn-primary" href="#" onclick="$('#upload_company_logo').click();">
-                                <span>*上传</span>
+                                <?php
+                                if (isset($id))
+                                    echo '<span>修改</span>';
+                                else
+                                    echo '<span>*上传</span>';
+                                ?>
                             </a>
                         </div>
                     </div>
@@ -139,14 +145,20 @@
                                 $company_cert = isset($more_data) ? json_decode($more_data->cert) : ['', 'assets/images/picture.png'];
                                 ?>
                                 <img id="company_cert_image" src="<?= base_url() . $company_cert[1]; ?>"
-                                     alt="user image" class="online" style="height: 200px; width:400px; padding: 20px; padding-bottom:2px;"><br>
+                                     alt="user image" class="online"
+                                     style="height: 180px; width:300px; padding: 20px; padding-bottom:2px;"><br>
                                 <input id="upload_company_cert" type="file" style="display: none"/>
                                 <input name="cert" id="company_cert_src" type="text" style="display: none"
                                        value='<?= json_encode($company_cert); ?>'>
-                                <span id="company_cert_filename"><?= $company_cert[0] ?></span>
+                                <span id="company_cert_filename" style="display: none;"><?= $company_cert[0] ?></span>
                             </div>
                             <a class="btn btn-primary" href="#" onclick="$('#upload_company_cert').click();">
-                                <span>*上传</span>
+                                <?php
+                                if (isset($id))
+                                    echo '<span>修改</span>';
+                                else
+                                    echo '<span>*上传</span>';
+                                ?>
                             </a>
                         </div>
                     </div>
@@ -161,16 +173,24 @@
                                 foreach ($company_brand_list as $company_brand) {
                                     $i++;
                                     ?>
-                                    <div class="company_brand" style="float: left;">
-                                        <img id="<?= 'company_brand' . $i . '_image' ?>" src="<?= base_url() . $company_brand[1]; ?>"
+                                    <div class="company_brand" id="company_brand<?= $i; ?>"
+                                         style="float: left; position: relative">
+                                        <img id="<?= 'company_brand' . $i . '_image' ?>"
+                                             src="<?= base_url() . $company_brand[1]; ?>"
                                              onclick="<?= '$(\'#upload_company_brand' . $i . '\').click();'; ?>"
-                                             alt="user image" class="online" style="height: 130px; width:180px; padding: 20px; padding-bottom:2px;"><br>
+                                             alt="user image" class="online"
+                                             style="height: 130px; width:180px; padding: 20px; padding-bottom:2px;"><br>
                                         <input id="<?= 'upload_company_brand' . $i ?>" class="upload_company_brand"
                                                type="file" style="display: none"/>
                                         <input name="<?= 'brand' . $i; ?>" id="<?= 'company_brand' . $i . '_src' ?>"
                                                type="text" style="display: none"
                                                value='<?= json_encode($company_brand); ?>'>
-                                        <span id="<?= 'company_brand' . $i . '_filename' ?>"><?= $company_brand[0] ?></span>
+                                        <span id="<?= 'company_brand' . $i . '_filename' ?>" style="display: none;"><?= $company_brand[0] ?></span>
+                                        <div class="item_group">
+                                            <div class="close_item" onclick="delete_image(<?= $i; ?>)">
+                                                <i class="fa fa-fw fa-close"></i></div>
+                                            <span class="modify_item" onclick="ModifyImage(<?= $i; ?>)">修改</span>
+                                        </div>
                                     </div>
                                     <?php
                                 }
@@ -179,8 +199,14 @@
                             <input name="brand_count" id="brand_count" value="<?= count($company_brand_list); ?>"
                                    style="display: none">
                             <input id="upload_company_brand" type="file" style="display: none"/>
-                            <a class="btn btn-primary" href="#" onclick="$('#upload_company_brand').click();" style="margin-left: 80px;">
-                                <span>*上传</span>
+                            <a class="btn btn-primary" href="#" onclick="$('#upload_company_brand').click();"
+                               style="margin-left: 80px;">
+                                <?php
+                                if (isset($id))
+                                    echo '<span>上传</span>';
+                                else
+                                    echo '<span>*上传</span>';
+                                ?>
                             </a>
                         </div>
                     </div>
@@ -188,9 +214,9 @@
                         <label> *平台佣金 : </label>
 
                         <div class="input-group margin">
-                            <span> 每笔订单收取供货商费用的百分比 </span>
+                            <span> 每笔订单收取区域总代理费用的百分比 </span>
                             <input name="ratio" type="text" id="percent"
-                                   value="<?= isset($provider->ratio) ? number_format((float)$provider->ratio*100,2,'.','') : 0; ?>"
+                                   value="<?= isset($provider->ratio) ? number_format((float)$provider->ratio * 100, 2, '.', '') : 0; ?>"
                                    style="margin: 0px 10px ; padding: 0px 10px; width: 80px; text-align: right;"/>%
                         </div>
                     </div>
@@ -209,7 +235,8 @@
 
                                         if ($select_state == 1) {
                                             ?>
-                                            <option value="<?php echo $item->id; ?>" selected><?= $item->username; ?></option>
+                                            <option value="<?php echo $item->id; ?>"
+                                                    selected><?= $item->username; ?></option>
                                             <?php
                                         } else {
                                             ?>
@@ -267,7 +294,8 @@
 
 
 <!-- Course Management JS-->
-<script type="text/javascript" src="<?php echo base_url(); ?>assets/js/user_manage/provider.js" charset="utf-8"></script>
+<script type="text/javascript" src="<?php echo base_url(); ?>assets/js/user_manage/provider.js"
+        charset="utf-8"></script>
 <script
         src="http://webapi.amap.com/maps?v=1.3&key=0250860ccb5953fa5d655e8acf40ebb7&plugin=AMap.PolyEditor,AMap.MouseTool,AMap.DistrictSearch"></script>
 <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/addressSupport.js" charset="utf-8"></script>

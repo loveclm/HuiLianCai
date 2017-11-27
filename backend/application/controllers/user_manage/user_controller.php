@@ -105,7 +105,10 @@ class user_controller extends BaseController
                     $output_html .= '<td>';
                     if($item->id != $this->login_id){
                         $output_html .= '<a href="'. base_url(). 'user_edit/' . $item->id . '">编辑 &nbsp;&nbsp;</a>';
-                        $output_html .= '<a href="#" onclick="deleteConfirm(\'' . $item->id . '\')">删除 &nbsp;&nbsp;</a>';
+                        if($this->user_model->isDeletable($item->id) == true)
+                            $output_html .= '<a href="#" onclick="deleteConfirm(\'' . $item->id . '\')">删除 &nbsp;&nbsp;</a>';
+                        else
+                            $output_html .= '<a href="#" onclick="$(\'#alert_delete\').show()" style="color: grey;">删除 &nbsp;&nbsp;</a>';
                     }
                     $output_html .= '<a href="#" onclick="passwordConfirm(\'' . $item->id . '\')">重置密码 &nbsp;&nbsp;</a>';
                     $output_html .= '</td>';
@@ -171,11 +174,11 @@ class user_controller extends BaseController
     function item_validate(){
         $this->load->library('form_validation');
 
-        $id = intval($this->input->post('id'));
+        $id = $this->input->post('id');
 
-        $this->form_validation->set_rules('userid', '账号', 'trim|required|max_length[20]|xss_clean');
         $this->form_validation->set_rules('username', '姓名', 'trim|required|xss_clean|max_length[20]');
-        if( $id == 0) {
+        if( $id == '') {
+            $this->form_validation->set_rules('userid', '账号', 'trim|required|max_length[20]|xss_clean');
             $this->form_validation->set_rules('password', '密码', 'required|matches[cpassword]|min_length[6]|max_length[20]');
             $this->form_validation->set_rules('cpassword', '确认密码', 'required|matches[password]|min_length[6]|max_length[20]');
         }
@@ -184,7 +187,8 @@ class user_controller extends BaseController
         $item = new stdClass();
         $item->username = $this->input->post('username');
         $item->role = $this->input->post('role');
-        if($id == 0) {
+
+        if($id == '') {
             $item->userid = $this->input->post('userid');
             $item->password = $this->input->post('password');
             $cpassword = $this->input->post('cpassword');
@@ -192,21 +196,27 @@ class user_controller extends BaseController
 
         $data['roles'] = $this->user_model->getRoles($this->global['login_id']);
         if ($this->form_validation->run() == FALSE) {
-            if($id == 0) {
+            if($id == '') {
                 $item->password = '';
                 if($this->user_model->isExistUserId($item->userid) )
                     $this->session->set_flashdata('error', '用户创建失败. 此帐户已存在了.');
+
+            }else{
+                $data['id'] = $id;
+                $userinfo = $this->user_model->getSystemUserById($id);
+                $item->userid = $userinfo->userid;
             }
+
             $this->global['model'] = $item;
 
             $this->loadViews("user_manage/user_add", $this->global, $data, NULL);
         } else {
             $userInfo = $item;
-            if($id == 0)
+            if($id == '')
                 $userInfo->password = getHashedPassword($item->password);
 
             $userInfo->parent_id = $this->login_id;
-            if($id > 0) $userInfo->id = $id;
+            if($id != '') $userInfo->id = $id;
 
             $this->user_model->addSystemUser($userInfo);
 

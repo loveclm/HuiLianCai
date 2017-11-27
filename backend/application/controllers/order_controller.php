@@ -20,6 +20,8 @@ class order_controller extends BaseController
         $this->load->model('order_model');
         $this->load->model('activity_model');
         $this->load->model('user_model');
+        $this->load->model('shop_model');
+        $this->load->model('shipping_model');
         $this->isLoggedIn();
     }
 
@@ -75,11 +77,23 @@ class order_controller extends BaseController
                             $header = array("序号", "订单号", "终端便利店", "收货人", "联系电话", "付款方式", "订单状态", "配送员", "提交时间", "操作");
                             $cols = 10;
                         }else if($this->isAdmin() == FALSE){
-                            $header = array("序号", "订单号", "终端便利店", "收货人", "联系电话", "付款方式", "订单状态", "所属供货商", "提交时间", "操作");
+                            $header = array("序号", "订单号", "终端便利店", "收货人", "联系电话", "付款方式", "订单状态", "所属区域总代理", "提交时间", "操作");
                             $cols = 10;
                         }
 
                         $contentList = $this->order_model->getItems($searchData);
+//                        foreach ($contentList as $item){
+//                            // get activity information
+//                            $activity = $this->activity_model->getItemById($item->activity_ids);
+//                            $activity->products = $this->activity_model->getProductsFromIds($activity->product_id, $activity->provider_id);
+//
+//                            $orderinfo = array(
+//                                'id' => $item->id,
+//                                'product_info' => json_encode($activity->products)
+//                            );
+//                            $this->order_model->update($orderinfo, $item->id);
+//                        }
+
                         $footer = (count($contentList) == 0 || !isset($contentList)) ? $footer = "没有订单." : '';
                         break; // get top1
                 }
@@ -104,7 +118,7 @@ class order_controller extends BaseController
         $header = array("商品条码", "封面", "活动名称", "原价（元）", "拼团价（元）", "采购数量");
         $cols = 6;
 
-        $provider_id = ($this->isTicketter()== FALSE) ? $this->global['shop_manager_number'] : '0';
+        $provider_id = $this->user_model->getProviderId($this->global['login_id']);
         $contentList = $this->order_model->getProductsFromIds($ids, $provider_id);
 
         $footer = (count($contentList) == 0 || !isset($contentList)) ? $footer = "没有商品." : '';
@@ -126,7 +140,7 @@ class order_controller extends BaseController
         $header = array("商品条码", "封面", "活动名称", "库存量", "原价", "操作");
         $cols = 6;
 
-        $provider_id = ($this->isTicketter()== FALSE) ? $this->global['shop_manager_number'] : '0';
+        $provider_id = $this->user_model->getProviderId($this->global['login_id']);
         $contentList = $this->order_model->getProducts( $provider_id);
 
         $footer = (count($contentList) == 0 || !isset($contentList)) ? $footer = "没有商品." : '';
@@ -203,7 +217,6 @@ class order_controller extends BaseController
 
                     $output_html .= '</td>';
                     $output_html .= '</tr>';
-                    $i++;
                 }
                 break;
         }
@@ -279,16 +292,13 @@ class order_controller extends BaseController
         $item->shipman_phone = isset($shipman_info->contact_phone) ? $shipman_info->contact_phone : '';
 
         // get activity information
-        $activities = array();
-        $ids = explode(",", $item->activity_ids);
-        $cnts = explode(",", $item->activity_cnts);
-        for( $i = 0; $i < count($ids); $i++){
-            $activity = $this->activity_model->getItemById($ids[$i]);
-            $activity->products = $this->activity_model->getProductsFromIds($activity->product_id, $activity->provider_id);
-            $activity->cnt = $cnts[$i];
-            array_push($activities, $activity);
-        }
-        $item->activities = $activities;
+        $activity = $this->activity_model->getItemById($item->activity_ids);
+        $activity->products = json_decode($item->product_info);
+        $activity->cnt = $item->activity_cnts;
+        // $activity->products = $this->activity_model->getProductsFromIds($activity->product_id, $activity->provider_id);
+
+        $item->activity = $activity;
+
         return $item;
     }
 
@@ -316,8 +326,7 @@ class order_controller extends BaseController
 
             $result = $_POST['itemInfo'];
             $order = $this->order_model->getItemById($result['id']);
-            $shop_info = $this->user_model->getUserInfoByid($order->shop_id);
-            $ship_id = $shop_info->ship_man;
+            $ship_id = $this->shop_model->getShipman($order->shop, $order->provider);
             if($ship_id == '0'){
                 $ret['data'] = '配送员不设定。 请在终端便利店页面选择配送员。';
                 echo json_encode($ret);
@@ -333,6 +342,7 @@ class order_controller extends BaseController
                 'order_id' => $order->id,
                 'money' => number_format(floatval($order->pay_cost) - floatval($order->refund_cost),2 , '.', '')
             );
+            if($order->pay_method == '2') $shipping_info['money'] = '0.00';
             $this->shipping_model->addShippingItem($shipping_info);
 
             $ret['status'] = true;

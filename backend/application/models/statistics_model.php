@@ -44,15 +44,16 @@ class statistics_model extends CI_Model
                 }
 
                 // get shipping total count and total money along with date and ship man
-                $this->db->select('provider, count(ship_man) as cnt, sum(pay_cost)-sum(refund_cost) as cost');
+                $this->db->select('tbl_order.provider, sum(tbl_activity.product_cnt * tbl_order.activity_cnts) as cnt, sum(tbl_order.pay_cost)-sum(tbl_order.refund_cost) as cost');
                 $this->db->from('tbl_order');
-                $this->db->where('date(create_time)', $day->filter_date);
-                $this->db->where('ship_man', $ship_man->ship_man);
-                $this->db->where('status', 4);
+                $this->db->join('tbl_activity', 'tbl_activity.id=tbl_order.activity_ids');
+                $this->db->where('date(tbl_order.create_time)', $day->filter_date);
+                $this->db->where('tbl_order.ship_man', $ship_man->ship_man);
+                $this->db->where('tbl_order.status', 4);
                 if ($pay_type > 0)
-                    $this->db->where('pay_method', $pay_type);
+                    $this->db->where('tbl_order.pay_method', $pay_type);
                 if ($provider_id != '0')
-                    $this->db->where('provider', $provider_id);
+                    $this->db->where('tbl_order.provider', $provider_id);
 
                 $query = $this->db->get();
                 $result = $query->result();
@@ -97,6 +98,8 @@ class statistics_model extends CI_Model
             if ($provider_id != '0')
                 $this->db->where('provider_id', $provider_id);
 
+            $this->db->order_by('start_time', 'desc');
+
             $query = $this->db->get();
             $result = $query->result();
             if (count($result) == 0) continue;
@@ -114,7 +117,7 @@ class statistics_model extends CI_Model
                     $cost = floatval($buy_cnt[$i]->cost);
                     $cnt = intval($buy_cnt[$i]->count);
 
-                    $this->db->select('tbl_product_format.barcode, tbl_product.cost');
+                    $this->db->select('tbl_product_format.barcode, tbl_product.cost, tbl_product_format.name');
                     $this->db->from('tbl_product');
                     $this->db->join('tbl_product_format', 'tbl_product.product_id = tbl_product_format.id');
                     $this->db->where('tbl_product.id', $id);
@@ -143,7 +146,7 @@ class statistics_model extends CI_Model
                         $new_record = [
                             count($records) + 1,
                             $result1[0]->barcode,
-                            $item->name,
+                            $result1[0]->name,
                             ($activity->cnt + $activity->fcnt) * intval($cnt),
                             number_format($cnt * ($activity->cnt * $cost + $activity->fcnt * $result1[0]->cost), 2, '.', ''),
                         ];
@@ -153,7 +156,7 @@ class statistics_model extends CI_Model
                 }
             }
         }
-        return $records;
+        return $this->sortRecords($records);
     }
 
     function getTopProductItems($provider_id)
@@ -180,10 +183,11 @@ class statistics_model extends CI_Model
 
                 for ($i = 0; $i < count($ids); $i++) {
                     $id = $ids[$i];
+
                     $cost = floatval($buy_cnt[$i]->cost);
                     $cnt = intval($buy_cnt[$i]->count);
 
-                    $this->db->select('tbl_product_format.barcode, tbl_product_format.cover, tbl_product.cost');
+                    $this->db->select('tbl_product_format.barcode, tbl_product_format.cover, tbl_product.cost, tbl_product_format.name');
                     $this->db->from('tbl_product');
                     $this->db->join('tbl_product_format', 'tbl_product.product_id = tbl_product_format.id');
                     $this->db->where('tbl_product.id', $id);
@@ -197,7 +201,7 @@ class statistics_model extends CI_Model
                         if ($idlist[$k] == $id) {
                             $records[$key][4] += ($activity->cnt + $activity->fcnt) * intval($cnt);
                             $records[$key][5] += $cnt * ($activity->cnt * $cost + $activity->fcnt * $result1[0]->cost);
-                            $records[$key][5] = number_format($records[$key][4], 2, '.', '');
+                            $records[$key][5] = number_format($records[$key][5], 2, '.', '');
                             $exists = 1;
                             break;
                         }
@@ -211,7 +215,7 @@ class statistics_model extends CI_Model
                             count($records) + 1,
                             $result1[0]->barcode,
                             '<img src="' . base_url() . $cover[1] . '" style="width:150px;height:80px;"/>',
-                            $item->name,
+                            $result1[0]->name,
                             ($activity->cnt + $activity->fcnt) * intval($cnt),
                             number_format($cnt * ($activity->cnt * $cost + $activity->fcnt * $result1[0]->cost), 2, '.', ''),
                         ];
@@ -221,12 +225,12 @@ class statistics_model extends CI_Model
                 }
             }
         }
+
         return $this->getTopRecords($records);
     }
 
     function getShopItems($data)
     {
-        $pay_type = $data['pay_type'];
         $provider_id = $data['provider_id'];
 
         $type = $data['searchType'];
@@ -243,9 +247,11 @@ class statistics_model extends CI_Model
         $days = $this->getAllDayInfos($start, $end, 'create_time');
         if ($days == NULL) return NULL;
 
-        $records = array();
+        $datas = array();
         // get distinct shop record along with each date
         foreach ($days as $day) {
+            $records = array();
+
             $this->db->select('tbl_order.shop');
             $this->db->from('tbl_order');
             $this->db->where('date(tbl_order.create_time)', $day->filter_date);
@@ -268,34 +274,45 @@ class statistics_model extends CI_Model
                 }
 
                 // get shipping total count and total money along with date and ship man
-                $this->db->select('count(shop) as cnt, sum(pay_cost)-sum(refund_cost) as cost');
+                $this->db->select('sum(tbl_activity.product_cnt * tbl_order.activity_cnts) as cnt, sum(tbl_order.pay_cost)-sum(tbl_order.refund_cost) as cost, pay_method');
                 $this->db->from('tbl_order');
-                $this->db->where('date(create_time)', $day->filter_date);
-                $this->db->where('status', 4);
-                $this->db->where('shop', $shop->shop);
-                if ($pay_type > 0)
-                    $this->db->where('pay_method', $pay_type);
+                $this->db->join('tbl_activity', 'tbl_activity.id=tbl_order.activity_ids');
+                $this->db->where('date(tbl_order.create_time)', $day->filter_date);
+                $this->db->where('tbl_order.shop', $shop->shop);
+                $this->db->where('tbl_order.pay_cost != ', 0);
+                $this->db->where('tbl_order.status', 4);
                 if ($provider_id != '0')
-                    $this->db->where('provider', $provider_id);
+                    $this->db->where('tbl_order.provider', $provider_id);
+
+                $this->db->group_by('tbl_order.pay_method');
 
                 $query = $this->db->get();
                 $result = $query->result();
                 if (count($result) == 0) continue;
                 if ($result[0]->cnt == 0) continue;
-                $total_info = $result[0];
 
-                $record = [
-                    $day->filter_date,
-                    $shop_info->userid,
-                    $shop_info->username,
-                    $total_info->cnt,
-                    number_format((float)$total_info->cost, 2, '.', '')
-                ];
+                foreach ($result as $total_info ) {
 
-                array_push($records, $record);
+                    $record = [
+                        $day->filter_date,
+                        $shop_info->userid,
+                        $shop_info->username,
+                        ($total_info->pay_method == '1') ? '线上支付' : '货到付款',
+                        $total_info->cnt,
+                        number_format((float)$total_info->cost, 2, '.', '')
+                    ];
+
+                    array_push($records, $record);
+                }
+            }
+
+            $records = $this->sortRecords($records);
+            foreach ($records as $record) {
+                array_push($datas, $record);
             }
         }
-        return $records;
+
+        return $datas;
     }
 
     function getTopShopItems($provider_id)
@@ -304,22 +321,24 @@ class statistics_model extends CI_Model
         $end = date('Y-m-d');
 
         $records = array();
-        $this->db->select('shop, count(shop) as cnt, sum(pay_cost)-sum(refund_cost) as cost');
+        $this->db->select('tbl_order.shop, sum(tbl_activity.product_cnt * tbl_order.activity_cnts) as cnt, sum(tbl_order.pay_cost)-sum(tbl_order.refund_cost) as cost');
         $this->db->from('tbl_order');
-        $this->db->where('date(pay_time)>=', $start);
-        $this->db->where('date(pay_time)<=', $end);
-        $this->db->where('status', 4);
+        $this->db->join('tbl_activity', 'tbl_activity.id=tbl_order.activity_ids');
+        $this->db->where('date(tbl_order.pay_time)>=', $start);
+        $this->db->where('date(tbl_order.pay_time)<=', $end);
+        $this->db->where('tbl_order.status', 4);
         if ($provider_id != '0')
-            $this->db->where('provider', $provider_id);
+            $this->db->where('tbl_order.provider', $provider_id);
 
-        $this->db->group_by('shop');
-        $this->db->order_by('sum(pay_cost)-sum(refund_cost)');
+        $this->db->group_by('tbl_order.shop');
+        $this->db->order_by('sum(tbl_order.pay_cost)-sum(tbl_order.refund_cost)', 'desc');
         $this->db->limit(10);
         $query = $this->db->get();
         $result = $query->result();
 
         $i = 0;
         foreach ($result as $item) {
+            if(floatval($item->cost) == 0) continue;
             $shop_info = $this->getUserInfoById($item->shop);
             $i++;
             $record = [
@@ -364,20 +383,20 @@ class statistics_model extends CI_Model
         if (count($result) == 0) return;
         $days = $result;
 
-        $records = array();
+        $datas = array();
         // get distinct shop record along with each date
         foreach ($days as $day) {
-            $sql = "select provider from tbl_order where status = 4 and left(create_time, 7)='" . $day->filter_date;
-            $sql .= "' group by provider";
+            $records = array();
+
+            $sql = "select id from tbl_userinfo where type = 2";
 
             $query = $this->db->query($sql);
             $result = $query->result();
 
             if (count($result) == 0) continue;
             $providers = $result;
-
             foreach ($providers as $provider) {
-                $provider_info = $this->getUserInfoById($provider->provider);
+                $provider_info = $this->getUserInfoById($provider->id);
                 if ($provider_info == NULL) continue;
                 if ($name != '') {
                     if ($type == 0)
@@ -386,14 +405,19 @@ class statistics_model extends CI_Model
                             if (strpos($provider_info->username, $name) === false) continue;
                 }
                 // get shipping total count and total money along with date and ship man
-                $sql = "select count(provider) as cnt, sum(pay_cost - refund_cost) as cost from tbl_order";
-                $sql .= " where status=4 and left(create_time,7)='" . $day->filter_date;
-                $sql .= "' and provider=" . $provider->provider;
+                $sql = "select sum(tbl_activity.product_cnt * tbl_order.activity_cnts) as cnt, sum(tbl_order.pay_cost - tbl_order.refund_cost) as cost from tbl_order";
+                $sql .= " join tbl_activity on tbl_activity.id=tbl_order.activity_ids";
+                $sql .= " where tbl_order.status=4 and left(tbl_order.create_time,7)='" . $day->filter_date;
+                $sql .= "' and tbl_order.provider=" . $provider->id;
 
                 $query = $this->db->query($sql);
                 $result = $query->result();
-                if (count($result) == 0) continue;
+
                 $total_info = $result[0];
+                if($total_info->cost == null){
+                    $total_info->cost = 0;
+                    $total_info->cnt = 0;
+                }
 
                 $cur_cost = floatval($total_info->cost);
                 $cur_platform_cost = $cur_cost * floatval($provider_info->ratio);
@@ -407,11 +431,15 @@ class statistics_model extends CI_Model
                     number_format((float)$cur_platform_cost, 2, '.', ''),
                     number_format((float)($cur_cost - $cur_platform_cost), 2, '.', '')
                 ];
-
                 array_push($records, $record);
             }
+            $records = $this->sortRecords($records);
+            foreach ($records as $record) {
+                array_push($datas, $record);
+            }
         }
-        return $records;
+
+        return $datas;
     }
 
     function getTopProviderItems()
@@ -421,14 +449,15 @@ class statistics_model extends CI_Model
 
         $records = array();
          // get shipping total count and total money along with date and ship man
-        $this->db->select('provider, count(provider) as cnt, sum(pay_cost)-sum(refund_cost) as cost');
+        $this->db->select('provider, sum(tbl_activity.product_cnt * tbl_order.activity_cnts) as cnt, sum(tbl_order.pay_cost)-sum(tbl_order.refund_cost) as cost');
         $this->db->from('tbl_order');
-        $this->db->where('date(pay_time)>=', $start);
-        $this->db->where('date(pay_time)<=', $end);
-        $this->db->where('status', 4);
+        $this->db->join('tbl_activity', 'tbl_activity.id=tbl_order.activity_ids');
+        $this->db->where('date(tbl_order.pay_time)>=', $start);
+        $this->db->where('date(tbl_order.pay_time)<=', $end);
+        $this->db->where('tbl_order.status', 4);
 
-        $this->db->group_by('provider');
-        $this->db->order_by('sum(pay_cost)-sum(refund_cost)');
+        $this->db->group_by('tbl_order.provider');
+        $this->db->order_by('sum(tbl_order.pay_cost)-sum(tbl_order.refund_cost)', 'desc');
         $this->db->limit(10);
         $query = $this->db->get();
         $result = $query->result();
@@ -468,6 +497,8 @@ class statistics_model extends CI_Model
             $this->db->where('id', $activity->id);
             if ($provider_id != '0')
                 $this->db->where('provider_id', $provider_id);
+
+            $this->db->order_by('start_time', 'desc');
 
             $query = $this->db->get();
             $result = $query->result();
@@ -526,7 +557,9 @@ class statistics_model extends CI_Model
                 }
             }
         }
-        return $records;
+
+
+        return $this->sortRecords($records);
     }
 
     function getTopBrandItems($provider_id)
@@ -542,6 +575,8 @@ class statistics_model extends CI_Model
             $this->db->where('id', $activity->id);
             if ($provider_id != '0')
                 $this->db->where('provider_id', $provider_id);
+
+            $this->db->order_by('start_time', 'desc');
 
             $query = $this->db->get();
             $result = $query->result();
@@ -615,6 +650,8 @@ class statistics_model extends CI_Model
             if ($provider_id != '0')
                 $this->db->where('provider_id', $provider_id);
 
+            $this->db->order_by('start_time', 'desc');
+
             $query = $this->db->get();
             $result = $query->result();
             if (count($result) == 0) continue;
@@ -669,7 +706,7 @@ class statistics_model extends CI_Model
                 }
             }
         }
-        return $records;
+        return $this->sortRecords($records);
     }
 
     function getTopTypeItems($provider_id)
@@ -769,14 +806,15 @@ class statistics_model extends CI_Model
         $records = array();
         // get distinct shop record along with each date
         foreach ($days as $day) {
-            $this->db->select('count(create_time) as cnt, sum(pay_cost - refund_cost) as cost, provider');
+            $this->db->select('sum(tbl_activity.product_cnt * tbl_order.activity_cnts) as cnt, sum(tbl_order.pay_cost - tbl_order.refund_cost) as cost, tbl_order.provider');
             $this->db->from('tbl_order');
-            $this->db->where('left(create_time,7)', $day->date_filter);
-            $this->db->where('status', 4);
+            $this->db->join('tbl_activity', 'tbl_activity.id=tbl_order.activity_ids');
+            $this->db->where('left(tbl_order.create_time,7)', $day->date_filter);
+            $this->db->where('tbl_order.status', 4);
             if ($provider_id != '0')
-                $this->db->where('provider', $provider_id);
+                $this->db->where('tbl_order.provider', $provider_id);
 
-            $this->db->group_by('provider');
+            $this->db->group_by('tbl_order.provider');
             $query = $this->db->get();
             $result = $query->result();
 
@@ -866,7 +904,7 @@ class statistics_model extends CI_Model
         $this->db->select('count(saleman_mobile)  as cnt, saleman_mobile');
         $this->db->from('tbl_userinfo');
         $this->db->where('type', 3);
-
+        $this->db->where('saleman_mobile <> \'\'');
         if ($start != '')
             $this->db->where('date(created_time)>=' . $start);
         if ($end != '')
@@ -894,7 +932,6 @@ class statistics_model extends CI_Model
 
         return $records;
     }
-
 
     function getAllActivities()
     {
@@ -960,7 +997,6 @@ class statistics_model extends CI_Model
         $query = $this->db->get();
         $result = $query->result();
         if (count($result) == 0) return NULL;
-
         $activities = array();
         foreach ($result as $item) {
             $ids = explode(',', $item->activity_ids);
@@ -995,7 +1031,6 @@ class statistics_model extends CI_Model
                 }
             }
         }
-
         return $activities;
     }
 
@@ -1003,18 +1038,22 @@ class statistics_model extends CI_Model
         $records = array();
         if(count($datas) == 0) return $records;
         $n = count($datas[0])-1;
-
+	    $k = count($datas);
+	
         $cnt = 0;
         while(1){
             if(count($datas) == 0) break;
             if($cnt == 10) break;
 
-            $cost = 0; $j = -1;
-            for( $i = 0; $i < count($datas); $i++){
+            $cost = -1; $j = -1;
+            for( $i = 0; $i < $k; $i++){
+                if(!isset($datas[$i])) continue;
                 if( $cost < $datas[$i][$n]) {
                     $j = $i; $cost = $datas[$i][$n];
                 }
             }
+
+            if($j == -1) break;
             $record = $datas[$j];
             array_push($records, $record);
             unset($datas[$j]);
@@ -1117,6 +1156,33 @@ class statistics_model extends CI_Model
         return 0;
     }
 
+    function sortRecords($datas){
+        $records = array();
+        if(count($datas) == 0) return $records;
+        $n = count($datas[0])-2;
+        $k = count($datas);
+        $cnt = 0;
+        while(1){
+            if(count($datas) == 0) break;
+
+            $cost = -1; $j = -1;
+            for( $i = 0; $i < $k; $i++){
+                if(!isset($datas[$i])) continue;
+                if( $cost < $datas[$i][$n]) {
+                    $j = $i; $cost = $datas[$i][$n];
+                }
+            }
+
+            if($j == -1) break;
+
+            $cnt++;
+            $record = $datas[$j];
+            if(strlen($record[0]) < 6) $record[0] = $cnt;
+            array_push($records, $record);
+            unset($datas[$j]);
+        }
+        return $records;
+    }
 }
 
 /* End of file withdraw_model.php */

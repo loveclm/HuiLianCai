@@ -54,6 +54,11 @@ class user_model extends CI_Model
         return $result;
     }
 
+    function convertAddress($address){
+        $ss = explode(',', $address);
+        return implode(' ', $ss);
+    }
+
     // the function is used for getting role name from role id
     function getRoleNameById($id)
     {
@@ -77,6 +82,15 @@ class user_model extends CI_Model
         return true;
     }
 
+    function isRoleDeletable($id){
+        $query = $this->db->select('id')
+            ->from('tbl_user')
+            ->where('role', $id)
+            ->limit(1)
+            ->get();
+
+        return count($query->result()) > 0 ? false : true;
+    }
 
     function isDeletable($id)
     {
@@ -96,7 +110,8 @@ class user_model extends CI_Model
     function addSystemUser($userInfo)
     {
         if (isset($userInfo->id)) {
-            $this->updateSystemUser($userInfo);
+            $insert_id = $this->updateSystemUser($userInfo);
+            return $insert_id;
         }
         $userInfo->create_time = date("Y-m-d H:i:s");
         $this->db->trans_start();
@@ -166,13 +181,15 @@ class user_model extends CI_Model
         return $this->db->affected_rows();
     }
 
-    function addNewShop($userid, $password, $saleman)
+    function addNewShop($userid, $password, $saleman, $token)
     {
         $userinfo = array(
             'userid' => $userid,
             'password' => $password,
             'saleman_mobile' => $saleman,
             'type' => 3,
+            'status' => 1,
+            'token' => $token,
             'created_time' => date('Y-m-d H:i:s')
         );
 
@@ -565,7 +582,7 @@ class user_model extends CI_Model
     {
         $this->db->select('*');
         $this->db->from('tbl_user');
-        $this->db->join('tbl_userinfo', 'tbl_user.userid = tbl_userinfo.userid', 'left');
+        $this->db->join('tbl_userinfo' ,'tbl_user.userid = tbl_userinfo.userid and tbl_userinfo.type = 2');
         $this->db->where('tbl_user.role', 2);
         $this->db->where('tbl_userinfo.id', $id);
         $query = $this->db->get();
@@ -609,13 +626,20 @@ class user_model extends CI_Model
      * @param array $userInfo : This is users updated information
      * @param number $userId : This is user id
      */
-    function updateUser($user, $userInfo)
+    function updateUser($user, $userInfo, $id)
     {
-        $this->db->where('userid', $user['userid']);
-        $this->db->update('tbl_user', $user);
+        // get user's id
+        $result = $this->db->select('tbl_user.id')
+            ->from('tbl_user')
+            ->join('tbl_userinfo', 'tbl_userinfo.userid = tbl_user.userid')
+            ->where('tbl_userinfo.id', $id)
+            ->get()->result();
 
-        $this->db->where('userid', $userInfo['userid']);
+        $this->db->where('id', $id);
         $this->db->update('tbl_userinfo', $userInfo);
+
+        $this->db->where('id', $result[0]->id);
+        $this->db->update('tbl_user', $user);
 
         return TRUE;
     }
@@ -677,6 +701,31 @@ class user_model extends CI_Model
             $this->db->select('userid');
             $this->db->from('tbl_userinfo');
             $this->db->where('userid', $userid);
+        }
+
+        $query = $this->db->get();
+        $result = $query->result();
+
+        if (count($result) == 0) return FALSE;
+
+        return TRUE;
+    }
+
+    function isValidUserId($userid, $id,  $type = 0)
+    {
+        if ($type == 0) {
+            $this->db->select('tbl_user.userid');
+            $this->db->from('tbl_user');
+            $this->db->join('tbl_userinfo', 'tbl_user.userid=tbl_userinfo.userid');
+            $this->db->where('tbl_user.userid', $userid);
+            if($id != '')
+                $this->db->where('tbl_userinfo.id <>'. $id);
+        } else {
+            $this->db->select('userid');
+            $this->db->from('tbl_userinfo');
+            $this->db->where('userid', $userid);
+            if($id != '')
+                $this->db->where('id <>'. $id);
         }
 
         $query = $this->db->get();

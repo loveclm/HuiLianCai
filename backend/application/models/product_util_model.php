@@ -41,6 +41,7 @@ class product_util_model extends CI_Model
     function getProductTypeList(){
         $this->db->select('*');
         $this->db->from('tbl_product_type');
+        $this->db->order_by('create_time', 'desc');
         $query = $this->db->get();
         $result = $query->result();
         if(count($result) == 0) $result = NULL;
@@ -65,6 +66,8 @@ class product_util_model extends CI_Model
         $this->db->join('tbl_product_brand', 'tbl_product_brand.id=tbl_product_format.brand');
         $this->db->where('tbl_activity.recommend_status', 1);
         $this->db->where('tbl_activity.status', 2);
+        $this->db->group_by('tbl_product_brand.name');
+        $this->db->order_by('tbl_product_brand.name', 'asc');
 
         $query = $this->db->get();
         $result = $query->result();
@@ -76,6 +79,8 @@ class product_util_model extends CI_Model
         $this->db->select('type');
         $this->db->from('tbl_product_type');
         $this->db->where('id', $id);
+
+        $this->db->order_by('type', 'asc');
         $query = $this->db->get();
         $result = $query->result();
         if(count($result) == 0) return '';
@@ -87,6 +92,8 @@ class product_util_model extends CI_Model
         $this->db->from('tbl_product_brand');
         if($name != "")
             $this->db->where('name like "%'.$name.'%"');
+
+        $this->db->order_by('create_time', 'desc');
         $query = $this->db->get();
         $result = $query->result();
         if(count($result) == 0) $result = NULL;
@@ -98,6 +105,9 @@ class product_util_model extends CI_Model
         $this->db->from('tbl_product_brand');
         if( $type != '0')
             $this->db->where('type', $type);
+
+        $this->db->group_by('name');
+        $this->db->order_by('create_time', 'desc');
         $query = $this->db->get();
         $result = $query->result();
         if(count($result) == 0) $result = NULL;
@@ -107,6 +117,7 @@ class product_util_model extends CI_Model
     function getProductUnitList(){
         $this->db->select('*');
         $this->db->from('tbl_product_unit');
+        $this->db->order_by('create_time', 'desc');
         $query = $this->db->get();
         $result = $query->result();
         if(count($result) == 0) $result = NULL;
@@ -160,7 +171,7 @@ class product_util_model extends CI_Model
             $this->updateBrand($brand);
             return 0;
         }
-        //$brand['create_time'] = date("Y-m-d H:i:s");
+        $brand['create_time'] = date("Y-m-d H:i:s");
         $this->db->trans_start();
         $this->db->insert('tbl_product_brand', $brand);
         $insert_id = $this->db->insert_id();
@@ -182,14 +193,18 @@ class product_util_model extends CI_Model
     {
         if($itemInfo['id'] == 0){
             // insert data
+
             $this->db->trans_start();
             switch ($itemInfo['type']){
                 case 1:
                     $item = array('type'=> $itemInfo['name']);
+                    $item['create_time'] = date("Y-m-d H:i:s");
+
                     $this->db->insert('tbl_product_type', $item);
                     break;
                 case 2:
                     $item = array('name'=> $itemInfo['name']);
+                    $item['create_time'] = date("Y-m-d H:i:s");
                     $this->db->insert('tbl_product_unit', $item);
                     break;
             }
@@ -268,9 +283,9 @@ class product_util_model extends CI_Model
                 return 0;
         }
 
-        $result = $this->db->limit(1)->get();
+        $result = $this->db->limit(1)->get()->result();
 
-        return count($result) ? false : true;
+        return (count($result) > 0) ? false : true;
     }
 }
 

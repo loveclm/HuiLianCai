@@ -28,7 +28,7 @@
                     </div>
                     <div class="row form-inline">
                         <label> *分类 : </label>
-                        <select name="type" class="form-control" id="searchKind" disabled>
+                        <select name="type" class="form-control" id="searchKind" style="margin-left: 10px;" disabled>
                             <option value="0">请选择</option>
                             <?php
                             foreach ($typelist as $item) {
@@ -55,7 +55,7 @@
                     </div>
                     <div class="row form-inline">
                         <label> *品牌 : </label>
-                        <select name="brand" class="form-control" id="searchBrand" disabled>
+                        <select name="brand" class="form-control" id="searchBrand" style="margin-left: 10px;" disabled>
                             <option value="0">请选择</option>
                             <?php
                             foreach ($brandlist as $item) {
@@ -73,7 +73,7 @@
                     <div class="row form-inline">
                         <label> *单位 : </label>
 
-                        <select name="unit" class="form-control" id="searchUnit" disabled>
+                        <select name="unit" class="form-control" id="searchUnit" style="margin-left: 10px;" disabled>
                             <option value="0">请选择</option>
                             <?php
                             foreach ($unitlist as $item) {
@@ -126,7 +126,7 @@
                     </div>
                     <div class="row form-inline">
                         <label> *商品详情 : </label>
-                        <div class="form-group" style="vertical-align: text-top; background-color: white; padding: 20px; border: 1px solid lightgrey">
+                        <div class="form-group" style="vertical-align: text-top; background-color: white; padding: 10px; border: 1px solid lightgrey; width: 400px;">
                             <?= isset($product_format) ? $product_format->contents : ''; ?>
                         </div>
                     </div>

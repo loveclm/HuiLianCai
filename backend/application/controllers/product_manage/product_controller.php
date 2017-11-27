@@ -41,7 +41,7 @@ class product_controller extends BaseController
         if ($this->isAdmin() == TRUE) {
             $this->loadThis();
         } else {
-            $this->global['pageTitle'] = '供货商商品列表';
+            $this->global['pageTitle'] = '区域总代理商品列表';
             $this->global['pageName'] = 'product';
             $this->global['typelist'] = $this->product_util_model->getProductTypeList();
             $this->global['brandlist'] = $this->product_util_model->getProductBrandList();
@@ -73,8 +73,15 @@ class product_controller extends BaseController
                 // get top list data in homepage
                 switch ($id) {
                     case 1:
-                        $header = array("序号", "商品条码", "商品名称", "分类", "品牌", "所属供货商", "库存量", "原价", "操作");
-                        $cols = 9;
+                        $header = array();
+                        $cols = 0;
+                        if ($this->isTicketter() == TRUE) {
+                            $header = array("序号", "商品条码", "商品名称", "分类", "品牌", "所属区域总代理", "库存量", "原价", "操作");
+                            $cols = 9;
+                        }else{
+                            $header = array("序号", "商品条码", "封面", "商品名称", "分类", "品牌", "库存量", "原价", "操作");
+                            $cols = 9;
+                        }
                         $contentList = $this->product_model->getItems($searchData);
                         $footer = (count($contentList) == 0 || !isset($contentList)) ? $footer = "没有商品." : '';
                         break; // get top1
@@ -129,7 +136,7 @@ class product_controller extends BaseController
     function getProductDetailInfo(){
         $ret = array(
             'content' => '',
-            'status' => 'fail'
+            'status' => 'fail',
         );
 
         if(!empty($_POST)){
@@ -143,6 +150,11 @@ class product_controller extends BaseController
             }
             $ret['content'] = $product_format;
             if($ret['content'] != NULL) $ret['status'] = 'success';
+            if($this->product_model->isExist($id, $this->user_model->getProviderId($this->global['login_id'])) == true) {
+                $ret['status'] = 'fail';
+                $ret['content'] = '';
+                $ret['error'] = 1;
+            }
         }
         echo json_encode($ret);
     }
@@ -162,20 +174,30 @@ class product_controller extends BaseController
                     $output_html .= '<tr>';
                     $output_html .= '<td>' . $i . '</td>';
                     $output_html .= '<td>' . $item->barcode . '</td>';
+                    if($this->isTicketter() == FALSE){
+                        $output_html .= '<td><img src="' . base_url() . json_decode($item->cover)[1] .
+                            '" style="width:150px;height:80px;border:2px solid lightgray;"/></td>';
+                    }
                     $output_html .= '<td>' . $item->name . '</td>';
                     $output_html .= '<td>' . $this->product_util_model->getTypeNameById($item->type) . '</td>';
                     $output_html .= '<td>' . $this->product_util_model->getBrandNameById($item->brand) . '</td>';
-                    $output_html .= '<td>' . $item->provider_name . '</td>';
+                    if($this->isTicketter() == TRUE) {
+                        $output_html .= '<td>' . $item->provider_name . '</td>';
+                    }
                     $output_html .= '<td>' . $item->store . '</td>';
                     $output_html .= '<td>' . $item->cost . '</td>';
                     $output_html .= '<td>';
                     $output_html .= '<a href="'. base_url(). 'product_show/' . $item->storeId . '">查看 &nbsp;&nbsp;</a>';
                     if($this->isTicketter() == FALSE) {
                         $output_html .= '<a href="' . base_url() . 'product_edit/' . $item->storeId . '">编辑 &nbsp;&nbsp;</a>';
-                        $output_html .= '<a href="#" onclick="deleteConfirm(\'' . $item->storeId . '\')">删除 &nbsp;&nbsp;</a>';
+                        if($this->product_model->isDeletable($item->storeId) == true)
+                            $output_html .= '<a href="#" onclick="deleteConfirm(\'' . $item->storeId . '\')">删除 &nbsp;&nbsp;</a>';
+                        else
+                            $output_html .= '<a href="#" onclick="$(\'#alert_delete\').show();" style="color: grey;">删除 &nbsp;&nbsp;</a>';
                     }
                     $output_html .= '</td>';
                     $output_html .= '</tr>';
+
                 }
                 break;
             case 2:
@@ -277,6 +299,33 @@ class product_controller extends BaseController
             $this->loadViews("product_manage/product_add", $this->global, $data, NULL);
         }else {
 
+            if($this->product_model->isExist($product->id) == true){
+                $this->form_validation->set_rules('id', '该商品已经存在', 'user_error');
+                $this->form_validation->run();
+
+                if($product->type != 0){
+                    $this->global['brandlist'] = $this->product_util_model->getProductBrandList($product->type);
+                }
+                if($product->brand != 0){
+                    $this->global['productlist'] = $this->product_model->getProductList($product->type, $product->brand);
+                }
+                if($product->id != '0'){
+                    $productinfo = $this->product_format_model->getItemById($product->id);
+                    $productinfo->unit_name = $this->product_util_model->getUnitNameById($productinfo->unit);
+                    $productinfo->cost = $product->cost;
+                    $productinfo->store = $product->store;
+                }else {
+                    $productinfo = $product;
+
+                }
+
+                $this->global['product'] = $productinfo;
+                // the user list that manages site
+                $data['empty'] = NULL;
+
+                $this->loadViews("product_manage/product_add", $this->global, $data, NULL);
+            }
+
             $product = array(
                 'id' => $product->storeId,
                 'product_id' => $product->id,
@@ -328,7 +377,8 @@ class product_controller extends BaseController
             $data['empty'] = NULL;
 
             $product = $this->getProductInfo($Id);
-
+            $this->global['brandlist'] = $this->product_util_model->getProductBrandList($product->type);
+            $this->global['productlist'] = $this->product_model->getProductList($product->type, $product->brand);
             $this->global['product'] = $product;
             $this->loadViews("product_manage/product_add", $this->global, $data, NULL);
         }

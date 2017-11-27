@@ -9,18 +9,18 @@
     <section class="content" style="min-height: 800px;">
         <div class="container">
             <div class="row">
-                <div class="col-xs-12 col-sm-6 form-inline">
+                <div class="col-xs-12 col-sm-4 form-inline">
                     <div class="form-group">
                         <select class="form-control" id="searchType">
                             <option value="0" <?php if ($searchType== 0) echo ' selected' ?>>商品条码</option>
                             <option value="1" <?php if ($searchType == 1) echo ' selected' ?>>商品名称</option>
                         </select>
-                        <input type="text" id="searchName"
+                        <input type="text" id="searchName" style="width: 140px;"
                                value="<?php echo $searchName == 'all' ? '' : $searchName; ?>" class="form-control">
                     </div>
                 </div>
 
-                <div class="col-xs-12 col-sm-4 form-inline">
+                <div class="col-xs-12 col-sm-6 form-inline">
                     <div class="form-group">
                         <select class="form-control" id="searchKind">
                             <option value="0" <?php if ($searchKind == 0) echo ' selected' ?>>分类</option>
@@ -38,13 +38,6 @@
                     <div class="form-group">
                         <select class="form-control" id="searchBrand">
                             <option value="0" <?php if ($searchBrand == 0) echo ' selected' ?>>品牌</option>
-                            <?php
-                                foreach ($brandlist as $item){
-                                    ?>
-                                    <option value="<?= $item->id ?>" <?php if ($searchBrand == $item->id) echo ' selected' ?>><?= $item->name ?></option>
-                                    <?php
-                                }
-                            ?>
                         </select>
                     </div>
                 </div>
@@ -65,18 +58,34 @@
                 </div>
             </div>
 
-            <div class="row">
+            <div class="row"  style="max-height: 630px; overflow-y: auto;">
                 <div class="box main-shadow">
                     <div class="box-body table-responsive no-padding">
-                        <table class="table table-hover">
+                        <table id="contentInfo_tbl" class="table table-hover">
                             <thead id="header_tbl"></thead>
                             <tbody id="content_tbl"></tbody>
                             <tfoot id="footer_tbl"></tfoot>
                         </table>
+                        <div id="contentpageNavPosition"></div>
                     </div>
                     <!-- /.box-body -->
                 </div>
                 <!-- /.box -->
+            </div>
+            <div id="alert_delete" class="modal-dialog text-center" style="display: none;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                                onclick="$('#alert_delete').hide();">
+                            <span aria-hidden="true">×</span></button>
+                        <span class="modal-title">提示</span>
+                    </div>
+                    <div class="modal-body">
+                        <label>该商品已关联商品，不能删除。</label><br><br>
+                        <a href="#" class="btn btn-primary" onclick="$('#alert_delete').hide();">确定</a>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
             </div>
             <div id="confirm_delete" class="modal-dialog text-center" style="display: none;">
                 <div class="modal-content">

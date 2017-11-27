@@ -34,7 +34,7 @@
                     <div class="radio">
                         <label>
                             <input type="radio" name="radio_caro_type" value="4">
-                            供货商
+                            区域总代理
                         </label>
                     </div>
                 </div>
@@ -66,19 +66,19 @@
             </div>
 
             <div class="row form-inline">
-                <div class="form-group">
-                    <a class="btn btn-primary form-control" href="<?php echo base_url() . 'carousel_upload'; ?>">
+                <div class="form-group" style="margin-left: 100px;">
+                    <a class="btn btn-primary form-control" href="<?php echo base_url() . 'carousel_upload'; ?>" onclick="saveSetting()">
                         <span>*上传图片并裁剪</span>
                     </a>
                 </div>
             </div>
             <div class="row text-center">
-                <div id="image_content" class="form-group">
+                <div id="image_content" class="form-group" style="text-align: left; margin-left: 150px;">
                     <img src="<?php
                         $fname = isset($imagefile) ? explode('/', $imagefile) : '';
                         echo isset($imagefile) ? base_url() . 'uploads/' . $fname[count($fname)-1] : 'assets/images/picture.png';
                     ?>" alt="user image"
-                         class="online">
+                         class="online" style="width: 400px;">
                 </div>
                 <div class="form-group" hidden>
                     <span id="image_filename"><?php
@@ -87,7 +87,7 @@
                     </span>
                 </div>
             </div>
-            <div class="row">
+            <div class="row" style="margin-left: 200px;">
                 <div class="col-xs-12 col-sm-12 form-inline">
                     <a class="btn btn-default form-control" href="<?php echo base_url(); ?>carousel">
                         <span>取消</span>

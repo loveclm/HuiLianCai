@@ -89,11 +89,13 @@ $route['product_show/(:any)'] = 'product_manage/product_controller/showitem/$1';
 $route['single_activity'] = 'activity_manage/single_activity_controller';
 $route['single_activity_add'] = 'activity_manage/single_activity_controller/additem';
 $route['single_activity_edit/(:any)'] = 'activity_manage/single_activity_controller/edititem/$1';
+$route['single_activity_copy/(:any)'] = 'activity_manage/single_activity_controller/copyitem/$1';
 $route['single_activity_show/(:any)'] = 'activity_manage/single_activity_controller/showitem/$1';
 
 $route['multiple_activity'] = 'activity_manage/multiple_activity_controller';
 $route['multiple_activity_add'] = 'activity_manage/multiple_activity_controller/additem';
 $route['multiple_activity_edit/(:any)'] = 'activity_manage/multiple_activity_controller/edititem/$1';
+$route['multiple_activity_copy/(:any)'] = 'activity_manage/multiple_activity_controller/copyitem/$1';
 $route['multiple_activity_show/(:any)'] = 'activity_manage/multiple_activity_controller/showitem/$1';
 
 $route['order'] = 'order_controller';
@@ -170,9 +172,13 @@ $route['api/transactionInfos'] = "api/Data_manager/shop_transactions";
 $route['api/newsInfos'] = "api/Data_manager/shop_news";
 $route['api/getMyWallet'] = "api/Data_manager/get_shop_wallet";
 
+$route['api/cartInfo'] = "api/Data_manager/shop_cartInfo";
+
 $route['api/orderInfos'] = "api/Data_manager/shop_orders";
 $route['api/orderRequest'] = "api/Data_manager/shop_order_request";
+$route['api/orderRequests'] = "api/Data_manager/shop_order_requests";
 $route['api/payOrderRequest'] = "api/Data_manager/shop_pay_order";
+$route['api/payOrderRequests'] = "api/Data_manager/shop_pay_orders";
 $route['api/cancelOrderRequest'] = "api/Data_manager/shop_order_cancel";
 
 $route['api/addFavorite'] = "api/Data_manager/shop_set_favorite";
@@ -195,6 +201,8 @@ $route['api/setLocation'] = "api/Data_manager/setLocation";
 
 $route['api/activity_detail'] = "api/Data_manager/activity_detail";
 $route['api/provider_detail'] = "api/Data_manager/provider_detail";
+$route['api/getNotifications'] = "api/Data_manager/getNotifications";
+
 $route['api/test'] = "api/Data_manager/test";
 
 $route['api/check_auth'] = "api/Shop_Authorization/check_auth";

@@ -22,15 +22,15 @@ class WxPayConfig
 	 * 获取地址：https://mp.weixin.qq.com/advanced/advanced?action=dev&t=advanced/dev&token=2005451881&lang=zh_CN
 	 * @var string
 	 */
-	const APPID = 'wxb042726847dca8d3';
-	const MCHID = '1487647712';
-	const KEY = '123skla8kso98alk29lkngb23ioemv56';
-	const APPSECRET = '70e43300732636e813e59f8b2199dfc9';
+	const APPID = 'wx76b2bf6b8c1dae12';
+	const MCHID = '1486887662';
+	const KEY = 't2soso349kxlkeklxmxles3sldsfmxlk';
+	const APPSECRET = 'a63708e282379414f0b05de8189632fd';
 	
 	//=======【证书路径设置】=====================================
 	/**
 	 * TODO：设置商户证书路径
-	 * 证书路径,注意应该填写绝对路径（仅退款、撤销订单时需要，可登录商户平台下载，
+	 * 证书路径,注意应该填写绝对路径（仅退款,撤销订单时需要，可登录商户平台下载，
 	 * API证书下载地址：https://pay.weixin.qq.com/index.php/account/api_cert，下载之前需要安装商户操作证书）
 	 * @var path
 	 */
@@ -56,5 +56,5 @@ class WxPayConfig
 	 * @var int
 	 */
 	const REPORT_LEVENL = 1;
-	const NOTIFY_URL = "http://www.ayoubc.com/test/example/notify.php";
+	const NOTIFY_URL = "http://www.ayoubc.com/frontend/notify.php";
 }

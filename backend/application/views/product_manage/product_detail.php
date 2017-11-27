@@ -95,7 +95,7 @@
                     </div>
                     <div class="row form-inline">
                         <label> 商品详情 : </label>
-                        <div class="form-group" style="vertical-align: text-top; background-color: white; padding: 20px; border: 1px solid lightgrey">
+                        <div class="form-group" style="vertical-align: text-top; background-color: white; padding: 10px; border: 1px solid lightgrey; width: 400px;">
                             <?= isset($product) ? $product->contents : ''; ?>
                         </div>
                     </div>

@@ -15,7 +15,7 @@
                                 <option value="0" <?php if ($searchType == 0) echo ' selected' ?>>账号</option>
                                 <option value="1" <?php if ($searchType == 1) echo ' selected' ?>>姓名</option>
                             </select>
-                            <input type="text" id="searchName"
+                            <input type="text" id="searchName" style="width: 140px;"
                                    value="<?php echo $searchName == '' ? '' : $searchName; ?>" class="form-control">
                         </div>
                     </div>
@@ -35,7 +35,7 @@
                         </div>
                     </div>
                 </div>
-            <div class="row">
+            <div class="row" style="max-height: 670px; overflow-y: auto;">
                 <div class="box main-shadow">
                     <div class="box-body table-responsive no-padding">
                         <table class="table table-hover">
@@ -48,6 +48,22 @@
                 </div>
                 <!-- /.box -->
             </div>
+            <div id="alert_delete" class="modal-dialog text-center" style="display: none;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                                onclick="$('#alert_delete').hide();">
+                            <span aria-hidden="true">×</span></button>
+                        <span class="modal-title">提示</span>
+                    </div>
+                    <div class="modal-body">
+                        <label>该业务员已关联了区域总代理，先去更换区域总代理的业务员吧。</label><br><br>
+                        <a href="#" class="btn btn-primary" onclick="$('#alert_delete').hide();">确定</a>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+
             <div id="confirm_delete" class="modal-dialog text-center" style="display: none;">
                 <div class="modal-content">
                     <div class="modal-header">

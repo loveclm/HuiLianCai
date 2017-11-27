@@ -12,6 +12,7 @@ class withdraw_model extends CI_Model
         $type = $data['searchType'];
         $name = $data['searchName'];
         $status = $data['searchStatus'];
+        $provider_id = $data['provider_id'];
 
         $this->db->select('tbl_provider_withdraw.id as withdraw_id, tbl_provider_withdraw.*, tbl_userinfo.userid as provider_userid, tbl_provider_bankinfo.*');
         $this->db->from('tbl_provider_withdraw');
@@ -30,6 +31,8 @@ class withdraw_model extends CI_Model
         if ($likeCriteria != '') $this->db->where($likeCriteria);
 
         if ($status != '0') $this->db->where('tbl_provider_withdraw.status', $status);
+
+        if($provider_id != '0') $this->db->where('tbl_provider_withdraw.provider_id', $provider_id);
 
         $this->db->order_by('tbl_provider_withdraw.time', "desc");
         $query = $this->db->get();

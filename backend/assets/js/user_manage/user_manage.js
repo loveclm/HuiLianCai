@@ -100,7 +100,7 @@ function deleteItem() {
             if (result == true)
                 showLists(1);
             else
-                window.alert("该业务员已关联了供货商，先去更换供货商的业务员吧。");
+                window.alert("该业务员已关联了区域总代理，先去更换区域总代理的业务员吧。");
         }
     });
 

@@ -13,9 +13,10 @@ class favorite_model extends CI_Model
         $this->db->from('tbl_shop_favorite');
         $this->db->where('tbl_shop_favorite.shop', $id);
 
+        $this->db->order_by('add_time', 'desc');
         $query = $this->db->get();
         $result = $query->result();
-        if (count($result) == 0) $result = NULL;
+
         return $result;
     }
 

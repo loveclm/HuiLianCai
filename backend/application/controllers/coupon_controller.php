@@ -65,7 +65,7 @@ class coupon_controller extends BaseController
                 switch ($id) {
                     case 1:
 
-                        $header = array("优惠券编号", "优惠券金额", "所属终端便利店账号", "终端便利店", "状态", "增送时间", "使用时间");
+                        $header = array("优惠券编号", "优惠券金额", "所属终端便利店账号", "终端便利店", "状态", "赠送时间", "使用时间");
                         $cols = 7;
 
                         $contentList = $this->coupon_model->getItems($searchData);

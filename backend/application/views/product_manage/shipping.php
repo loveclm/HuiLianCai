@@ -10,17 +10,17 @@
     <section class="content" style="min-height: 800px;">
         <div class="container">
             <div class="row">
-                <div class="col-xs-12 col-sm-9 form-inline">
+                <div class="col-xs-12 col-sm-9 form-inline" style="padding-right: 0px;">
                     <div class="form-group">
                         <select class="form-control" id="searchType">
                             <option value="0">配送编号</option>
                             <option value="1">配送员</option>
                         </select>
-                        <input type="text" id="searchName"
+                        <input type="text" id="searchName" style="width: 140px;"
                                value="" class="form-control">
                     </div>
                     <div class="form-group">
-                        <select name="start_month" class="form-control" id="start_month">
+                        <select name="start_month" class="form-control" id="start_month" style="margin-left: 20px;">
                             <option value="0">选择月份</option>
                             <?php
                             for ($i = 1; $i <= 12; $i++) {
@@ -55,7 +55,7 @@
                 </div>
                 <div class="col-xs-12 col-sm-2 form-inline">
                     <div class="form-group">
-                        <a href="#" class="btn btn-primary" onclick="shipman_list();">查询</a>
+                        <a href="#" class="btn btn-primary" onclick="showLists(4);">查询</a>
                     </div>
                 </div>
             </div>
@@ -70,14 +70,15 @@
                 </div>
                 </div>
             </div>
-            <div class="row">
+            <div class="row"  style="max-height: 630px; overflow-y: auto;">
                 <div class="box main-shadow">
                     <div class="box-body table-responsive no-padding">
-                        <table class="table table-hover">
+                        <table id="contentInfo_tbl" class="table table-hover">
                             <thead id="header_tbl"></thead>
                             <tbody id="content_tbl"></tbody>
                             <tfoot id="footer_tbl"></tfoot>
                         </table>
+                        <div id="contentpageNavPosition"></div>
                     </div>
                     <!-- /.box-body -->
                 </div>

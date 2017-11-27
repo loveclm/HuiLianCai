@@ -12,13 +12,13 @@
                 <div class="col-xs-12 col-sm-4 form-inline">
                     <div class="form-group">
                         <select class="form-control" id="searchType">
-                            <option value="0" <?php if ($searchType == 0) echo ' selected' ?>>供货商账号</option>
-                            <option value="1" <?php if ($searchType == 1) echo ' selected' ?>>供货商名称</option>
+                            <option value="0" <?php if ($searchType == 0) echo ' selected' ?>>区域总代理账号</option>
+                            <option value="1" <?php if ($searchType == 1) echo ' selected' ?>>区域总代理名称</option>
                             <option value="2" <?php if ($searchType == 2) echo ' selected' ?>>联系人</option>
                             <option value="3" <?php if ($searchType == 3) echo ' selected' ?>>推荐业务员</option>
                         </select>
                         <input type="text" id="searchName"
-                               value="<?php echo $searchName == 'all' ? '' : $searchName; ?>" class="form-control">
+                               value="<?php echo $searchName == 'all' ? '' : $searchName; ?>" class="form-control" style="width: 140px;">
                     </div>
                 </div>
 
@@ -42,7 +42,7 @@
                     </div>
 
                     <div class="form-group">
-                        <select class="form-control" id="searchStatus">
+                        <select class="form-control" id="searchStatus"  style="margin-left: 10px;">
                             <option value="0" <?php if ($searchStatus == 0) echo ' selected' ?>>禁用状态</option>
                             <option value="1" <?php if ($searchStatus == 1) echo ' selected' ?>>未禁用</option>
                             <option value="2" <?php if ($searchStatus == 2) echo ' selected' ?>>已禁用</option>
@@ -71,14 +71,15 @@
                 <?php
             }
             ?>
-            <div class="row">
+            <div class="row"  style="max-height: 630px; overflow-y: auto;">
                 <div class="box main-shadow">
                     <div class="box-body table-responsive no-padding">
-                        <table class="table table-hover">
+                        <table id="contentInfo_tbl" class="table table-hover">
                             <thead id="header_tbl"></thead>
                             <tbody id="content_tbl"></tbody>
                             <tfoot id="footer_tbl"></tfoot>
                         </table>
+                        <div id="contentpageNavPosition"></div>
                     </div>
                     <!-- /.box-body -->
                 </div>

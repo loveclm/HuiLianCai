@@ -20,13 +20,13 @@
                                         $Status = '未开始';
                                         break;
                                     case 2:
-                                        $Status = '拼单中';
+                                        $Status = '拼团中';
                                         break;
                                     case 3:
-                                        $Status = '拼单成功';
+                                        $Status = '拼团成功';
                                         break;
                                     case 4:
-                                        $Status = '拼单失败';
+                                        $Status = '拼团失败';
                                         break;
                                 }
                             }else{
@@ -40,13 +40,13 @@
                     if($shop_manager_number == '') {
                         ?>
                         <div class="row form-inline">
-                            <label> 所属供货商 : </label>
+                            <label> 所属区域总代理 : </label>
                             <div class="input-group margin">
                                 <span><?php echo isset($model->provider_name) ? $model->provider_name : ''; ?></span>
                             </div>
                         </div>
                         <div class="row form-inline">
-                            <label> 供货商账号 : </label>
+                            <label> 区域总代理账号 : </label>
                             <div class="input-group margin">
                                 <span><?php echo isset($model->provider_userid) ? $model->provider_userid : ''; ?></span>
                             </div>
@@ -155,7 +155,7 @@
                     <div class="row form-inline">
                         <label> 套餐详情 : </label>
                         <div id="contents" class="form-group"
-                             style="vertical-align: text-top; background-color: white; padding: 20px; border: 1px solid lightgrey">
+                             style="vertical-align: text-top; background-color: white; padding: 10px; border: 1px solid lightgrey; width: 400px;">
                             <?= isset($more_data->contents) ? $more_data->contents : ''; ?>
                         </div>
                     </div>

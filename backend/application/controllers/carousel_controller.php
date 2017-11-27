@@ -67,7 +67,7 @@ class carousel_controller extends BaseController
                 // get top list data in homepage
                 switch ($id) {
                     case 1:
-                        $header = array("序号", "轮播图片", "类型", "单品活动/餐装活动/供货商", "排序", "新增日期", "操作",);
+                        $header = array("序号", "轮播图片", "类型", "单品活动/餐装活动/区域总代理", "排序", "新增日期", "操作",);
                         $cols = 7;
                         $contentList = $this->carousel_model->getItems();
                         $footer = (count($contentList) == 0||$contentList=='') ? $footer = "没有轮播图项目." : '';
@@ -121,13 +121,13 @@ class carousel_controller extends BaseController
         $activity_name = '';
         switch ($item->type){
             case "2":   //单品活动名称
-                $activity_name = '单品活动名称';
-                break;
             case "3":   //餐装活动名称
-                $activity_name = '餐装活动名称';
+                $activity = $this->activity_model->getItemById($item->activity);
+                $activity_name = $activity->activity_name;
                 break;
-            case "4":   //供货商名称
-                $activity_name = '供货商名称';
+            case "4":   //区域总代理名称
+                $providerinfo = $this->user_model->getUserInfoByid($item->activity);
+                $activity_name = $providerinfo->username;
                 break;
         }
 
@@ -153,7 +153,7 @@ class carousel_controller extends BaseController
                         '" style="width:150px;height:80px;border:2px solid lightgray;"/></td>';
                     $output_html .= '<td>';
                     $output_html .= (($item->type == 1) ? '广告' : (($item->type == 2) ? '单品活动' :
-                        (($item->type == 3) ? '餐装活动' : (($item->type == 4) ? '供货商' : ''))));
+                        (($item->type == 3) ? '餐装活动' : (($item->type == 4) ? '区域总代理' : ''))));
                     $output_html .= '</td>';
                     $output_html .= '<td>' . $this->getActivityNameFromItem($item) . '</td>';                             // exchange id to activity name
                     $output_html .= '<td>' . ($item->sort != 1000 ? $item->sort : '') . '</td>';

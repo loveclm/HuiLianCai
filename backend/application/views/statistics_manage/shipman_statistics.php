@@ -12,11 +12,11 @@
             <?php
             if($shop_manager_number != '') {
                 ?>
-                <div id="donate">
-                    <label><input type="radio" id="1" name="toggleButton" checked><span>提现记录</span></label>
-                    <label><input type="radio" id="2" name="toggleButton"><span>线上付款记录</span></label>
-                    <label><input type="radio" id="3" name="toggleButton"><span>货到付款记录</span></label>
-                    <input id="btnIndex" value="1" type="hidden">
+                <div id="donate" class="row" style="margin-left: 20px;">
+                    <label><input type="radio" id="0" name="toggleButton" checked><span>汇总表</span></label>
+                    <label><input type="radio" id="1" name="toggleButton"><span>线上支付</span></label>
+                    <label><input type="radio" id="2" name="toggleButton"><span>货到付款</span></label>
+                    <input id="btnIndex" value="0" type="hidden">
                 </div>
                 <?php
             }
@@ -27,11 +27,11 @@
                         <select class="form-control" id="searchType">
                             <option value="0">配送员</option>
                         </select>
-                        <input type="text" id="searchName"
+                        <input type="text" id="searchName" style="width: 140px;"
                                value="" class="form-control">
                     </div>
                     <div class="form-group">
-                        <select name="start_month" class="form-control" id="start_month">
+                        <select name="start_month" class="form-control" id="start_month" style="margin-left: 20px;">
                             <option value="0" >选择月份</option>
                             <?php
                             for($i = 1; $i <=12; $i++){
@@ -64,9 +64,9 @@
                         </select>
                     </div>
                  </div>
-                <div class="col-xs-12 col-sm-2 form-inline">
+                <div class="col-xs-12 col-sm-2 form-inline" style="padding: 0px;">
                     <div class="form-group">
-                        <a href="#" class="btn btn-primary" onclick="exportTable2xls()">导出xcel</a>
+                        <a href="#" class="btn btn-primary" onclick="exportTable2xls()">导出Excel</a>
                     </div>
                     <div class="form-group">
                         <a href="#" class="btn btn-primary" onclick="shipman_list();">查询</a>
@@ -74,14 +74,15 @@
                 </div>
             </div>
 
-            <div class="row">
+            <div class="row" style="max-height: 700px; overflow-y: auto;">
                 <div class="box main-shadow">
                     <div class="box-body table-responsive no-padding">
-                        <table class="table table-hover">
+                        <table id="contentInfo_tbl" class="table table-hover">
                             <thead id="header_tbl"></thead>
                             <tbody id="content_tbl"></tbody>
                             <tfoot id="footer_tbl"></tfoot>
                         </table>
+                        <div id="contentpageNavPosition"></div>
                     </div>
                     <!-- /.box-body -->
                 </div>
