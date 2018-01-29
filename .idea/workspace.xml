@@ -1,47 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="0b776105-d502-40d9-af6a-d8e588141a93" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/backend/application/logs/log-2017-10-09.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/backend/application/logs/log-2017-10-10.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/backend/application/logs/log-2017-10-11.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/backend/application/logs/log-2017-10-12.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/backend/application/logs/log-2017-10-16.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/backend/application/logs/log-2017-10-17.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/backend/application/logs/log-2017-10-18.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/backend/application/logs/log-2017-10-19.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/backend/application/logs/log-2017-10-20.php" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/frontend/cloudshop/assets/images/tmp/authcard.png" afterPath="$PROJECT_DIR$/frontend/cloudshop/assets/images/tmp/authcard.png" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/frontend/cloudshop/assets/images/tmp/u3.jpg" afterPath="$PROJECT_DIR$/frontend/cloudshop/assets/images/tmp/u3.jpg" />
+    <list default="true" id="0b776105-d502-40d9-af6a-d8e588141a93" name="Default" comment="Final Completed Version 2018-01-29">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/huiliancai_init.sql" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/backend/application/config/database.php" afterPath="$PROJECT_DIR$/backend/application/config/database.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/backend/application/config/routes.php" afterPath="$PROJECT_DIR$/backend/application/config/routes.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/backend/application/controllers/activity_manage/multiple_activity_controller.php" afterPath="$PROJECT_DIR$/backend/application/controllers/activity_manage/multiple_activity_controller.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/backend/application/controllers/activity_manage/single_activity_controller.php" afterPath="$PROJECT_DIR$/backend/application/controllers/activity_manage/single_activity_controller.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/backend/application/controllers/api/Data_manager.php" afterPath="$PROJECT_DIR$/backend/application/controllers/api/Data_manager.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/backend/application/controllers/api/ImgProcessor.php" afterPath="$PROJECT_DIR$/backend/application/controllers/api/ImgProcessor.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/backend/application/controllers/api/Shop_Authorization.php" afterPath="$PROJECT_DIR$/backend/application/controllers/api/Shop_Authorization.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/backend/application/controllers/cron_controller.php" afterPath="$PROJECT_DIR$/backend/application/controllers/cron_controller.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/backend/application/controllers/statistics_controller.php" afterPath="$PROJECT_DIR$/backend/application/controllers/statistics_controller.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/backend/application/models/shop_model.php" afterPath="$PROJECT_DIR$/backend/application/models/shop_model.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/backend/application/models/statistics_model.php" afterPath="$PROJECT_DIR$/backend/application/models/statistics_model.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/backend/application/models/user_model.php" afterPath="$PROJECT_DIR$/backend/application/models/user_model.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/backend/application/views/activity_manage/multiple_activity_add.php" afterPath="$PROJECT_DIR$/backend/application/views/activity_manage/multiple_activity_add.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/backend/application/views/activity_manage/single_activity_add.php" afterPath="$PROJECT_DIR$/backend/application/views/activity_manage/single_activity_add.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/backend/application/views/statistics_manage/recommend_provider.php" afterPath="$PROJECT_DIR$/backend/application/views/statistics_manage/recommend_provider.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/backend/application/views/statistics_manage/recommend_shop.php" afterPath="$PROJECT_DIR$/backend/application/views/statistics_manage/recommend_shop.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/backend/application/views/user_manage/shop.php" afterPath="$PROJECT_DIR$/backend/application/views/user_manage/shop.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/backend/assets/js/activity_manage/multiple_activity.js" afterPath="$PROJECT_DIR$/backend/assets/js/activity_manage/multiple_activity.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/backend/assets/js/activity_manage/single_activity.js" afterPath="$PROJECT_DIR$/backend/assets/js/activity_manage/single_activity.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/backend/assets/js/user_manage/shop.js" afterPath="$PROJECT_DIR$/backend/assets/js/user_manage/shop.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/frontend/cloudshop/assets/css/style.css" afterPath="$PROJECT_DIR$/frontend/cloudshop/assets/css/style.css" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/frontend/cloudshop/assets/js/global.js" afterPath="$PROJECT_DIR$/frontend/cloudshop/assets/js/global.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/frontend/cloudshop/assets/js/global_restapi.js" afterPath="$PROJECT_DIR$/frontend/cloudshop/assets/js/global_restapi.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/frontend/cloudshop/assets/js/main.js" afterPath="$PROJECT_DIR$/frontend/cloudshop/assets/js/main.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/frontend/cloudshop/assets/js/user_manage/individual_info.js" afterPath="$PROJECT_DIR$/frontend/cloudshop/assets/js/user_manage/individual_info.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/frontend/cloudshop/payment.php" afterPath="$PROJECT_DIR$/frontend/cloudshop/payment.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/frontend/cloudshop/sms/SendTemplateSMS.php" afterPath="$PROJECT_DIR$/frontend/cloudshop/sms/SendTemplateSMS.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/frontend/cloudshop/test_pay.php" afterPath="$PROJECT_DIR$/frontend/cloudshop/test_pay.php" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -65,8 +27,8 @@
       <file leaf-file-name="page_footer.php" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/frontend/cloudshop/page_footer.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="576">
-              <caret line="32" column="6" lean-forward="false" selection-start-line="18" selection-start-column="0" selection-end-line="32" selection-end-column="6" />
+            <state relative-caret-position="378">
+              <caret line="21" column="28" lean-forward="false" selection-start-line="21" selection-start-column="28" selection-end-line="21" selection-end-column="28" />
               <folding />
             </state>
           </provider>
@@ -134,7 +96,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -147,6 +108,7 @@
         </subPane>
       </pane>
       <pane id="Scope" />
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -180,7 +142,8 @@
       <workItem from="1512868358680" duration="403000" />
       <workItem from="1512868873736" duration="786000" />
       <workItem from="1512970476208" duration="619000" />
-      <workItem from="1517197676383" duration="28000" />
+      <workItem from="1517197676383" duration="264000" />
+      <workItem from="1517198089780" duration="12000" />
     </task>
     <task id="LOCAL-00001" summary="Testing Version 2017-10-13">
       <created>1507895966483</created>
@@ -189,25 +152,32 @@
       <option name="project" value="LOCAL" />
       <updated>1507895966483</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Final Completed Version 2018-01-29">
+      <created>1517197759530</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1517197759530</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="6281000" />
+    <option name="totallyTimeSpent" value="6529000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <layout>
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.26066098" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.26332623" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -225,13 +195,54 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Testing Version 2017-10-13" />
-    <option name="LAST_COMMIT_MESSAGE" value="Testing Version 2017-10-13" />
+    <MESSAGE value="Final Completed Version 2018-01-29" />
+    <option name="LAST_COMMIT_MESSAGE" value="Final Completed Version 2018-01-29" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/backend/application/views/statistics_manage/brand_statistics.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="378">
+          <caret line="21" column="26" lean-forward="false" selection-start-line="18" selection-start-column="82" selection-end-line="21" selection-end-column="26" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/backend/assets/js/statistics.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="8172">
+          <caret line="457" column="1" lean-forward="false" selection-start-line="446" selection-start-column="0" selection-end-line="457" selection-end-column="1" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/backend/application/views/includes/footer.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="540">
+          <caret line="30" column="120" lean-forward="false" selection-start-line="29" selection-start-column="12" selection-end-line="30" selection-end-column="120" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/backend/assets/plugins/table2Excel/jquery.table2excel.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3528">
+          <caret line="203" column="4" lean-forward="false" selection-start-line="203" selection-start-column="4" selection-end-line="203" selection-end-column="4" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/frontend/cloudshop/page_footer.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="378">
+          <caret line="21" column="28" lean-forward="true" selection-start-line="21" selection-start-column="28" selection-end-line="21" selection-end-column="28" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/backend/application/views/statistics_manage/brand_statistics.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="378">
@@ -370,8 +381,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/frontend/cloudshop/page_footer.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="576">
-          <caret line="32" column="6" lean-forward="false" selection-start-line="18" selection-start-column="0" selection-end-line="32" selection-end-column="6" />
+        <state relative-caret-position="378">
+          <caret line="21" column="28" lean-forward="false" selection-start-line="21" selection-start-column="28" selection-end-line="21" selection-end-column="28" />
           <folding />
         </state>
       </provider>
