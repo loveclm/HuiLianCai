@@ -90,10 +90,10 @@ function clearTimer() {
 function prepareRealPayment(price, orderId, itemTxt) {
     phone_num = getPhoneNumber()
 
-    location.href = 'payment.php' +
-        '?cost=' + price +
-        '&type=' + orderId +
-        '&product=' + itemTxt;
+    // location.href = 'payment.php' +
+    //     '?cost=' + price +
+    //     '&type=' + orderId +
+    //     '&product=' + itemTxt;
 }
 
 function increaseCartAmount() {
@@ -558,7 +558,7 @@ function showModalToCenter(id) {
     var margin_height = (parseInt(height) - parseInt(dialog_height)) / 2;
 
     $('.modal-scrollable').css({width: parseInt(width) * 0.7});
-    $('.modal-scrollable').css({margin: 'auto', 'margin-top': margin_height,});
+    $('.modal-scrollable').css({margin: 'auto', 'margin-top': margin_height});
 }
 
 function showMessage(message, isShowbtn) {
@@ -754,8 +754,9 @@ function validateText() {
 
 }
 
-var scrollEndDetection = function (divTag) {
-    if ($(divTag).scrollTop() + $(divTag).innerHeight() >= $(divTag)[0].scrollHeight) {
+function scrollEndDetection(divTag) {
+    //alert(($(divTag).scrollTop() + $(divTag).innerHeight())+","+$(divTag)[0].scrollHeight);
+    if ((parseInt($(divTag).scrollTop()) + parseInt($(divTag).innerHeight())) >= (parseInt($(divTag)[0].scrollHeight) - 2)) {
         return true;
     }
     return false;
@@ -838,12 +839,14 @@ function walletPayment(walletIDList, cntList, noteList) {
             var walletPayList = addSessionWalletPayOrderInfo(0);
             if (walletPayList.length != 0) {
                 for (var i = 0; i < walletPayList.length; i++) {
-                    sendRemoveMyCartItemRequest(walletPayList[i].id);
+                    removeFromSessionCart(walletPayList[i].id);
                 }
+//                sendRemoveMyCartItemRequest(0);
             }
 
             if (data.status == true) {
-                walletPayOrder(data.data);
+                    walletPayOrder(data.data);
+
             } else {
                 showNotifyAlert('订单失败。')
             }
@@ -872,12 +875,6 @@ function walletPayOrder(orderIDlist) {
         moneyList.push(walletOrderList[i].payInfo.price);
         noteList.push(walletOrderList[i].payInfo.order_note);
     }
-
-    if (orderList.length == 0) { // if successed listcount is 0 - wallet payment is invalid
-        onlinePayment(0);
-        return;
-    }
-
 
     $.ajax({
         type: 'POST',
@@ -978,7 +975,6 @@ function onlinePayment(status) {
             break;
         default:
             break;
-
     }
 }
 
@@ -1009,8 +1005,9 @@ function onlineOrderRequest() {
             var onlinePayList = addSessionOnlinePayOrderInfo(0);
             if (onlinePayList.length != 0) {
                 for (var i = 0; i < onlinePayList.length; i++) {
-                    sendRemoveMyCartItemRequest(onlinePayList[i].id);
+                    removeFromSessionCart(onlinePayList[i].id);
                 }
+                //sendRemoveMyCartItemRequest(0);
             }
             if (data.status == true) {
                 app_data['orderIDList'] = data.data;
@@ -1102,8 +1099,9 @@ function weixin_payment(orderIDList) {
         onlinePayOrderRequest();
     } else {
         setTimeout(function () {
-            window.location.href = MY_API_URL + 'payment.php?cost=' + cost;
-        }, 2000);
+            sessionStorage.setItem('isPaying','1');
+            window.location.href = MY_API_URL + 'payment.php?cost=' + cost + "&";
+        }, 1000);
     }
 }
 

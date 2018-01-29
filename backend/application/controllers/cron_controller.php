@@ -108,6 +108,8 @@ class cron_controller extends CI_Controller
                         // refund extra money
                         $order_info['refund_cost'] = $money;
                         $order_info['refund_time'] = date('Y-m-d H:i:s');
+                        $result_id = $this->order_model->update($order_info, $order->id);
+                        if(!$result_id) continue;
 
                         $news_data = array(
                             'sender' => $order->provider,
@@ -141,6 +143,8 @@ class cron_controller extends CI_Controller
                         $this->shop_model->update($user_info, $provider_info->userid);
                     }
                 } else {
+                    $result_id = $this->order_model->update($order_info, $order->id);
+                    if(!$result_id) continue;
                     $news_data = array(
                         'sender' => $order->provider,
                         'receiver' => $order->shop,
@@ -149,8 +153,6 @@ class cron_controller extends CI_Controller
                     );
                     $this->news_model->add($news_data);
                 }
-
-                $this->order_model->update($order_info, $order->id);
             }
 
             $news_data = array(

@@ -423,7 +423,7 @@ class statistics_controller extends BaseController
         $this->loadViews("user_manage/provider", $this->global, $data, NULL);
     }
 
-    function showShops($id){
+    function showShops($id, $start_date, $end_date){
         $this->global['pageTitle'] = '终端便利店列表';
         $this->global['pageName'] = 'shop';
 
@@ -433,6 +433,8 @@ class statistics_controller extends BaseController
         $data['searchStatus'] = '0';
         $data['searchShoptype']='0';
         $data['searchAuth'] = '0';
+        $data['start'] = $start_date;
+        $data['end'] = $end_date;
 
         $this->loadViews("user_manage/shop", $this->global, $data, NULL);
     }

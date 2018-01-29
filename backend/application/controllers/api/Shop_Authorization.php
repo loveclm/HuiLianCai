@@ -44,7 +44,7 @@ class Shop_Authorization extends REST_Controller
             return;
         }
         // check user information conflict
-        if ($this->user_model->isExistUserId($userid, 1)) {
+        if ($this->user_model->isExistUserId($userid, 1) == true) {
             $this->response(array('status' => false, 'err_code' => 2, 'error' => 'This user already is registered in server.'), 200);
             return;
         }

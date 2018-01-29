@@ -52,7 +52,11 @@ function display_product_table() {
                 var origin_cost = 0;
                 var total_cost = 0;
 
+
                 if (product_list != null) {
+                    if($('#activity_id').val() == '0')
+                        $('#activity_name').val(product_list[0]['name']+ '-' + product_list.length);
+
                     for (var i = 0; i < product_list.length; i++) {
                         if (buy_cnt.length > i) {
                             cur_cost = buy_cnt[i]['cost'];

@@ -37,7 +37,12 @@ class shop_model extends CI_Model
         $this->db->select('*');
         $this->db->from('tbl_userinfo');
         $this->db->where('type', 3);
-
+        if(isset($data['start_date'])){
+            if($data['start_date'] != '')
+                $this->db->where('date(created_time)>=\''. $data['start_date'] . '\'');
+            if($data['end_date'] != '')
+                $this->db->where('date(created_time)<=\''. $data['end_date'] . '\'');
+        }
         switch (intval($type)) {
             case 0: // account
                 $likeCriteria = $name != '' ? ("(userid  LIKE '%" . $name . "%')") : '';

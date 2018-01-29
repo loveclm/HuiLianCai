@@ -56,7 +56,7 @@
                         <a href="#" class="btn btn-primary" onclick="exportTable2xls()">导出Excel</a>
                     </div>
                     <div class="form-group">
-                        <a href="#" class="btn btn-primary" onclick="recommend_man_list();">查询</a>
+                        <a href="#" class="btn btn-primary" onclick="recommend_provider();">查询</a>
                     </div>
                 </div>
             </div>

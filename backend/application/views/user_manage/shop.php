@@ -214,6 +214,10 @@
 
 
 <!-- Course Management JS-->
+<script type="text/javascript">
+    var start_date = '<?= isset($start)? $start : ''; ?>';
+    var end_date = '<?= isset($end)? $end : ''; ?>';
+</script>
 <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/user_manage/shop.js" charset="utf-8"></script>
 <?php
 if ($shop_manager_number == '') {

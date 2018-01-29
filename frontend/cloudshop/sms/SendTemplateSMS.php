@@ -61,7 +61,7 @@ function sendTemplateSMS($to, $datas, $tempId)
     $data = array();
     $result = NULL;
     $result->statusCode = 0;
-    //$result = $rest->sendTemplateSMS($to, $datas, $tempId);
+    $result = $rest->sendTemplateSMS($to, $datas, $tempId);
     if ($result == NULL) {
         $data = array(result => "error!", error => "Server no response!");
     } else if ($result->statusCode != 0) {

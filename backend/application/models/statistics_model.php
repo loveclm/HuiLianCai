@@ -863,9 +863,9 @@ class statistics_model extends CI_Model
         $this->db->where('tbl_userinfo.type', 2);
 
         if ($start != '')
-            $this->db->where('date(tbl_userinfo.created_time)>=' . $start);
+            $this->db->where('date(tbl_userinfo.created_time)>=\'' . $start . '\'');
         if ($end != '')
-            $this->db->where('date(tbl_userinfo.created_time)<=' . $end);
+            $this->db->where('date(tbl_userinfo.created_time)<=\'' . $end . '\'');
 
         $this->db->group_by('tbl_userinfo.saleman');
         $query = $this->db->get();
@@ -906,9 +906,9 @@ class statistics_model extends CI_Model
         $this->db->where('type', 3);
         $this->db->where('saleman_mobile <> \'\'');
         if ($start != '')
-            $this->db->where('date(created_time)>=' . $start);
+            $this->db->where('date(created_time)>=\'' . $start . '\'');
         if ($end != '')
-            $this->db->where('date(created_time)<=' . $end);
+            $this->db->where('date(created_time)<=\'' . $end . '\'');
 
         $this->db->group_by('saleman_mobile');
         $query = $this->db->get();
@@ -924,7 +924,7 @@ class statistics_model extends CI_Model
             $record = [
                 $user->saleman_mobile,
                 $user->cnt,
-                '<a href="' . base_url() . 'showShops/' . $user->saleman_mobile . '">推荐明细</a>'
+                '<a href="' . base_url() . 'showShops/' . $user->saleman_mobile . '/' . $start . '/' . $end . '">推荐明细</a>'
             ];
 
             array_push($records, $record);

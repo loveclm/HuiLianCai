@@ -217,7 +217,7 @@ class user_model extends CI_Model
         $insert_id = $this->db->insert_id();
         $this->db->trans_complete();
 
-        $userinfo['created_time'] = date('Y-m-d H:i:s');
+        $userInfo['created_time'] = date('Y-m-d H:i:s');
         $this->db->trans_start();
         $this->db->insert('tbl_userinfo', $userInfo);
         $insert_id = $this->db->insert_id();

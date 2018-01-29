@@ -243,7 +243,7 @@ class single_activity_controller extends BaseController
         $this->form_validation->set_rules('activity_name', '活动名称', 'trim|required|max_length[30]');
         $this->form_validation->set_rules('start_time', '拼团开始时间', 'trim|required');
         $this->form_validation->set_rules('end_time', '拼团结束时间', 'trim|required');
-        $this->form_validation->set_rules('man_cnt', '拼单人数', 'trim|required|numeric|greater_than[1]|max_length[2]');
+        $this->form_validation->set_rules('man_cnt', '拼单人数', 'trim|required|numeric|greater_than[1]|max_length[3]');
         $this->form_validation->set_rules('group_cnt', '起团数量', 'trim|required|numeric|greater_than[1]|max_length[3]');
         $this->form_validation->set_rules('group_cost', '拼团价', 'trim|required|numeric|greater_than[0]');
 
@@ -535,6 +535,8 @@ class single_activity_controller extends BaseController
                         // refund extra money
                         $order_info['refund_cost'] = $money;
                         $order_info['refund_time'] = date('Y-m-d H:i:s');
+                        $result_id = $this->order_model->update($order_info, $order->id);
+                        if(!$result_id) continue;
 
                         $news_data = array(
                             'sender' => $order->provider,
@@ -568,6 +570,9 @@ class single_activity_controller extends BaseController
                         $this->shop_model->update($user_info, $provider_info->userid);
                     }
                 } else {
+                    $result_id = $this->order_model->update($order_info, $order->id);
+                    if(!$result_id) continue;
+
                     $news_data = array(
                         'sender' => $order->provider,
                         'receiver' => $order->shop,
@@ -577,8 +582,6 @@ class single_activity_controller extends BaseController
                     $this->news_model->add($news_data);
 
                 }
-
-                $this->order_model->update($order_info, $order->id);
             }
 
             $news_data = array(

@@ -1,10 +1,10 @@
 // Main rest api file
 
- var REMOTE_SERVER_ROOT = 'http://www.huiliancai.com';
+var REMOTE_SERVER_ROOT = 'http://www.huiliancai.com';
 // var REMOTE_API_URL = REMOTE_SERVER_ROOT + '/backend/';
 // var MY_API_URL = 'http://www.huiliancai.com/frontend/';
 
-// var REMOTE_SERVER_ROOT = 'http://192.168.2.15/huiliancai';
+//var REMOTE_SERVER_ROOT = 'http://192.168.2.15/huiliancai';
 var REMOTE_API_URL = REMOTE_SERVER_ROOT + '/backend/';
 var MY_API_URL = 'http://192.168.2.18/frontend/';
 
@@ -54,7 +54,11 @@ function sendSMSToServer(phoneNumber) {
                 }
             } else {
                 app_data.sms_code = "";
-                showNotifyAlert(data.error[0]);
+                if(data.error[0]=="验证码超出同模板同号码天发送上限"){
+                    showNotifyAlert("同一手机号每天只能获取5次验证码。");
+                }else {
+                    showNotifyAlert(data.error[0]);
+                }
                 restoreSMSButton();
                 //showNotifyAlert(JSON.stringify(data));
             }
@@ -68,7 +72,7 @@ function sendSMSToServer(phoneNumber) {
 // User Registering APIs
 function sendRegisterRequest(phoneNumber, passwd, servantPhone) {
     if (getAuthorizationStatus()) {
-        showNotifyAlert('该账号已注册。')
+        showNotifyAlert('该账号已注册。');
         setTimeout(function () {
             history.back()
         }, 3000)
@@ -125,10 +129,11 @@ function sendRegisterRequest(phoneNumber, passwd, servantPhone) {
 function sendUploadImageRequest(data, imgCtrl, filename) {
     var timerID = setInterval(function () {
         var message = $('#notification_alert_bar').html();
-        if (message == '图片上传中。。。') message = '图片上传中。';
-        else if (message == '图片上传中。') message = '图片上传中。。';
-        else if (message == '图片上传中。。') message = '图片上传中。。。';
-        else message = '图片上传中。';
+        // if (message == '图片上传中。。。') message = '图片上传中。';
+        // else if (message == '图片上传中。') message = '图片上传中。。';
+        // else if (message == '图片上传中。。') message = '图片上传中。。。';
+        // else message = '图片上传中...';
+        message = '图片上传中...';
         $('#notification_alert_bar').html(message);
         $('#notification_alert_bar').css({
             'background-color': 'rgba(255, 255, 255, 0.7)',
@@ -137,6 +142,8 @@ function sendUploadImageRequest(data, imgCtrl, filename) {
         })
         $('#notification_alert_bar').show();
     }, 1000);
+
+    // alert(JSON.stringify(filename));
     $.ajax({
         url: REMOTE_API_URL + "api/ImgProcessor/uploadAnyData",
         type: "POST",
@@ -159,6 +166,62 @@ function sendUploadImageRequest(data, imgCtrl, filename) {
                 sessionStorage.removeItem(imgCtrl)
                 showNotifyAlert(data.status);
             }
+            // alert(JSON.stringify(data));
+            activateAuthButton(data.file)
+        },
+        error: function (data) {
+            clearInterval();
+            $('#notification_alert_bar').hide();
+            showNotifyAlert(LANG_DATA.server_error)
+            if (HLC_LOGIN_MODE == HLC_SIMUL_MODE) {
+                sessionStorage.setItem(imgCtrl, 'uploads/' + filename);
+                activateAuthButton(filename)
+            }
+        },
+        //  beforeSend: setHeader,
+    });
+}
+
+function sendUploadLogoImageRequest(data, imgCtrl, filename) {
+    var timerID = setInterval(function () {
+        var message = $('#notification_alert_bar').html();
+        // if (message == '图片上传中。。。') message = '图片上传中。';
+        // else if (message == '图片上传中。') message = '图片上传中。。';
+        // else if (message == '图片上传中。。') message = '图片上传中。。。';
+        // else message = '图片上传中。';
+        message = '图片上传中...';
+        $('#notification_alert_bar').html(message);
+        $('#notification_alert_bar').css({
+            'background-color': 'rgba(255, 255, 255, 0.7)',
+            'color': 'red',
+            'border-color': 'red'
+        })
+        $('#notification_alert_bar').show();
+    }, 1000);
+    // alert(JSON.stringify(filename));
+    $.ajax({
+        url: REMOTE_API_URL + "api/ImgProcessor/uploadLogoData",
+        type: "POST",
+        data: data,
+        cache: false,
+        dataType: 'json',
+        processData: false, // Don't process the files
+        contentType: false, // Set content type to false as jQuery will tell the server its a query string request
+        success: function (data) {
+            clearInterval(timerID);
+            $('#notification_alert_bar').hide();
+            if (HLC_LOGIN_MODE == HLC_SIMUL_MODE) {
+                sessionStorage.setItem(imgCtrl, 'assets/images/' + filename);
+            }
+            else if (data['status'] == true) {
+                sessionStorage.setItem(imgCtrl, 'uploads/' + data.file);
+                //    if(imgCtrl=='shop_license_img')
+                //        $('#shop_license_img_cover').attr('style','opacity:0');
+            } else {
+                sessionStorage.removeItem(imgCtrl)
+                showNotifyAlert(data.status);
+            }
+            // alert(JSON.stringify(data));
             activateAuthButton(data.file)
         },
         error: function (data) {
@@ -935,22 +998,27 @@ function getMainActivityItemTemplate(menu_id, brand_id) {
             ],
         },
     ];
-    sessionStorage.removeItem('productDatas')
     $.ajax({
         type: 'POST',
         url: REMOTE_API_URL + 'api/productInfos', //rest API url
         dataType: 'json',
         data: {'type': menu_id, 'brand': brand_id, 'phone': getPhoneNumber()}, // set function name and parameters
         success: function (data) {
+            sessionStorage.removeItem('productDatas')
+            data.productPageCnt=0;
             if (HLC_APP_MODE == HLC_SIMUL_MODE) {
                 // showNotifyAlert('Product Testing Success.')
                 sessionStorage.setItem('productDatas', JSON.stringify(productItems));
+                data.productPageCnt =0;
                 display_product_infos()
             } else if (data.status == false) {
                 showNotifyAlert('信息错误。')
             } else {
                 sessionStorage.setItem('productDatas', JSON.stringify(data.products));
-                display_product_infos()
+                data.productPageCnt=0;
+                setTimeout(function(){
+                    display_product_infos()
+                },100);
             }
         },
         error: function (data) {
@@ -1749,7 +1817,7 @@ function sendCancelOrderRequest(orderId, sendTxt) {
                 if (sendTxt != '') {
                     showMessage('您的退款申请已提交,<br>我们将会尽快处理！');
                     setTimeout(function () {
-                        history.go(-2);
+                        history.go(-1);
                         clearTimeout();
                         //location.href = 'javascript:history.go(-2)'
                     }, 3000);

@@ -32,7 +32,9 @@ function showLists(id) {
         address: address,
         searchStatus: $("#searchStatus :selected").val(), //0-all, 1-available, 2-disable
         searchShoptype : $('#searchShoptype :selected').val(), // 0-all, 1-便利店, 2-中型超市, 3-餐饮店, 4-其他业态
-        searchAuth : $('#searchAuth :selected').val()  // 0-认证状态, 1-未认证, 2-待认证, 3-认证通过, 4-认证失败
+        searchAuth : $('#searchAuth :selected').val(),  // 0-认证状态, 1-未认证, 2-待认证, 3-认证通过, 4-认证失败
+        start_date: start_date,
+        end_date:end_date,
     };
     $.ajax({
         type: 'post',
@@ -45,6 +47,8 @@ function showLists(id) {
                 $('#content_tbl').html(res.content);
                 $('#footer_tbl').html(res.footer);
                 executionPageNation();
+                start_date = '';
+                end_date = '';
             } else {
                 alert('search failed!');
                 console.log(res.data);

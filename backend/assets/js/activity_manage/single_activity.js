@@ -30,6 +30,8 @@ $(document).ready(function () {
 });
 
 function productSelected(product_id) {
+    if($('#activity_id').val() == '0')
+        $('#activity_name').val($("#product_name :selected").html());
     $.ajax({
         type: 'post',
         url: baseURL + 'activity_manage/single_activity_controller/getProductDetailInfo',

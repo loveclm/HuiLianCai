@@ -10,7 +10,7 @@
             <div>
                 <form role="form" action="<?php echo base_url() ?>single_activity_add"
                       method="post">
-                    <input name="activity_id" value="<?= isset($model->activity_id) ? $model->activity_id : '0'; ?>" type="hidden"/>
+                    <input id="activity_id" name="activity_id" value="<?= isset($model->activity_id) ? $model->activity_id : '0'; ?>" type="hidden"/>
                     <div class="row form-inline">
                         <label> *分类 : </label>
                         <select name="type" class="form-control" id="searchKind">

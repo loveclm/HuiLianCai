@@ -9,6 +9,9 @@ require_once 'log.php';
 //
 ////初始化日志
 $total_fee = floatval($_GET['cost']) * 100;
+
+$isRedirect = (isset($_GET['state'])) ? 1 : 0;
+
 $title = '惠联彩';//$_GET['title'];
 $detail = '商品购买';//$_GET['detail'];
 $logHandler = new CLogFileHandler("logs/" . date('Y-m-d') . '.log');
@@ -40,12 +43,12 @@ $jsApiParameters = $tools->GetJsApiParameters($order);
 <html>
 <head lang="en">
     <title><?= $title ?></title>
-<!--    <meta charset="utf-8">-->
-<!--    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">-->
-<!--    <meta name="apple-touch-fullscreen" content="yes">-->
-<!--    <meta name="apple-mobile-web-app-capable" content="yes">-->
-<!--    <meta name="apple-mobile-web-app-status-bar-style" content="black">-->
-<!--    <meta name="format-detection" content="telephone=no">-->
+    <!--    <meta charset="utf-8">-->
+    <!--    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">-->
+    <!--    <meta name="apple-touch-fullscreen" content="yes">-->
+    <!--    <meta name="apple-mobile-web-app-capable" content="yes">-->
+    <!--    <meta name="apple-mobile-web-app-status-bar-style" content="black">-->
+    <!--    <meta name="format-detection" content="telephone=no">-->
 
     <?php include('page_header.php'); ?>
 </head>
@@ -68,10 +71,18 @@ $jsApiParameters = $tools->GetJsApiParameters($order);
 <script type="text/javascript">
 
     $(function () {
-        $('#content').html('');
-        callpay();
+        if('<?php echo $jsApiParameters;?>'!='' && sessionStorage.getItem('isPaying')=='1') {
+            $('#content').html('');
+            callpay();
+            sessionStorage.removeItem('isPaying');
+        }
     });
+
     function callpay() {
+
+//        var isRedirect = parseInt('<?php //echo $isRedirect;?>//');
+//        if (isRedirect == 1) return;
+
         if (typeof WeixinJSBridge == "undefined") {
             if (document.addEventListener) {
                 document.addEventListener('WeixinJSBridgeReady', jsApiCall, false);
@@ -83,12 +94,19 @@ $jsApiParameters = $tools->GetJsApiParameters($order);
             jsApiCall();
         }
     }
+
+    showContents(){}
+    showCartStatus(){}
     //调用微信JS api 支付
     function jsApiCall() {
+
+        sendRemoveMyCartItemRequest(0);
+
         if (HLC_PAY_MODE == HLC_SIMUL_MODE) {
             onlinePayOrderRequest();
             return;
         }
+
         WeixinJSBridge.invoke(
             'getBrandWCPayRequest',
             <?php echo $jsApiParameters; ?>,
@@ -101,22 +119,25 @@ $jsApiParameters = $tools->GetJsApiParameters($order);
                     case 'get_brand_wcpay_request:cancel':
                         showMessage('支付未完成', 2);
                         setTimeout(function () {
-                            history.go(-1);
-                        },2000);
+                            //location.href="order_manage.php";
+                            history.go(-2);
+                        }, 2000);
                         break;
                     case 'get_brand_wcpay_request:fail':
                         showMessage('支付失败', 2);
                         setTimeout(function () {
-                            history.go(-1);
-                        },2000);
+                            //location.href="order_manage.php";
+                            history.go(-2);
+                        }, 2000);
                         break;
                 }
                 //alert(res.err_code+res.err_desc+res.err_msg);
             }
         );
     }
+
     function onOk() {
-        history.go(-1);
+        history.go(-2);
     }
 
 </script>

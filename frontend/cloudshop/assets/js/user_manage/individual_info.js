@@ -87,10 +87,12 @@ function checkValidation() {
     // check authrization code input state
 
     $('#shop_logo_img').click(function () {
+        $('#upload_shop_logo').val('');
         $('#upload_shop_logo').trigger('click');
     });
 
     $('#shop_license_img_cover').click(function () {
+        $('#upload_shop_license').val('');
         $('#upload_shop_license').trigger('click');
     });
 
@@ -219,7 +221,10 @@ function add_upload_file(event, input, id) {
 //        document.getElementById(id).src = 'assets/images/' + filename;
 //        $('#shop_license_img_cover').attr('style','opacity:0');
 //        $('#shop_license_img_cover').css({'width':$('#shop_license_img').css('width')})
-        sendUploadImageRequest(data, id, filename)
+        if (id == "shop_logo_img")
+            sendUploadLogoImageRequest(data, id, filename);
+        else
+            sendUploadImageRequest(data, id, filename);
 //        }
 //        reader.readAsDataURL(input.files[0]);
         //userinfo[id] = filename;

@@ -619,6 +619,9 @@ class Data_manager extends REST_Controller
                         // refund extra money
                         $order_info['refund_cost'] = $money;
                         $order_info['refund_time'] = date('Y-m-d H:i:s');
+                        $result_id = $this->order_model->update($order_info, $order->id);
+                        if(!$result_id) continue;
+
                         $news_data = array(
                             'sender' => $order->provider,
                             'receiver' => $order->shop,
@@ -651,6 +654,7 @@ class Data_manager extends REST_Controller
 
                     }
                 } else {
+                    $this->order_model->update($order_info, $order->id);
                     $news_data = array(
                         'sender' => $order->provider,
                         'receiver' => $order->shop,
@@ -660,7 +664,7 @@ class Data_manager extends REST_Controller
                     $this->news_model->add($news_data);
                 }
 
-                $this->order_model->update($order_info, $order->id);
+
             }
             // add activity starting message to message list
             $news_data = array(
@@ -704,9 +708,12 @@ class Data_manager extends REST_Controller
             $this->response(array('status' => false, 'err_code' => 7, 'error' => 'This order id is wrong.'), 200);
             return;
         }
-
+        if( floatval($order->pay_cost) > 0) {
+            $this->response(array('status' => false, 'err_code' => 12, 'error' => 'This order already is paid.'), 200);
+            return;
+        }
         $activity = $this->activity_model->getItemById($order->activity_ids);
-
+        $result_id = "";
         if ($pay_method == '1') {
             $orderinfo = array(
                 'id' => $order->id,
@@ -718,7 +725,7 @@ class Data_manager extends REST_Controller
                 'note' => $note
             );
 
-            $this->order_model->update($orderinfo, $order_id);
+            $result_id = $this->order_model->update($orderinfo, $order_id);
         } else if ($pay_method == '2') {
             $orderinfo = array(
                 'id' => $order->id,
@@ -727,9 +734,12 @@ class Data_manager extends REST_Controller
                 'status' => 2,
                 'note' => $note
             );
-            $this->order_model->update($orderinfo, $order_id);
+            $result_id = $this->order_model->update($orderinfo, $order_id);
         }
-
+        if(!$result_id){
+            $this->response(array('status' => false, 'err_code' => 11, 'error' => 'db written error'), 200);
+            return;
+        }
         $userinfo = $this->shop_model->getItemById($userid);
 
         if ($pay_method == '1') {
@@ -846,9 +856,10 @@ class Data_manager extends REST_Controller
             // get activity information
             $order = $this->order_model->getItemById($order_id);
             if ($order == NULL) continue;
+            if( floatval($order->pay_cost) > 0) continue;
 
             $activity = $this->activity_model->getItemById($order->activity_ids);
-
+            $result_id = "";
             if ($pay_method == '1') {
                 $orderinfo = array(
                     'id' => $order->id,
@@ -860,7 +871,7 @@ class Data_manager extends REST_Controller
                     'note' => $note
                 );
 
-                $this->order_model->update($orderinfo, $order_id);
+                $result_id = $this->order_model->update($orderinfo, $order_id);
             } else if ($pay_method == '2') {
                 $orderinfo = array(
                     'id' => $order->id,
@@ -869,8 +880,9 @@ class Data_manager extends REST_Controller
                     'status' => 2,
                     'note' => $note
                 );
-                $this->order_model->update($orderinfo, $order_id);
+                $result_id = $this->order_model->update($orderinfo, $order_id);
             }
+            if(!$result_id) continue;
 
             $userinfo = $this->shop_model->getItemById($userid);
 
@@ -900,9 +912,9 @@ class Data_manager extends REST_Controller
                 $nums = explode(',', $activity->nums);
 
                 $flag = 0;
-                for ($i = 0; $i < count($users); $i++) {
-                    if ($users[$i] == $order->shop) {
-                        $nums[$i] = intval($order->activity_cnts) + intval($nums[$i]);
+                for ($k = 0; $k < count($users); $k++) {
+                    if ($users[$k] == $order->shop) {
+                        $nums[$k] = intval($order->activity_cnts) + intval($nums[$k]);
                         $flag = 1;
                         break;
                     }
@@ -1022,7 +1034,10 @@ class Data_manager extends REST_Controller
             $this->response(array('status' => false, 'err_code' => 7, 'error' => 'This order id is wrong.'), 200);
             return;
         }
-
+        if($order->cancel_time != null){
+            $this->response(array('status' => false, 'err_code' => 12, 'error' => 'This order is already cancelled.'), 200);
+            return;
+        }
         $userinfo = $this->shop_model->getItemById($userid);
         $activity = $this->activity_model->getItemById($order->activity_ids);
 
@@ -1050,11 +1065,17 @@ class Data_manager extends REST_Controller
         }
 
         if ($order->status == 2) {
+            $orderinfo['complete_time'] = date('Y-m-d H:i:s');
             if ($order->pay_method == '1') {
                 $orderinfo['refund_cost'] = $order->pay_cost;
                 $orderinfo['refund_time'] = date('Y-m-d H:i:s');
                 $orderinfo['status'] = 6;
 
+                $result_id = $this->order_model->update($orderinfo, $order_id);
+                if(!$result_id) {
+                    $this->response(array('status' => false, 'err_code' => 13, 'error' => 'This request is rejected in db.'), 200);
+                    return;
+                }
                 //add transaction to message list
                 $transaction_info = array(
                     'order_id' => $order->id,
@@ -1087,8 +1108,13 @@ class Data_manager extends REST_Controller
                     );
                     $this->coupon_model->update($coupon_info, $this->user_model->getIdByUserId($userid));
                 }
+            }else{
+                $result_id = $this->order_model->update($orderinfo, $order_id);
+                if(!$result_id) {
+                    $this->response(array('status' => false, 'err_code' => 13, 'error' => 'This request is rejected in db.'), 200);
+                    return;
+                }
             }
-            $orderinfo['complete_time'] = date('Y-m-d H:i:s');
 
             // remove shop id in activity's user list
             $users = explode(',', $activity->users);
@@ -1117,8 +1143,6 @@ class Data_manager extends REST_Controller
             }
 
         }
-
-        $this->order_model->update($orderinfo, $order_id);
 
         //add pay status message to message list
         $news_data = array(

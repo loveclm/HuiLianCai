@@ -124,7 +124,7 @@ $route['type_statistics'] = 'statistics_controller/type_statistics';
 $route['sale_performance'] = 'statistics_controller/sale_performance';
 $route['recommend_provider'] = 'statistics_controller/recommend_provider';
 $route['recommend_shop'] = 'statistics_controller/recommend_shop';
-$route['showShops/(:any)'] = 'statistics_controller/showShops/$1';
+$route['showShops/(:any)/(:any)/(:any)'] = 'statistics_controller/showShops/$1/$2/$3';
 $route['showProviders/(:any)'] = 'statistics_controller/showProviders/$1';
 
 $route['userlist'] = 'user_manage/user_controller';

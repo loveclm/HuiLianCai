@@ -1,10 +1,18 @@
+
+<?php
+
+$total_fee = floatval($_GET['cost']) * 100;
+
+
+?>
+
 <html>
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
 <body>
-    <button style="margin-top: 50px; padding: 10px;" onclick="OnPay()"><h3>pay test</h3></button>
+    <button style="margin-top: 50px; padding: 10px;" onclick="OnPay()"><h3><?php echo $total_fee;?></h3></button>
 </body>
 <script type="text/javascript" src="assets/js/plugins/jquery.min.js"></script>
 <!--<script type="text/javascript" src="jquery.min.js"></script>-->

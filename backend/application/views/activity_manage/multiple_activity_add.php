@@ -30,7 +30,7 @@
             <div>
                 <form role="form" action="<?php echo base_url() ?>multiple_activity_add"
                       method="post">
-                    <input name="activity_id" value="<?= isset($model->activity_id) ? $model->activity_id : '0'; ?>"
+                    <input id="activity_id" name="activity_id" value="<?= isset($model->activity_id) ? $model->activity_id : '0'; ?>"
                            type="hidden"/>
                     <div class="row form-inline">
                         <label> *活动名称 : </label>
